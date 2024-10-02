@@ -7,6 +7,7 @@ import { Dashboard } from "@/pages/dashboard";
 // import { Videos } from "@/pages/videos";
 import { Login } from "@/pages/login";
 import { Medias } from "@/pages/medias";
+import { HomeBanners } from "@/pages/home-banners";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: "/midias",
         element: <Medias />,
+      },
+      {
+        path: "/home-banners",
+        element: <HomeBanners />,
       },
     ],
   },

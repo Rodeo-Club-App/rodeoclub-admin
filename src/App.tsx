@@ -1,3 +1,5 @@
+import "react-circular-progressbar/dist/styles.css";
+
 import { useState } from "react";
 import { Button } from "./components/ui/button";
 import { Login } from "./pages/login";

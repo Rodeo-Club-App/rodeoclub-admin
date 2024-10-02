@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +38,7 @@ export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
+  const navigate = useNavigate();
   return (
     <nav
       className={cn("flex items-center space-x-4 lg:space-x-6", className)}
@@ -84,7 +85,7 @@ export function MainNav({
           <DropdownMenuLabel>Aplicativo</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/home-banners")}>
               <Home className="mr-2 h-4 w-4" />
               <span>Banners Home</span>
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
