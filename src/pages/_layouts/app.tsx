@@ -1,20 +1,27 @@
 // import { isAxiosError } from 'axios'
 // import { useAuth } from "@/hooks/auth";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useUserAuth } from "@/hooks/useUserAuth";
+import { setNavigator } from "@/utils/navigationHelper";
 
 export function AppLayout() {
-  const { user } = useUserAuth();
+  const { user, isFetchingDataInStorage } = useUserAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    setNavigator(navigate);
+  }, [navigate]);
+
+  useEffect(() => {
+    if (isFetchingDataInStorage) return;
+
+    if (!user?.email) {
       return navigate("/login", { replace: true });
     }
-  }, [navigate, user]);
+  }, [navigate, user, isFetchingDataInStorage]);
 
-  if (!user) return null;
+  if (!user?.email) return null;
 
   return <Outlet />;
 }

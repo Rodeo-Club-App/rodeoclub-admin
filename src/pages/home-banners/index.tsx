@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -18,24 +18,32 @@ import {
 import { AppLayout } from "../_layout";
 import { Header } from "@/components/header";
 import { api } from "@/services/api";
+import { actionLabel } from "@/utils/actions-label";
+import {
+  BannersBrawerRef,
+  BannersDrawer,
+} from "@/components/modals/banners-drawer";
+import { useSearchParams } from "react-router-dom";
 
 // Types
 type Banner = {
-  id: string;
+  id: number;
   position: number;
   imageUrl: string;
+  action: "view" | "product" | "category_product" | "external_link";
+  reference: string;
+  referenceLabel: string;
 };
 
 interface HomeBannersResponse {
-  banners: {
-    id: string;
-    imageUrl: string;
-    position: number;
-  }[];
+  banners: Banner[];
 }
 
 export function HomeBanners() {
+  const [, setSearchParams] = useSearchParams();
   const [banners, setBanners] = useState<Banner[]>([]);
+
+  const bannersDrawerRef = useRef<BannersBrawerRef>(null);
 
   useEffect(() => {
     fetchHome();
@@ -51,28 +59,36 @@ export function HomeBanners() {
     } catch (error) {}
   }
 
-  // Function to handle the drag-and-drop logic
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    // Reorder the array based on drag result
     const items = Array.from(banners);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Update the order based on new array position
     const updatedBanners = items.map((item, index) => ({
       ...item,
-      position: index + 1, // Update the order after reordering
+      position: index + 1,
     }));
 
     setBanners(updatedBanners);
   };
 
+  function handleEditBanner(id: number) {
+    setSearchParams((prev) => {
+      prev.set("edit", String(id));
+      prev.set("destination", "home");
+
+      return prev;
+    });
+    bannersDrawerRef.current?.openModal();
+  }
+
   return (
     <div className="flex-col md:flex">
       <Header />
       <AppLayout>
+        <BannersDrawer ref={bannersDrawerRef} />
         <div className="container mx-auto p-4">
           <h1 className="text-2xl font-bold mb-4">
             Gestão de Banners (Home aplicativo)
@@ -113,6 +129,19 @@ export function HomeBanners() {
                                 height={100}
                                 className="rounded"
                               />
+
+                              <div className="flex flex-col">
+                                <div>Ação: {actionLabel[banner.action]}</div>
+
+                                <div>Item: {banner.reference}</div>
+                                <div>
+                                  <Button
+                                    onClick={() => handleEditBanner(banner.id)}
+                                  >
+                                    Editar
+                                  </Button>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </Draggable>

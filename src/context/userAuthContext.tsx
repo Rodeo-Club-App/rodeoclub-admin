@@ -109,6 +109,7 @@ export const UserAuthContextProvider = ({
     } catch (error) {
       throw error;
     } finally {
+      console.log("bateu fin");
       setIsFetchingDataInStorage(false);
     }
   }, []);

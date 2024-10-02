@@ -1,26 +1,22 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
 // import { api } from "@/services/api";
-import { useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Link2, Loader, Upload, X } from "lucide-react";
-import { isDragActive } from "framer-motion";
-import { Card, CardContent } from "../ui/card";
-import { useDropzone } from "react-dropzone";
-import { ScrollArea } from "../ui/scroll-area";
 import { api } from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, Link2, Upload } from "lucide-react";
 import { CircularProgressbar } from "react-circular-progressbar";
+import { useDropzone } from "react-dropzone";
+import { Card, CardContent } from "../ui/card";
+import { ScrollArea } from "../ui/scroll-area";
 
-import { filesize } from "filesize";
 import axios from "axios";
+import { filesize } from "filesize";
 
 interface UploadMediaModalProps {
   id?: string;
@@ -54,10 +50,6 @@ export const UploadMediaModal = forwardRef<
   const { toast } = useToast();
 
   const [files, setFiles] = useState<File[]>([]);
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-  }, []);
 
   const handleUpload = async (files: File[]) => {
     const uploadedFiles: UploadedFile[] = files.map((file) => ({
@@ -96,7 +88,6 @@ export const UploadMediaModal = forwardRef<
 
   const processUpload = async (uploadedFile: UploadedFile) => {
     try {
-      // Obtenha a chave assinada do servidor antes do upload
       const { data: signedUrlData } = await api.post<{
         signedUrl: string;
         url: string;
@@ -130,7 +121,7 @@ export const UploadMediaModal = forwardRef<
 
       updateFile(uploadedFile.id, {
         uploaded: true,
-        url: signedUrlData.url, // URL da imagem carregada
+        url: signedUrlData.url,
       });
 
       await api.post("/medias/rodeoclub", {
@@ -147,12 +138,9 @@ export const UploadMediaModal = forwardRef<
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  const [eventId, setEventId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
     openModal: (id: string) => {
-      setEventId(id);
       setIsOpen(true);
     },
   }));
@@ -164,30 +152,6 @@ export const UploadMediaModal = forwardRef<
     setIsOpen(false);
   };
 
-  async function handlePublishEvent() {
-    try {
-      setLoading(true);
-      //   await api.patch(`/lcl-events/publish/${eventId}`);
-
-      queryClient.refetchQueries({
-        queryKey: ["lcl-events"],
-      });
-      closeModal();
-
-      toast({
-        variant: "success",
-        title: "Evento publicado com sucesso",
-      });
-    } catch (error: any) {
-      setLoading(false);
-
-      toast({
-        variant: "destructive",
-        title: "Falha ao publicar evento",
-        description: error.response.data.message,
-      });
-    }
-  }
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
       <DialogContent className="sm:max-w-[425px]">
