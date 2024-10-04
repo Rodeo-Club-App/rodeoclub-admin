@@ -29,6 +29,10 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    --custom-dark: #272425;
+    --custom-primary: #bfb49a;
+    --custom-light: #e0d7c8;
   }
 
   .dark {
@@ -56,6 +60,10 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    --custom-dark: #231f20;
+    --custom-primary: #c5b59a;
+    --custom-light: #e0d7c8;
   }
 }
 

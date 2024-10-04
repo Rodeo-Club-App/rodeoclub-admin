@@ -1,15 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logo from "@/assets/pvt.png";
+import logoTop from "@/assets/pvt-sigla.png";
+import logoBottom from "@/assets/logo-pvt-top.png";
+
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserAuth } from "@/hooks/useUserAuth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
+import { Loader } from "lucide-react";
+
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+  email: z
+    .string()
+    .min(1, "O e-mail é obrigatório")
+    .email("O formato do e-mail é inválido"),
+  password: z.string().min(1, "A senha é obrigatória").trim(),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -17,26 +25,48 @@ type LoginForm = z.infer<typeof loginSchema>;
 export function Login() {
   const navigate = useNavigate();
   const { signIn } = useUserAuth();
+
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   async function onSubmit(values: LoginForm) {
-    await signIn({
-      email: values.email,
-      password: values.password,
-    });
+    const { email, password } = values;
 
-    navigate("/");
+    try {
+      await signIn({ email, password });
+      navigate("/");
+    } catch (error: any) {
+      console.log(error);
+      toast({ title: error.response.data.message, variant: "destructive" });
+    }
   }
+
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen px-4 md:px-0">
+      <div className="hidden lg:flex lg:flex-col lg:min-h-full">
+        <div className="flex-1 bg-[--custom-dark] flex items-end justify-center">
+          <img src={logoTop} alt="Logo Top" className="w-3/4 max-w-xs mb-2" />
+        </div>
+        <div className="flex-1 bg-[--custom-primary] flex items-start justify-center">
+          <img
+            src={logoBottom}
+            alt="Logo Bottom"
+            className="w-3/4 max-w-[350px]"
+          />
+        </div>
+      </div>
+
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Autenticação</h1>
             <p className="text-balance text-muted-foreground">
-              Entre com seu e-mail para logar na sua conta
+              Entre com seu e-mail para acessar sua conta.
             </p>
           </div>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -48,6 +78,7 @@ export function Login() {
                   type="email"
                   placeholder="m@example.com"
                   {...form.register("email")}
+                  disabled={form.formState.isSubmitting}
                   required
                 />
               </div>
@@ -62,27 +93,26 @@ export function Login() {
                   </a>
                 </div>
                 <Input
-                  {...form.register("password")}
                   id="password"
                   type="password"
+                  {...form.register("password")}
+                  disabled={form.formState.isSubmitting}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button
+                type="submit"
+                className="w-full rounded bg-[--custom-dark]"
+                disabled={form.formState.isLoading}
+              >
+                {form.formState.isLoading && (
+                  <Loader className="w-4 h-4 animate-spin mr-4" />
+                )}
+                Entrar
               </Button>
             </div>
           </form>
         </div>
-      </div>
-      <div className="hidden bg-muted lg:block">
-        <img
-          src={logo}
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
       </div>
     </div>
   );

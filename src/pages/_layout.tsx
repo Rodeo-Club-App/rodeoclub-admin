@@ -6,8 +6,11 @@ interface Props {
 
 export function AppLayout({ children }: Props) {
   return (
-    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900">
-      <div className="container mx-auto px-6 py-8">{children}</div>
+    <main
+      className="flex flex-col overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900"
+      style={{ minHeight: "calc(100vh - 65px)" }}
+    >
+      <div className="container px-auto px-6 py-8 flex-1">{children}</div>
     </main>
   );
 }

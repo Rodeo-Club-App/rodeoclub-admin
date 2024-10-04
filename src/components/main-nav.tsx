@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,22 +16,17 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import {
-  User,
-  CreditCard,
-  Settings,
-  Keyboard,
   Users,
   UserPlus,
   Mail,
   MessageSquare,
   PlusCircle,
   Plus,
-  Github,
   LifeBuoy,
   Cloud,
-  LogOut,
   Home,
   Rocket,
+  Github,
 } from "lucide-react";
 
 export function MainNav({
@@ -39,58 +34,84 @@ export function MainNav({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <nav
       className={cn("flex items-center space-x-4 lg:space-x-6", className)}
       {...props}
     >
       <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium transition-colors text-amber-400 hover:text-primary"
+        to="/"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          location.pathname === "/" && "text-amber-400"
+        )}
       >
         Dashboard
       </Link>
       <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        to="/clientes"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          location.pathname === "/clientes" && "text-amber-400"
+        )}
       >
         Clientes
       </Link>
       <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        to="/pedidos"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          location.pathname === "/pedidos" && "text-amber-400"
+        )}
       >
         Pedidos
       </Link>
 
       <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        to="/divulgacao"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          location.pathname === "/divulgacao" && "text-amber-400"
+        )}
       >
         Divulgação
       </Link>
 
       <Link
         to="/midias"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        className={cn(
+          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
+          location.pathname === "/midias" && "text-amber-400"
+        )}
       >
         Midias
       </Link>
 
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost">Configurações</Button>
+        <DropdownMenuTrigger asChild className="w-24">
+          <Button
+            variant="ghost"
+            className="hover:bg-transparent text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            Configurações
+          </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Aplicativo</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => navigate("/home-banners")}>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/home-banners")}
+            >
               <Home className="mr-2 h-4 w-4" />
               <span>Banners Home</span>
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               <Rocket className="mr-2 h-4 w-4" />
               <span>Banners Lançamentos</span>
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
@@ -108,45 +129,45 @@ export function MainNav({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               <Users className="mr-2 h-4 w-4" />
               <span>Team</span>
             </DropdownMenuItem>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger className="cursor-pointer">
                 <UserPlus className="mr-2 h-4 w-4" />
                 <span>Invite users</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <Mail className="mr-2 h-4 w-4" />
                     <span>Email</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <MessageSquare className="mr-2 h-4 w-4" />
                     <span>Message</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     <span>More...</span>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
               <Plus className="mr-2 h-4 w-4" />
               <span>New Team</span>
               <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             <Github className="mr-2 h-4 w-4" />
             <span>GitHub</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
             <LifeBuoy className="mr-2 h-4 w-4" />
             <span>Support</span>
           </DropdownMenuItem>
