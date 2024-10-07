@@ -109,7 +109,7 @@ export function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Revenue
+                  Total de vendas
                 </CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -120,14 +120,14 @@ export function Dashboard() {
                     <ChevronUp className="h-4 w-4" />
                     20.1%
                   </span>
-                  from last month
+                  em relação ao mês passado
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  New Customers
+                  Novos clientes
                 </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -138,14 +138,14 @@ export function Dashboard() {
                     <ChevronUp className="h-4 w-4" />
                     180.1%
                   </span>
-                  from last month
+                  em relação ao mês passado
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Orders
+                  Total de pedidos
                 </CardTitle>
                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -156,14 +156,14 @@ export function Dashboard() {
                     <ChevronUp className="h-4 w-4" />
                     19%
                   </span>
-                  from last month
+                  em relação ao mês passado
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Active Products
+                  Produtos ativos
                 </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -174,7 +174,7 @@ export function Dashboard() {
                     <ChevronUp className="h-4 w-4" />
                     201
                   </span>
-                  since last week
+                  desde o ultimo mês
                 </p>
               </CardContent>
             </Card>
@@ -184,7 +184,7 @@ export function Dashboard() {
           <div className="grid gap-6 mb-8 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Sales Overview</CardTitle>
+                <CardTitle>Balanço de vendas</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
@@ -215,7 +215,7 @@ export function Dashboard() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Visitors Overview</CardTitle>
+                <CardTitle>Taxa de uso do APP</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={350}>
@@ -254,16 +254,16 @@ export function Dashboard() {
           <div className="grid gap-6 mb-8 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Orders</CardTitle>
+                <CardTitle>Pedidos recentes</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Order ID</TableHead>
-                      <TableHead>Customer</TableHead>
+                      <TableHead>Pedido N.</TableHead>
+                      <TableHead>Cliente</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -287,15 +287,17 @@ export function Dashboard() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Top Products</CardTitle>
+                <CardTitle>Top Produtos mais vendidos</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead>Sales</TableHead>
-                      <TableHead className="text-right">Revenue</TableHead>
+                      <TableHead>Produto</TableHead>
+                      <TableHead>Vendas</TableHead>
+                      <TableHead className="text-right">
+                        Total de Vendas
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -319,7 +321,7 @@ export function Dashboard() {
           {/* Activity Feed */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
+              <CardTitle>Atividades recenntes</CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="all" className="w-full">
@@ -410,7 +412,7 @@ export function Dashboard() {
                   <CardContent>
                     <div className="text-2xl font-bold">$45,231.89</div>
                     <p className="text-xs text-muted-foreground">
-                      +20.1% from last month
+                      +20.1% em relação ao mês passado
                     </p>
                   </CardContent>
                 </Card>
@@ -437,7 +439,7 @@ export function Dashboard() {
                   <CardContent>
                     <div className="text-2xl font-bold">+2350</div>
                     <p className="text-xs text-muted-foreground">
-                      +180.1% from last month
+                      +180.1% em relação ao mês passado
                     </p>
                   </CardContent>
                 </Card>
@@ -461,7 +463,7 @@ export function Dashboard() {
                   <CardContent>
                     <div className="text-2xl font-bold">+12,234</div>
                     <p className="text-xs text-muted-foreground">
-                      +19% from last month
+                      +19% em relação ao mês passado
                     </p>
                   </CardContent>
                 </Card>

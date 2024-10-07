@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { AppLayout } from "../_layout";
 import { Title } from "@/components/title-page";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,11 +35,13 @@ import { api } from "@/services/api";
 import { useForm } from "react-hook-form";
 
 import { useToast } from "@/hooks/use-toast";
-import { Loader } from "lucide-react";
+import { Edit, Loader } from "lucide-react";
 import { useDebounce } from "use-debounce";
 
 interface Media {
+  id: number;
   url: string;
+  type: "image" | "video";
 }
 
 interface BannerData {
@@ -71,9 +73,19 @@ interface ProductResponse {
   data: IProduct[];
 }
 
+interface SubCategoryResponse {
+  id: number;
+  name: string;
+}
+
+interface Media {
+  url: string;
+}
+
 export function BannersForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { id } = useParams() as { id: string };
 
   const viewMediaModal = useRef<ViewMediaModalRef>(null);
@@ -81,8 +93,10 @@ export function BannersForm() {
   const [searchName, setSearchName] = useState("");
   const [debouncedSearchName] = useDebounce(searchName, 500);
   const [selectedMedia, setSelectedMedia] = useState<MediaProps | null>(null);
+  const [reference, setReference] = useState("");
+  const [referenceLabel, setReferenceLabel] = useState("");
 
-  const { handleSubmit, register } = useForm<BannerData>();
+  const { handleSubmit } = useForm<BannerData>();
 
   const handleMediaSelect = (media: MediaProps | null) => {
     setSelectedMedia(media);
@@ -100,7 +114,10 @@ export function BannersForm() {
     queryFn: async () => {
       const response = await api.get<BannerData>(`/home/rodeoclub/${id}/home`);
       const data = response.data;
+      setReference(data.reference ?? "");
+      setReferenceLabel(data.referenceLabel ?? "");
       setSelectedAction(data.action);
+      setSelectedMedia(data.media);
       return data;
     },
   });
@@ -122,22 +139,44 @@ export function BannersForm() {
     },
   });
 
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ["category_product", debouncedSearchName],
+    enabled: selectedAction === "category_product",
+    queryFn: async () => {
+      const response = await api.get<SubCategoryResponse[]>(
+        `/sub-category/rodeoclub`
+      );
+
+      return response.data;
+    },
+  });
+
   const onSubmit = async (data: BannerData) => {
     try {
       if (id && id !== "new") {
-        await api.put(`/home/rodeoclub/${id}/home`, {
-          ...data,
+        await api.put(`/home/rodeoclub/${id}`, {
           mediaId: selectedMedia?.id,
+          destination: "home",
+          action: selectedAction,
+          reference,
         });
         toast({
           title: "Sucesso",
+          variant: "success",
           description: "Banner atualizado com sucesso! 🎉",
         });
+
+        navigate("/home-banners");
       } else {
-        await api.post(`/home/rodeoclub/${id}`, data);
+        await api.post(`/home/rodeoclub/${id}`, {
+          mediaId: selectedMedia?.id,
+          destination: "home",
+          action: selectedAction,
+          reference,
+        });
         toast({
           title: "Sucesso",
-          description: "Banner criado com sucesso! 🎉",
+          description: "Banner atualizado",
         });
       }
 
@@ -192,14 +231,14 @@ export function BannersForm() {
                 </Button>
               </div>
               <div className="flex-1 flex flex-col gap-4">
-                <div>
+                {/* <div>
                   <Label htmlFor="reference">Referência</Label>
                   <Input
                     className="rounded-md"
                     name="reference"
                     value={banner?.reference ?? ""}
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <Label htmlFor="action">Ação</Label>
@@ -229,69 +268,78 @@ export function BannersForm() {
 
                 {selectedAction === "product" && (
                   <div>
-                    <Label htmlFor="product">Pesquisar produto</Label>
-                    <Command>
-                      <CommandInput
-                        placeholder="Digite o nome do produto"
-                        className="rounded-md"
-                      />
-                      <CommandList>
-                        {isLoadingProducts ? (
-                          <CommandEmpty>Carregando...</CommandEmpty>
-                        ) : (products?.data ?? []).length > 0 ? (
-                          <CommandGroup>
-                            {products?.data.map((product) => (
-                              <CommandItem
-                                key={product.id}
-                                onSelect={() => {
-                                  setSearchName(product.name);
-                                  setSelectedAction("product");
-                                }}
-                              >
-                                {product.name}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        ) : (
-                          <CommandEmpty>
-                            Nenhum produto encontrado.
-                          </CommandEmpty>
-                        )}
-                      </CommandList>
-                    </Command>
+                    <Label htmlFor="product">Produto</Label>
+
+                    {referenceLabel ? (
+                      <div className="flex flex-row gap-2 items-center">
+                        <p>{referenceLabel}</p>
+                        <Button
+                          size="icon"
+                          onClick={() => {
+                            setReference("");
+                            setReferenceLabel("");
+                          }}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Command>
+                        <CommandInput
+                          placeholder="Digite o nome do produto"
+                          className="rounded-md"
+                          onValueChange={(value) => setSearchName(value)}
+                        />
+                        <CommandList>
+                          {isLoadingProducts ? (
+                            <CommandEmpty>Carregando...</CommandEmpty>
+                          ) : (products?.data ?? []).length > 0 ? (
+                            <CommandGroup>
+                              {products?.data.map((product) => (
+                                <CommandItem
+                                  key={product.id}
+                                  onSelect={() => {
+                                    setReference(String(product.id));
+                                    setReferenceLabel(product.name);
+                                  }}
+                                >
+                                  {product.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          ) : (
+                            <CommandEmpty>
+                              Nenhum produto encontrado.
+                            </CommandEmpty>
+                          )}
+                        </CommandList>
+                      </Command>
+                    )}
                   </div>
                 )}
 
                 {selectedAction === "category_product" && (
                   <div>
-                    <Label htmlFor="category">Pesquisar categoria</Label>
-                    <Command>
-                      <CommandInput
-                        placeholder="Digite o nome da categoria"
-                        className="rounded-md"
-                        onValueChange={(value) => setSearchName(value)}
-                      />
-                      <CommandList>
-                        {isLoadingProducts ? (
-                          <CommandEmpty>Carregando...</CommandEmpty>
-                        ) : (products?.data ?? []).length > 0 ? (
-                          <CommandGroup>
-                            {products?.data.map((product) => (
-                              <CommandItem
-                                key={product.id}
-                                onSelect={() => setSearchName(product.name)}
-                              >
-                                {product.name}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        ) : (
-                          <CommandEmpty>
-                            Nenhum produto encontrado.
-                          </CommandEmpty>
-                        )}
-                      </CommandList>
-                    </Command>
+                    <Select
+                      value={reference}
+                      onValueChange={(e) => {
+                        setReference(String(e));
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map((category) => (
+                          <SelectItem
+                            key={category.id}
+                            value={String(category.id)}
+                          >
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
 
@@ -302,8 +350,8 @@ export function BannersForm() {
                       id="link"
                       placeholder="Insira o URL do link"
                       className="rounded-md"
-                      value={banner?.reference ?? ""}
-                      {...register("reference")}
+                      value={reference}
+                      onChange={(e) => setReference(e.target.value)}
                     />
                   </div>
                 )}

@@ -34,6 +34,7 @@ export const ViewMediaModal = forwardRef<
       const response = await api.get<MediaProps[]>("medias/rodeoclub");
       return response.data;
     },
+    enabled: isOpen,
   });
 
   useImperativeHandle(ref, () => ({

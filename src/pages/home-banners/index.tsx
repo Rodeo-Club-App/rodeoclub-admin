@@ -14,8 +14,9 @@ import { api } from "@/services/api";
 import { actionLabel } from "@/utils/actions-label";
 
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Title } from "@/components/title-page";
+import { useMutation } from "@tanstack/react-query";
 
 // Types
 export type Banner = {
@@ -50,6 +51,22 @@ export function HomeBanners() {
     } catch (error) {}
   }
 
+  const updateBannerPositions = async (
+    updatedBanners: { id: number; position: number }[]
+  ) => {
+    const response = await api.patch(
+      "/home/rodeoclub/update-position/home",
+      updatedBanners
+    );
+
+    return response.data;
+  };
+
+  const mutationPosition = useMutation({
+    mutationFn: updateBannerPositions,
+    onSuccess: () => {},
+  });
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -63,9 +80,14 @@ export function HomeBanners() {
     }));
 
     setBanners(updatedBanners);
+
+    mutationPosition.mutateAsync(
+      updatedBanners.map((i) => ({
+        id: i.id,
+        position: i.position,
+      }))
+    );
   };
-
-
 
   return (
     <div className="flex-col md:flex">
@@ -81,7 +103,14 @@ export function HomeBanners() {
 
           <Card className="mb-4">
             <CardHeader>
-              <CardTitle>Banners</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                {mutationPosition.isPending
+                  ? "Atualizando posições"
+                  : "Banners"}
+                {mutationPosition.isPending && (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                )}
+              </CardTitle>
             </CardHeader>
             <CardContent className="">
               <DragDropContext onDragEnd={onDragEnd}>
@@ -118,10 +147,17 @@ export function HomeBanners() {
                               <div className="flex items-center md:items-start flex-col">
                                 <div>Ação: {actionLabel[banner.action]}</div>
 
-                                <div>Item: {banner.reference}</div>
+                                <div>
+                                  Referência:{" "}
+                                  {banner.action === "external_link"
+                                    ? banner.reference
+                                    : banner.referenceLabel}
+                                </div>
                                 <div className="mt-5">
                                   <Button
-                                    onClick={() => navigate(`/banners-form/${banner.id}`)}
+                                    onClick={() =>
+                                      navigate(`/banners-form/${banner.id}`)
+                                    }
                                   >
                                     Editar
                                   </Button>
