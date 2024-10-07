@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -7,26 +7,18 @@ import {
 } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { AppLayout } from "../_layout";
 import { Header } from "@/components/header";
 import { api } from "@/services/api";
 import { actionLabel } from "@/utils/actions-label";
-import {
-  BannersBrawerRef,
-  BannersDrawer,
-} from "@/components/modals/banners-drawer";
-import { useSearchParams } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { Title } from "@/components/title-page";
 
 // Types
-type Banner = {
+export type Banner = {
   id: number;
   position: number;
   imageUrl: string;
@@ -40,10 +32,9 @@ interface HomeBannersResponse {
 }
 
 export function HomeBanners() {
-  const [, setSearchParams] = useSearchParams();
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const navigate = useNavigate();
 
-  const bannersDrawerRef = useRef<BannersBrawerRef>(null);
+  const [banners, setBanners] = useState<Banner[]>([]);
 
   useEffect(() => {
     fetchHome();
@@ -74,38 +65,32 @@ export function HomeBanners() {
     setBanners(updatedBanners);
   };
 
-  function handleEditBanner(id: number) {
-    setSearchParams((prev) => {
-      prev.set("edit", String(id));
-      prev.set("destination", "home");
 
-      return prev;
-    });
-    bannersDrawerRef.current?.openModal();
-  }
 
   return (
     <div className="flex-col md:flex">
       <Header />
       <AppLayout>
-        <BannersDrawer ref={bannersDrawerRef} />
         <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">
-            Gestão de Banners (Home aplicativo)
-          </h1>
+          <div className="flex flex-row w-full justify-between">
+            <Title name="Gestão de Banners (Home aplicativo)" />
+            <Button onClick={() => navigate("/banners-form/new")}>
+              Adicionar <Plus className="w-4 h-4 ml-4" />{" "}
+            </Button>
+          </div>
 
           <Card className="mb-4">
             <CardHeader>
               <CardTitle>Banners</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="">
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable">
                   {(provided) => (
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className="space-y-2"
+                      className="flex flex-wrap gap-2"
                     >
                       {banners.map((banner, index) => (
                         <Draggable
@@ -118,7 +103,7 @@ export function HomeBanners() {
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className="bg-white p-2 rounded shadow flex items-center space-x-2 hover:cursor-move"
+                              className="bg-white flex-col md:flex-row w-full p-2 rounded shadow flex items-center space-x-2 hover:cursor-move"
                             >
                               <span className="font-bold">
                                 {banner.position}.
@@ -130,13 +115,13 @@ export function HomeBanners() {
                                 className="rounded"
                               />
 
-                              <div className="flex flex-col">
+                              <div className="flex items-center md:items-start flex-col">
                                 <div>Ação: {actionLabel[banner.action]}</div>
 
                                 <div>Item: {banner.reference}</div>
-                                <div>
+                                <div className="mt-5">
                                   <Button
-                                    onClick={() => handleEditBanner(banner.id)}
+                                    onClick={() => navigate(`/banners-form/${banner.id}`)}
                                   >
                                     Editar
                                   </Button>

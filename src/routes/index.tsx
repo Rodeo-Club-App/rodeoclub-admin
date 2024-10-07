@@ -8,6 +8,7 @@ import { Dashboard } from "@/pages/dashboard";
 import { Login } from "@/pages/login";
 import { Medias } from "@/pages/medias";
 import { HomeBanners } from "@/pages/home-banners";
+import { BannersForm } from "@/pages/home-banners/[id]";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: "/home-banners",
         element: <HomeBanners />,
+      },
+      {
+        path: "/banners-form/:id",
+        element: <BannersForm />,
       },
     ],
   },
