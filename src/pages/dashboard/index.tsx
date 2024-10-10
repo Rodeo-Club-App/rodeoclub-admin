@@ -1,9 +1,3 @@
-import { MainNav } from "@/components/main-nav";
-import { UserNav } from "@/components/user-nav";
-
-import logo from "@/assets/logo-pvt-top.png";
-
-import { useState } from "react";
 import {
   Bar,
   BarChart,
@@ -14,14 +8,7 @@ import {
   Line,
   LineChart,
 } from "recharts";
-import {
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuContent,
-  DropdownMenu,
-} from "@/components/ui/dropdown-menu";
+
 import {
   TableHead,
   TableRow,
@@ -31,9 +18,7 @@ import {
   Table,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -41,19 +26,11 @@ import {
   ShoppingCart,
   Users,
   DollarSign,
-  Search,
-  Bell,
-  Menu,
-  Home,
-  BarChart2,
-  Settings,
-  HelpCircle,
   TrendingUp,
   ChevronUp,
-  ChevronDown,
   Activity,
 } from "lucide-react";
-import { motion } from "framer-motion";
+
 import { Header } from "@/components/header";
 import { AppLayout } from "../_layout";
 import { Title } from "@/components/title-page";

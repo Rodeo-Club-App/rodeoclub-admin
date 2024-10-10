@@ -60,10 +60,10 @@ export function MainNav({
         Clientes
       </Link>
       <Link
-        to="/pedidos"
+        to="/orders"
         className={cn(
           "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/pedidos" && "text-amber-400"
+          location.pathname === "/orders" && "text-amber-400"
         )}
       >
         Pedidos

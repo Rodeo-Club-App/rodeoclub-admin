@@ -20,7 +20,7 @@ interface MediaProps {
 export function Medias() {
   const uploadMediaModal = useRef<UploadMediaModalRef>(null);
 
-  const { data: mediaList, isLoading } = useQuery({
+  const { data: mediaList } = useQuery({
     queryKey: ["medias"],
     queryFn: async () => {
       const response = await api.get<MediaProps[]>("medias/rodeoclub");

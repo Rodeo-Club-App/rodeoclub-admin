@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { AppLayout } from "../_layout";
 import { Title } from "@/components/title-page";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   MediaProps,
   ViewMediaModal,
@@ -32,7 +32,6 @@ import {
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
-import { useForm } from "react-hook-form";
 
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Loader } from "lucide-react";
@@ -96,19 +95,11 @@ export function BannersForm() {
   const [reference, setReference] = useState("");
   const [referenceLabel, setReferenceLabel] = useState("");
 
-  const { handleSubmit } = useForm<BannerData>();
-
   const handleMediaSelect = (media: MediaProps | null) => {
     setSelectedMedia(media);
   };
 
-  const {
-    data: banner,
-    isLoading,
-    error,
-    isRefetching,
-    refetch,
-  } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["banner", id],
     enabled: !!id && id !== "new",
     queryFn: async () => {
@@ -139,7 +130,7 @@ export function BannersForm() {
     },
   });
 
-  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+  const { data: categories } = useQuery({
     queryKey: ["category_product", debouncedSearchName],
     enabled: selectedAction === "category_product",
     queryFn: async () => {
@@ -151,7 +142,7 @@ export function BannersForm() {
     },
   });
 
-  const onSubmit = async (data: BannerData) => {
+  const onSubmit = async () => {
     try {
       if (id && id !== "new") {
         await api.put(`/home/rodeoclub/${id}`, {
@@ -231,15 +222,6 @@ export function BannersForm() {
                 </Button>
               </div>
               <div className="flex-1 flex flex-col gap-4">
-                {/* <div>
-                  <Label htmlFor="reference">Referência</Label>
-                  <Input
-                    className="rounded-md"
-                    name="reference"
-                    value={banner?.reference ?? ""}
-                  />
-                </div> */}
-
                 <div>
                   <Label htmlFor="action">Ação</Label>
                   <Select
@@ -361,7 +343,7 @@ export function BannersForm() {
               <Button
                 className="w-full md:w-auto"
                 disabled={isLoading}
-                onClick={handleSubmit(onSubmit)}
+                onClick={onSubmit}
               >
                 {isLoading ? (
                   <Loader className="w-4 h-4 animate-spin mr-4" />

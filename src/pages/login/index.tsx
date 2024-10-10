@@ -41,7 +41,6 @@ export function Login() {
       await signIn({ email, password });
       navigate("/");
     } catch (error: any) {
-      console.log(error);
       toast({ title: error.response.data.message, variant: "destructive" });
     }
   }
@@ -103,9 +102,9 @@ export function Login() {
               <Button
                 type="submit"
                 className="w-full rounded bg-[--custom-dark]"
-                disabled={form.formState.isLoading}
+                disabled={form.formState.isSubmitting}
               >
-                {form.formState.isLoading && (
+                {form.formState.isSubmitting && (
                   <Loader className="w-4 h-4 animate-spin mr-4" />
                 )}
                 Entrar
