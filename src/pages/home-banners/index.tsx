@@ -97,7 +97,10 @@ export function HomeBanners() {
           <div className="flex flex-row w-full justify-between">
             <Title name="Gestão de Banners (Home aplicativo)" />
             <Button onClick={() => navigate("/banners-form/new")}>
-              Adicionar <Plus className="w-4 h-4 ml-4" />{" "}
+              <Plus className="w-4 h-4 mr-1" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Adicionar
+              </span>
             </Button>
           </div>
 

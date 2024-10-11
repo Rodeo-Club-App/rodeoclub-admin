@@ -51,10 +51,10 @@ export function MainNav({
         Dashboard
       </Link>
       <Link
-        to="/clientes"
+        to="/customers"
         className={cn(
           "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/clientes" && "text-amber-400"
+          location.pathname === "/customers" && "text-amber-400"
         )}
       >
         Clientes

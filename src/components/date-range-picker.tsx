@@ -35,18 +35,18 @@ export function DatePickerWithRange({
   };
 
   return (
-    <div className={cn("grid gap-2 w-full md:w-auto", className)}>
+    <div className={cn("grid gap-2 mr-1", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={"outline"}
             className={cn(
-              "md:w-[240px] justify-start text-left font-normal",
+              "sm:w-auto justify-start text-left font-normal",
               !dateRange && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4 hidden sm:block" />
+            <CalendarIcon className="mr-2 h-4 w-4 block" />
             {dateRange?.from ? (
               dateRange.to ? (
                 <>

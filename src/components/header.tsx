@@ -20,7 +20,7 @@ export function Header() {
       <div className="flex h-16 items-center px-4">
         <Sheet>
           <SheetTrigger asChild>
-            <Button size="icon" variant="outline" className="sm:hidden">
+            <Button size="icon" variant="outline" className="md:hidden">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle Menu</span>
             </Button>
@@ -72,7 +72,7 @@ export function Header() {
             </nav>
           </SheetContent>
         </Sheet>
-        <img src={logo} className="w-[150px] ml-auto sm:ml-0" alt="" />
+        <img src={logo} className="w-[150px] ml-auto md:ml-0" alt="" />
 
         <MainNav className="mx-6 hidden md:flex" />
         <div className="ml-auto flex items-center space-x-4">

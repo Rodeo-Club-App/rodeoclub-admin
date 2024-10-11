@@ -193,13 +193,11 @@ export function Orders() {
 
   const handleRowClick = (order: OrderList) => {
     if (orderId === order.id) {
-      // setSelectedOrder(null);
       setSearchParams((prev) => {
         prev.delete("orderId");
         return prev;
       });
     } else {
-      // setSelectedOrder(order);
       setSearchParams((prev) => {
         prev.set("orderId", order.id);
         return prev;
@@ -359,103 +357,105 @@ export function Orders() {
       <Header />
       <AppLayout>
         <main
-          className={`grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8 ${
+          className={`md:grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8 ${
             orderId ? "lg:grid-cols-[2fr_1fr]" : "lg:grid-cols-1"
           }`}
         >
-          <div className="grid auto-rows-max items-start gap-4 md:gap-8 w-full">
+          <div className="md:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
             <Tabs defaultValue="week">
-              <div className="flex items-center">
-                <div className="relative mr-2 md:mr-0 flex-1 md:grow-0">
-                  <Search className="absolute left-2.5 bottom-3 h-4 w-4 text-muted-foreground" />
+              <div className="flex flex-col md:flex-row md:items-center">
+                <div className="relative md:mr-2 md:grow-0 mb-1 md:mb-0 w-full sm:w-auto">
+                  <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
                     placeholder="Buscar pelo número do pedido ou cliente..."
-                    className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+                    className="pl-8 pr-4 py-2 w-full md:w-auto lg:w-[336px] rounded-lg bg-background"
                     value={search}
                     onChange={(event) =>
                       setSearchParams((p) => {
                         p.set("search", event.target.value);
-
                         return p;
                       })
                     }
                   />
                 </div>
 
-                <div className="flex items-center">
-                  <Select
-                    value={partnerId || ""}
-                    onValueChange={(e) => onSelectPartner(e)}
-                  >
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="Parceiro" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {!isLoadingPartners &&
-                        partnersList?.map((partner) => (
-                          <SelectItem value={String(partner.id)}>
-                            {partner.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                    {partnerId && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={clearPartner}
-                        className=" w-8 h-8 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </Select>
-                </div>
-
-                <div className="flex items-center">
-                  <Select
-                    value={status || ""}
-                    onValueChange={(e) => onSelectStatus(e)}
-                  >
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusList?.map((status) => (
-                        <SelectItem value={status.key}>
-                          {formattedStatus[status.key]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                    {status && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={clearStatus}
-                        className=" w-8 h-8 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </Select>
-                </div>
-                <div className="ml-auto flex">
+                <div className="md:ml-auto flex flex-wrap sm:flex-row mt-2">
                   <DatePickerWithRange
                     to={to}
                     from={from}
                     onChange={handleRangeChange}
                   />
 
+                  <div className="flex mr-1">
+                    <Select
+                      value={partnerId || ""}
+                      onValueChange={(e) => onSelectPartner(e)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Parceiro" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {!isLoadingPartners &&
+                          partnersList?.map((partner) => (
+                            <SelectItem
+                              key={partner.id}
+                              value={String(partner.id)}
+                            >
+                              {partner.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                      {partnerId && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={clearPartner}
+                          className="w-8 h-8 hover:text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </Select>
+                  </div>
+
+                  <div className="flex mr-1">
+                    <Select
+                      value={status || ""}
+                      onValueChange={(e) => onSelectStatus(e)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusList?.map((status, index) => (
+                          <SelectItem key={index} value={status.key}>
+                            {formattedStatus[status.key]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                      {status && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={clearStatus}
+                          className="w-8 h-8 hover:text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </Select>
+                  </div>
+
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-10 gap-1 text-sm ml-2"
+                    className="h-10 gap-1 text-sm"
                     onClick={handleExportReport}
                     disabled={isExporting}
                   >
                     <File className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only">Exportar</span>
-
+                    <span className="sr-only md:not-sr-only">Exportar</span>
                     {isExporting && (
                       <Loader2 className="animate-spin w-4 h-4" />
                     )}
@@ -506,17 +506,17 @@ export function Orders() {
                               }`}
                               onClick={() => handleRowClick(order)}
                             >
-                              <TableCell className="font-medium">
+                              <TableCell className="font-medium text-xs sm:text-sm">
                                 #{order.externalId}
                               </TableCell>
                               <TableCell className="sm:table-cell">
-                                <div className="font-medium">
+                                <div className="font-medium text-xs sm:text-sm">
                                   {order?.customer?.name}
                                 </div>
                               </TableCell>
                               <TableCell className="sm:table-cell">
                                 <Badge
-                                  className={`text-xs ${
+                                  className={`text-xs sm:text-sm ${
                                     statusColors[order.status] || ""
                                   }`}
                                 >

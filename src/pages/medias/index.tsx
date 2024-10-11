@@ -10,6 +10,7 @@ import {
 } from "@/components/modals/upload-media-modal";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
+import { Card } from "@/components/ui/card";
 
 interface MediaProps {
   id: number;
@@ -35,23 +36,26 @@ export function Medias() {
       <div className="flex-col md:flex">
         <Header />
         <AppLayout>
-          <div className="flex flex-row w-full justify-between">
-            <Title name="Mídias" />
-            <Button onClick={() => uploadMediaModal.current?.openModal("1")}>
-              Adicionar <Plus className="w-4 h-4 ml-4" />{" "}
-            </Button>
-          </div>
+          <Title name="Mídias">
+            <div className="hidden items-center gap-2 md:ml-auto md:flex">
+              <Button onClick={() => uploadMediaModal.current?.openModal("1")}>
+                Adicionar <Plus className="w-4 h-4 ml-4" />{" "}
+              </Button>
+            </div>
+          </Title>
 
-          <div className="flex flex-wrap gap-4 mt-4">
-            {mediaList?.map((media) => (
-              <img
-                key={media.id}
-                src={media.url}
-                alt=""
-                className=" h-32 object-cover rounded"
-              />
-            ))}
-          </div>
+          <Card className="w-full p-4">
+            <div className="flex flex-wrap gap-4 mt-4">
+              {mediaList?.map((media) => (
+                <img
+                  key={media.id}
+                  src={media.url}
+                  alt=""
+                  className=" h-32 object-cover rounded"
+                />
+              ))}
+            </div>
+          </Card>
         </AppLayout>
       </div>
     </>

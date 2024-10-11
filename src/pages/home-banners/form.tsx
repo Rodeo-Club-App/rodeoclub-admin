@@ -192,6 +192,7 @@ export function BannersForm() {
         <Header />
         <AppLayout>
           <Title
+            showBackButton
             name={id && id !== "new" ? "Editar Banner" : "Cadastrar Banner"}
           />
 
