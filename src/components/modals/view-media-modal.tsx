@@ -17,7 +17,7 @@ interface ViewMediaModalProps {
 }
 
 export interface ViewMediaModalRef {
-  openModal: (id: string) => void;
+  openModal: () => void;
 }
 
 export const ViewMediaModal = forwardRef<
@@ -38,7 +38,7 @@ export const ViewMediaModal = forwardRef<
   });
 
   useImperativeHandle(ref, () => ({
-    openModal: (id: string) => {
+    openModal: () => {
       setIsOpen(true);
     },
   }));

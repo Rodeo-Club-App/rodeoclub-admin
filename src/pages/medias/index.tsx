@@ -38,7 +38,7 @@ export function Medias() {
         <AppLayout>
           <Title name="Mídias">
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
-              <Button onClick={() => uploadMediaModal.current?.openModal("1")}>
+              <Button onClick={() => uploadMediaModal.current?.openModal()}>
                 Adicionar <Plus className="w-4 h-4 ml-4" />{" "}
               </Button>
             </div>
