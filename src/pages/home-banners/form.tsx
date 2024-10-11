@@ -1,9 +1,22 @@
 import { Header } from "@/components/header";
-import { AppLayout } from "../_layout";
+import {
+  MediaProps,
+  ViewMediaModal,
+  ViewMediaModalRef,
+} from "@/components/modals/view-media-modal";
 import { Title } from "@/components/title-page";
-import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -13,25 +26,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useRef, useState } from "react";
-import {
-  MediaProps,
-  ViewMediaModal,
-  ViewMediaModalRef,
-} from "@/components/modals/view-media-modal";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { useNavigate, useParams } from "react-router-dom";
+import { AppLayout } from "../_layout";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Loader } from "lucide-react";
@@ -99,7 +99,7 @@ export function BannersForm() {
     setSelectedMedia(media);
   };
 
-  const { data, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["banner", id],
     enabled: !!id && id !== "new",
     queryFn: async () => {

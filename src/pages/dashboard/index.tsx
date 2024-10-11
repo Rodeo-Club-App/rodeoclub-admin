@@ -1,39 +1,36 @@
 import {
   Bar,
   BarChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Tooltip,
   Line,
   LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 
-import {
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableCell,
-  TableBody,
-  Table,
-} from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  ChevronUp,
+  DollarSign,
   Package,
   ShoppingCart,
   Users,
-  DollarSign,
-  TrendingUp,
-  ChevronUp,
-  Activity,
 } from "lucide-react";
 
 import { Header } from "@/components/header";
-import { AppLayout } from "../_layout";
 import { Title } from "@/components/title-page";
+import { AppLayout } from "../_layout";
 
 const salesData = [
   { name: "Jan", total: 4500 },
@@ -295,59 +292,74 @@ export function Dashboard() {
             </Card>
           </div>
 
+          <div className="grid gap-6 mb-8 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Top parceiros com mais vendas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Pedido N.</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">
+                          {order.id}
+                        </TableCell>
+                        <TableCell>{order.customer}</TableCell>
+                        <TableCell>
+                          <Badge>{order.status}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${order.amount.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Top clientes com mais vendas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Produto</TableHead>
+                      <TableHead>Vendas</TableHead>
+                      <TableHead className="text-right">
+                        Total de Vendas
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {topProducts.map((product) => (
+                      <TableRow key={product.name}>
+                        <TableCell className="font-medium">
+                          {product.name}
+                        </TableCell>
+                        <TableCell>{product.sales}</TableCell>
+                        <TableCell className="text-right">
+                          ${product.revenue.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Activity Feed */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Atividades recenntes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="all" className="w-full">
-                <TabsList>
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="sales">Sales</TabsTrigger>
-                  <TabsTrigger value="stock">Stock</TabsTrigger>
-                  <TabsTrigger value="users">Users</TabsTrigger>
-                </TabsList>
-                <TabsContent value="all">
-                  <div className="mt-4 space-y-4">
-                    <div className="flex items-center">
-                      <Activity className="h-5 w-5 mr-2 text-blue-500" />
-                      <p className="text-sm">
-                        New order <span className="font-semibold">#3215</span>{" "}
-                        has been placed
-                      </p>
-                      <span className="ml-auto text-xs text-gray-500">
-                        2m ago
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <TrendingUp className="h-5 w-5 mr-2 text-green-500" />
-                      <p className="text-sm">
-                        Stock for{" "}
-                        <span className="font-semibold">Wireless Earbuds</span>{" "}
-                        is low
-                      </p>
-                      <span className="ml-auto text-xs text-gray-500">
-                        15m ago
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <Users className="h-5 w-5 mr-2 text-purple-500" />
-                      <p className="text-sm">
-                        New user{" "}
-                        <span className="font-semibold">Emily White</span>{" "}
-                        registered
-                      </p>
-                      <span className="ml-auto text-xs text-gray-500">
-                        1h ago
-                      </span>
-                    </div>
-                  </div>
-                </TabsContent>
-                {/* Add content for other tabs as needed */}
-              </Tabs>
-            </CardContent>
-          </Card>
         </AppLayout>
         {/* <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900">
           <div className="container mx-auto px-6 py-8"></div>

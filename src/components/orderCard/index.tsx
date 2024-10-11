@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Copy, CreditCard, MoreVertical } from "lucide-react";
+import { Copy, CreditCard, MoreVertical, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSearchParams } from "react-router-dom";
 
 interface OrderItem {
   imageUrl: string;
@@ -60,6 +61,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   customer,
   payment,
 }) => {
+  const [_, setSearchParams] = useSearchParams();
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopyOrderId = () => {
@@ -105,6 +107,20 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <DropdownMenuItem>Deletar</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Button
+            size="icon"
+            variant="outline"
+            className="h-8 w-8"
+            onClick={() =>
+              setSearchParams((prev) => {
+                prev.delete("orderId");
+                return prev;
+              })
+            }
+          >
+            <X className="w-4 h-4" />
+          </Button>
         </div>
       </CardHeader>
 
@@ -113,7 +129,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <div className="font-semibold">Detalhes do pedido</div>
           <ul className="grid gap-3 ">
             {items.map((item, index) => (
-              <li key={index} className="flex flex-col md:flex-row lg:flex-col xl:flex-row items-center">
+              <li
+                key={index}
+                className="flex flex-col md:flex-row lg:flex-col xl:flex-row items-center"
+              >
                 <img
                   src={item.imageUrl}
                   width={100}

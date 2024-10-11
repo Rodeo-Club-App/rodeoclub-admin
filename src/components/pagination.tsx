@@ -45,7 +45,7 @@ export function Pagination({
             value={perPage.toString()}
             onValueChange={(value) => {
               setSearchParams((prev) => {
-                prev.set("pageCount", "1");
+                prev.set("page", "1");
                 prev.set("limit", value);
                 return prev;
               });
@@ -56,7 +56,11 @@ export function Pagination({
             </SelectTrigger>
             <SelectContent side="top">
               {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`} className="cursor-pointer">
+                <SelectItem
+                  key={pageSize}
+                  value={`${pageSize}`}
+                  className="cursor-pointer"
+                >
                   {pageSize}
                 </SelectItem>
               ))}

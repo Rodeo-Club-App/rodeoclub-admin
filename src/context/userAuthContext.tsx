@@ -1,5 +1,4 @@
 import {
-  ReactElement,
   ReactNode,
   createContext,
   useCallback,
@@ -10,19 +9,17 @@ import {
 import {
   SaveUserInLocalStorage,
   getUserInLocalStorage,
-  removeUserInLocalStorage,
 } from "../storage/storageUser";
 import {
   SaveAuthTokensInLocalStorage,
   getAuthTokensInLocalStorage,
-  removeAuthTokensInLocalStorage,
 } from "../storage/storageUsersTokens";
 
 // import { createUserNotificationTokenController } from "@/controllers/user/createUserNotificationTokenController";
 // import { errorToastHandler } from "@/_errors/errorToastHandler";
 // import { logout } from "@/services/logout";
-import { signinService } from "@/api/auth/signin.service";
 import { saveApiTokenService } from "@/api/auth/save-api-token.service";
+import { signinService } from "@/api/auth/signin.service";
 // import { logout } from "@/service/logout";
 
 type userAuthContextType = {

@@ -1,6 +1,14 @@
 type OrderStatus = {
   [key: string]: string;
-}
+};
+
+const statusList = [
+  { key: "processing" },
+  { key: "on-hold" },
+  { key: "pending" },
+  // { key: "completed" },
+  // { key: "canceled" },
+];
 
 const formattedStatus: OrderStatus = {
   processing: "Processando",
@@ -8,6 +16,6 @@ const formattedStatus: OrderStatus = {
   pending: "Pendente",
   completed: "Concluído",
   canceled: "Cancelado",
-}
+};
 
-export { formattedStatus };
+export { formattedStatus, statusList };
