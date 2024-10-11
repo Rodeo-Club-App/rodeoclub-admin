@@ -216,7 +216,7 @@ export function BannersForm() {
 
                 <Button
                   className="mt-4 w-full md:w-auto"
-                  onClick={() => viewMediaModal.current?.openModal("1")}
+                  onClick={() => viewMediaModal.current?.openModal()}
                 >
                   {id && id !== "new" ? "Alterar imagem" : "Adicionar imagem"}
                 </Button>

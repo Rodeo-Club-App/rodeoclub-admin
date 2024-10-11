@@ -1,24 +1,9 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 // import { api } from "@/services/api";
-import { api } from "@/services/api";
-import { useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Link2, Upload } from "lucide-react";
-import { CircularProgressbar } from "react-circular-progressbar";
-import { useDropzone } from "react-dropzone";
-import { Card, CardContent } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 
-import axios from "axios";
-import { filesize } from "filesize";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 import { useSearchParams } from "react-router-dom";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 
 interface BannersDrawerProps {
   id?: string;
@@ -32,14 +17,14 @@ export const BannersDrawer = forwardRef<BannersBrawerRef, BannersDrawerProps>(
   ({}, ref) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const destination = searchParams.get("destination");
+    // const destination = searchParams.get("destination");
     const edit = searchParams.get("edit");
 
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
-    const { toast } = useToast();
+    // const { toast } = useToast();
 
-    const [files, setFiles] = useState<File[]>([]);
+    // const [files, setFiles] = useState<File[]>([]);
 
     const [isOpen, setIsOpen] = useState(false);
 

@@ -4,8 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 // import { api } from "@/services/api";
 import { api } from "@/services/api";
 import { useQueryClient } from "@tanstack/react-query";
@@ -36,7 +35,7 @@ interface UploadedFile {
 }
 
 export interface UploadMediaModalRef {
-  openModal: (id: string) => void;
+  openModal: () => void;
 }
 
 export const UploadMediaModal = forwardRef<
@@ -47,9 +46,7 @@ export const UploadMediaModal = forwardRef<
 
   const queryClient = useQueryClient();
 
-  const { toast } = useToast();
-
-  const [files, setFiles] = useState<File[]>([]);
+  // const { toast } = useToast();
 
   const handleUpload = async (files: File[]) => {
     const uploadedFiles: UploadedFile[] = files.map((file) => ({
@@ -133,14 +130,10 @@ export const UploadMediaModal = forwardRef<
     }
   };
 
-  const removeFile = (file: File) => {
-    setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
-  };
-
   const [isOpen, setIsOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({
-    openModal: (id: string) => {
+    openModal: () => {
       setIsOpen(true);
     },
   }));
