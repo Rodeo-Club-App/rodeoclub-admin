@@ -41,7 +41,7 @@ export function Login() {
       await signIn({ email, password });
       navigate("/");
     } catch (error: any) {
-      toast({ title: error.response.data.message, variant: "destructive" });
+      toast({ title: error.message, variant: "destructive" });
     }
   }
 
