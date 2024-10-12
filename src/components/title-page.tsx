@@ -1,5 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   name: string;
@@ -7,8 +8,9 @@ interface Props {
   showBackButton?: boolean;
 }
 export function Title({ name, children, showBackButton = false }: Props) {
+  const navigate = useNavigate();
   const handleGoBack = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   return (

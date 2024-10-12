@@ -1,12 +1,4 @@
-import {
-  File,
-  Loader2,
-  MoreHorizontal,
-  Plus,
-  PlusCircle,
-  Search,
-  X,
-} from "lucide-react";
+import { File, MoreHorizontal, Plus, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,7 +34,6 @@ import {
 } from "@/components/ui/select";
 
 import { format, parseISO } from "date-fns";
-import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDebounce } from "use-debounce";
@@ -55,69 +46,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatCPF } from "@/utils/formatters";
 
-export interface ICustomer {
-  id: number;
-  name: string;
-  email: string;
-  cpf: string;
-  partner: string;
-  createdAt: string;
-  invitedAt: string | null;
+interface CustomerResponse {
+  currentPage: number;
+  count: number;
+  pageCount: number;
+  users: ICustomer[];
 }
 
-export const CustomersList: ICustomer[] = [
-  {
-    id: 1,
-    name: "Guilherme Silva",
-    email: "guilherme.silva@email.com",
-    cpf: "123.456.789-00",
-    partner: "Aurora Due",
-    createdAt: "2024-10-11",
-    invitedAt: null,
-  },
-  {
-    id: 2,
-    name: "Maria Oliveira",
-    email: "maria.oliveira@email.com",
-    cpf: "987.654.321-00",
-    partner: "Aurora Due",
-    createdAt: "2023-09-05",
-    invitedAt: "2023-09-05",
-  },
-  {
-    id: 3,
-    name: "João Souza",
-    email: "joao.souza@email.com",
-    cpf: "111.222.333-44",
-    partner: "Aurora Due",
-    createdAt: "2022-08-22",
-    invitedAt: null,
-  },
-];
+export interface ICustomer {
+  id: string;
+  name: string;
+  email: string;
+  documentNumber: string;
+  lastAccessAt: Date | null;
+  createdAt: string;
+  invitedAt: Date | null;
+  registerAt: Date | null;
+  partner: string;
+}
 
 export function Customers() {
   const navigate = useNavigate();
-
-  const [data, setData] = useState<ICustomer[]>([]);
-
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  async function fetchCustomers() {
-    try {
-      setTimeout(() => {
-        setData(CustomersList);
-      }, 500);
-    } catch (error) {
-      console.error("Erro ao buscar os dados:", error);
-    }
-  }
-
-  const parseDate = (param: string | null) =>
-    param ? parseISO(param) : undefined;
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const search = searchParams.get("search") || "";
@@ -128,10 +79,41 @@ export function Customers() {
 
   const pageCount = z.coerce.number().parse(searchParams.get("page") ?? "1");
   const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
-
-  const [isExporting, setIsExporting] = useState(false);
-
   const [debouncedSearchQuery] = useDebounce(search, 500);
+
+  const { data, isLoading, isRefetching } = useQuery({
+    queryKey: [
+      "users",
+      pageCount,
+      limit,
+      debouncedSearchQuery,
+      partnerId,
+      startAt,
+      endAt,
+    ],
+    queryFn: async () => {
+      const response = await api.post<CustomerResponse>(
+        "/user/rodeoclub/search",
+        {
+          ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
+          ...(partnerId && { partnerId: partnerId }),
+          ...(startAt && { startAt: format(parseISO(startAt), "yyyy-MM-dd") }),
+          ...(endAt && { endAt: format(parseISO(startAt), "yyyy-MM-dd") }),
+        },
+        {
+          params: {
+            page: pageCount,
+            limit,
+          },
+        }
+      );
+
+      return response.data;
+    },
+  });
+
+  const parseDate = (param: string | null) =>
+    param ? parseISO(param) : undefined;
 
   const { data: partnersList, isLoading: isLoadingPartners } = useQuery({
     queryKey: ["partners"],
@@ -170,7 +152,6 @@ export function Customers() {
 
   function handlePaginate(pageIndex: number) {
     setSearchParams((prev) => {
-      prev.delete("orderId");
       prev.set("page", pageIndex.toString());
 
       return prev;
@@ -248,13 +229,13 @@ export function Customers() {
                     size="sm"
                     variant="outline"
                     className="h-10 gap-1 text-sm mr-1"
-                    disabled={isExporting}
+                    // disabled={isExporting}
                   >
                     <File className="h-3.5 w-3.5" />
                     <span className="sr-only md:not-sr-only">Exportar</span>
-                    {isExporting && (
+                    {/* {isExporting && (
                       <Loader2 className="animate-spin w-4 h-4" />
-                    )}
+                    )} */}
                   </Button>
 
                   <Button onClick={() => navigate("/customers/new")}>
@@ -272,93 +253,107 @@ export function Customers() {
                     <CardTitle>Clientes</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {/*  {isLoading || isRefetching ? (
+                    {isLoading || isRefetching ? (
                       <ListSkeletonTable rows={limit} />
-                    ) : ( */}
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Nome</TableHead>
-                          <TableHead className="sm:table-cell">CPF</TableHead>
+                    ) : (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nome</TableHead>
+                            <TableHead className="sm:table-cell">CPF</TableHead>
 
-                          <TableHead className="sm:table-cell">
-                            Parceiro
-                          </TableHead>
-                          <TableHead className="w-64 md:table-cell">
-                            Data (Registro no APP)
-                          </TableHead>
+                            <TableHead className="sm:table-cell">
+                              Parceiro
+                            </TableHead>
+                            <TableHead className="w-64 md:table-cell">
+                              Data (Registro no APP)
+                            </TableHead>
 
-                          <TableHead className="md:table-cell w-10 text-right">
-                            <span className="sr-only">Ações</span>
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {data?.map((customer) => (
-                          <TableRow key={customer.id}>
-                            <TableCell className="font-medium text-xs sm:text-sm">
-                              <div className="font-medium">{customer.name}</div>
-                              <div className="hidden text-sm text-muted-foreground md:inline">
-                                {customer.email}
-                              </div>
-                            </TableCell>
-                            <TableCell className="sm:table-cell">
-                              <div className="font-medium text-xs sm:text-sm">
-                                {customer.cpf}
-                              </div>
-                            </TableCell>
-
-                            <TableCell className="hidden md:table-cell">
-                              {customer.partner}
-                            </TableCell>
-
-                            <TableCell className="hidden md:table-cell">
-                              {formatDate(customer.createdAt)}
-                            </TableCell>
-
-                            <TableCell className="md:table-cell text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    aria-haspopup="true"
-                                    size="icon"
-                                    variant="ghost"
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">Toggle menu</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                                  <DropdownMenuItem
-                                    className="cursor-pointer"
-                                    onClick={() =>
-                                      navigate(`/customers/${customer.id}`)
-                                    }
-                                  >
-                                    Editar
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="cursor-pointer">
-                                    Deletar
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
+                            <TableHead className="md:table-cell w-10 text-right">
+                              <span className="sr-only">Ações</span>
+                            </TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {data?.users?.map((customer) => (
+                            <TableRow key={customer.id}>
+                              <TableCell className="font-medium text-xs sm:text-sm">
+                                <div className="font-medium">
+                                  {customer.name}
+                                </div>
+                                <div className="hidden text-sm text-muted-foreground md:inline">
+                                  {customer.email}
+                                </div>
+                              </TableCell>
+                              <TableCell className="sm:table-cell">
+                                <div className="font-medium text-xs sm:text-sm">
+                                  {formatCPF(customer.documentNumber ?? "")}
+                                </div>
+                              </TableCell>
+
+                              <TableCell className="hidden md:table-cell">
+                                {customer.partner}
+                              </TableCell>
+
+                              <TableCell className="hidden md:table-cell">
+                                {customer.registerAt ? (
+                                  formatDate(
+                                    customer.registerAt,
+                                    "dd/MM/yyyy HH:mm"
+                                  )
+                                ) : (
+                                  <p className="text-red-300">
+                                    Ainda não se registrou
+                                  </p>
+                                )}
+                              </TableCell>
+
+                              <TableCell className="md:table-cell text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      aria-haspopup="true"
+                                      size="icon"
+                                      variant="ghost"
+                                    >
+                                      <MoreHorizontal className="h-4 w-4" />
+                                      <span className="sr-only">
+                                        Toggle menu
+                                      </span>
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                    <DropdownMenuItem
+                                      className="cursor-pointer"
+                                      onClick={() =>
+                                        navigate(`/customers/${customer.id}`)
+                                      }
+                                    >
+                                      Editar
+                                    </DropdownMenuItem>
+                                    {/* <DropdownMenuItem className="cursor-pointer">
+                                    Deletar
+                                  </DropdownMenuItem> */}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    )}
                   </CardContent>
-                  {/*        <div className="flex w-fulljustify-end px-8 py-6">
-                    {orderList && (
+                  <div className="flex w-fulljustify-end px-8 py-6">
+                    {data && (
                       <Pagination
-                        currentPage={orderList.currentPage}
-                        totalCount={orderList.count}
+                        currentPage={data.currentPage}
+                        totalCount={data.count}
                         perPage={limit}
                         onPageChange={handlePaginate}
                       />
                     )}
-                  </div> */}
+                  </div>
                 </Card>
               </TabsContent>
             </Tabs>

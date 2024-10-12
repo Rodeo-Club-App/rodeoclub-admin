@@ -1,11 +1,12 @@
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 function formatDate(date: string | Date, formatText?: string) {
   let currentFormat = "dd/MM/yyyy";
 
   if (formatText) currentFormat = formatText;
 
-  return format(new Date(date), currentFormat);
+  return format(new Date(date), currentFormat, { locale: ptBR });
 }
 
 function formatDateToDatetimeLocal(isoDateStr: string) {
