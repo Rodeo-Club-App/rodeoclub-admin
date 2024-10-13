@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AppLayout } from "../_layout";
 
 import { api } from "@/services/api";
@@ -82,6 +82,9 @@ interface Media {
 }
 
 export function BannersForm() {
+  const [searchParams] = useSearchParams();
+  const destination = searchParams.get("destination");
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -100,10 +103,12 @@ export function BannersForm() {
   };
 
   const { isLoading } = useQuery({
-    queryKey: ["banner", id],
+    queryKey: ["banner", id, destination],
     enabled: !!id && id !== "new",
     queryFn: async () => {
-      const response = await api.get<BannerData>(`/home/rodeoclub/${id}/home`);
+      const response = await api.get<BannerData>(
+        `/home/rodeoclub/${id}/${destination}`
+      );
       const data = response.data;
       setReference(data.reference ?? "");
       setReferenceLabel(data.referenceLabel ?? "");
@@ -147,7 +152,7 @@ export function BannersForm() {
       if (id && id !== "new") {
         await api.put(`/home/rodeoclub/${id}`, {
           mediaId: selectedMedia?.id,
-          destination: "home",
+          destination: destination,
           action: selectedAction,
           reference,
         });
@@ -157,23 +162,26 @@ export function BannersForm() {
           description: "Banner atualizado com sucesso! 🎉",
         });
 
-        navigate("/home-banners");
+        navigate(`/banners?destination=${destination}`);
       } else {
-        await api.post(`/home/rodeoclub/${id}`, {
+        await api.post(`/home/rodeoclub`, {
           mediaId: selectedMedia?.id,
-          destination: "home",
+          destination: destination,
           action: selectedAction,
           reference,
         });
         toast({
           title: "Sucesso",
-          description: "Banner atualizado",
+          description: "Banner criado",
+          variant: "success",
         });
       }
 
       queryClient.invalidateQueries({
         queryKey: ["banners"],
       });
+
+      navigate(`/banners?destination=${destination}`);
     } catch (error) {
       toast({
         title: "Erro",

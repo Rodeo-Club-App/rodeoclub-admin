@@ -13,7 +13,7 @@ import { Header } from "@/components/header";
 import { api } from "@/services/api";
 import { actionLabel } from "@/utils/actions-label";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, Plus } from "lucide-react";
 import { Title } from "@/components/title-page";
 import { useMutation } from "@tanstack/react-query";
@@ -33,18 +33,20 @@ interface HomeBannersResponse {
 }
 
 export function HomeBanners() {
+  const [searchParams] = useSearchParams();
+  const destination = searchParams.get("destination");
   const navigate = useNavigate();
 
   const [banners, setBanners] = useState<Banner[]>([]);
 
   useEffect(() => {
     fetchHome();
-  }, []);
+  }, [destination]);
 
   async function fetchHome() {
     try {
       const response = await api.get<HomeBannersResponse>(
-        "/home/rodeoclub/mobile"
+        `/home/rodeoclub/${destination === "home" ? "mobile" : "releases"}`
       );
 
       setBanners(response.data.banners);
@@ -55,7 +57,7 @@ export function HomeBanners() {
     updatedBanners: { id: number; position: number }[]
   ) => {
     const response = await api.patch(
-      "/home/rodeoclub/update-position/home",
+      `/home/rodeoclub/update-position/${destination}`,
       updatedBanners
     );
 
@@ -95,8 +97,16 @@ export function HomeBanners() {
       <AppLayout>
         <div className="container mx-auto p-4">
           <div className="flex flex-row w-full justify-between">
-            <Title name="Gestão de Banners (Home aplicativo)" />
-            <Button onClick={() => navigate("/banners-form/new")}>
+            <Title
+              name={`Gestão de Banners - ${
+                destination === "home" ? "Tela Home" : "Tela de Lançamentos"
+              }`}
+            />
+            <Button
+              onClick={() =>
+                navigate(`/banners-form/new?destination=${destination}`)
+              }
+            >
               <Plus className="w-4 h-4 mr-1" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 Adicionar
@@ -159,7 +169,9 @@ export function HomeBanners() {
                                 <div className="mt-5">
                                   <Button
                                     onClick={() =>
-                                      navigate(`/banners-form/${banner.id}`)
+                                      navigate(
+                                        `/banners-form/${banner.id}?destination=${destination}`
+                                      )
                                     }
                                   >
                                     Editar

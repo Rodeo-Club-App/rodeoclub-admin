@@ -1,33 +1,17 @@
 import { cn } from "@/lib/utils";
+import { Home, Rocket, Users } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
-import {
-  Users,
-  UserPlus,
-  Mail,
-  MessageSquare,
-  PlusCircle,
-  Plus,
-  LifeBuoy,
-  Cloud,
-  Home,
-  Rocket,
-  Github,
-} from "lucide-react";
 
 export function MainNav({
   className,
@@ -105,13 +89,16 @@ export function MainNav({
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => navigate("/home-banners")}
+              onClick={() => navigate("/banners?destination=home")}
             >
               <Home className="mr-2 h-4 w-4" />
               <span>Banners Home</span>
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/banners?destination=releases")}
+            >
               <Rocket className="mr-2 h-4 w-4" />
               <span>Banners Lançamentos</span>
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
@@ -129,11 +116,14 @@ export function MainNav({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/user-admin")}
+            >
               <Users className="mr-2 h-4 w-4" />
-              <span>Team</span>
+              <span>Administradores</span>
             </DropdownMenuItem>
-            <DropdownMenuSub>
+            {/* <DropdownMenuSub>
               <DropdownMenuSubTrigger className="cursor-pointer">
                 <UserPlus className="mr-2 h-4 w-4" />
                 <span>Invite users</span>
@@ -155,14 +145,14 @@ export function MainNav({
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
-            </DropdownMenuSub>
-            <DropdownMenuItem className="cursor-pointer">
+            </DropdownMenuSub> */}
+            {/* <DropdownMenuItem className="cursor-pointer">
               <Plus className="mr-2 h-4 w-4" />
               <span>New Team</span>
               <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          {/* <DropdownMenuSeparator />
           <DropdownMenuItem className="cursor-pointer">
             <Github className="mr-2 h-4 w-4" />
             <span>GitHub</span>
@@ -174,7 +164,7 @@ export function MainNav({
           <DropdownMenuItem disabled>
             <Cloud className="mr-2 h-4 w-4" />
             <span>API</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </nav>

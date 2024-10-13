@@ -1,4 +1,4 @@
-import { File, MoreHorizontal, Plus, Search, X } from "lucide-react";
+import { File, FileUp, MoreHorizontal, Plus, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,8 +47,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatCPF } from "@/utils/formatters";
+import {
+  ImportCsvUsersModal,
+  ImportCsvUsersModalRef,
+} from "@/components/modals/import-csv-users-modal";
+import { useRef } from "react";
 
-interface CustomerResponse {
+export interface CustomerResponse {
   currentPage: number;
   count: number;
   pageCount: number;
@@ -71,6 +76,7 @@ export function Customers() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const importCsvUserModalRef = useRef<ImportCsvUsersModalRef>(null);
   const search = searchParams.get("search") || "";
 
   const startAt = searchParams.get("startAt") || "";
@@ -98,7 +104,7 @@ export function Customers() {
           ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
           ...(partnerId && { partnerId: partnerId }),
           ...(startAt && { startAt: format(parseISO(startAt), "yyyy-MM-dd") }),
-          ...(endAt && { endAt: format(parseISO(startAt), "yyyy-MM-dd") }),
+          ...(endAt && { endAt: format(parseISO(endAt), "yyyy-MM-dd") }),
         },
         {
           params: {
@@ -161,6 +167,7 @@ export function Customers() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Header />
+      <ImportCsvUsersModal ref={importCsvUserModalRef} />
       <AppLayout>
         <main
           className={
@@ -238,6 +245,13 @@ export function Customers() {
                     )} */}
                   </Button>
 
+                  <Button
+                    size="icon"
+                    onClick={() => importCsvUserModalRef.current?.openModal()}
+                    className="mr-1 bg-white hover:bg-green-500 text-green-500 hover:text-white"
+                  >
+                    <FileUp className="w-4 h-4 " />
+                  </Button>
                   <Button onClick={() => navigate("/customers/new")}>
                     <Plus className="w-4 h-4 mr-1" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

@@ -268,7 +268,8 @@ export function CustomerForm() {
     } catch (error) {
       toast({
         title: "Erro",
-        description: "Ocorreu um erro ao salvar o Cliente",
+        //@ts-ignore
+        description: error.message,
       });
     }
   }

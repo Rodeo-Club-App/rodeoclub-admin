@@ -12,6 +12,7 @@ import { BannersForm } from "@/pages/home-banners/form";
 import { Orders } from "@/pages/orders";
 import { Customers } from "@/pages/customers";
 import { CustomerForm } from "@/pages/customers/form";
+import { UserAdmin } from "@/pages/user-admin";
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +29,7 @@ export const router = createBrowserRouter([
         element: <Medias />,
       },
       {
-        path: "/home-banners",
+        path: "/banners",
         element: <HomeBanners />,
       },
       {
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: "/customers/:id",
         element: <CustomerForm />,
+      },
+      {
+        path: "/user-admin",
+        element: <UserAdmin />,
       },
     ],
   },
