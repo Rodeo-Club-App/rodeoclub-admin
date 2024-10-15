@@ -14,7 +14,10 @@ import { Customers } from "@/pages/customers";
 import { CustomerForm } from "@/pages/customers/form";
 import { UserAdmin } from "@/pages/user-admin";
 import { Products } from "@/pages/products";
-
+import RecoveryAccount from "@/pages/recoveryAccount/recoveryAccountResquest";
+import TokenVerification from "@/pages/recoveryAccount/tokenVerification";
+import RedefinePassword from "@/pages/recoveryAccount/reset";
+ 
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -66,6 +69,18 @@ export const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/recoveryAccount",
+        element: <RecoveryAccount />,
+      },
+      {
+        path: "/recoveryAccount/TokenVerification",
+        element: <TokenVerification />,
+      },
+      {
+        path: "/recoveryAccount/TokenVerification/reset",
+        element: <RedefinePassword />,
       },
     ],
   },

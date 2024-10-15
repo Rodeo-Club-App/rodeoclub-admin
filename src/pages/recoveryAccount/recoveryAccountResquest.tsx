@@ -1,45 +1,38 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import logoTop from "@/assets/pvt-sigla.png";
-import logoBottom from "@/assets/logo-pvt-top.png";
-
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUserAuth } from "@/hooks/useUserAuth";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
+import logoTop from "@/assets/pvt-sigla.png";
+import logoBottom from "@/assets/logo-pvt-top.png";
+import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
-const loginSchema = z.object({
+const recoveryAccountSchema = z.object({
   email: z
     .string()
-    .min(1, "O e-mail é obrigatório")
-    .email("O formato do e-mail é inválido"),
-  password: z.string().min(1, "A senha é obrigatória").trim(),
+    .min(1, "E-mail obrigatório")
+    .transform((email) => email.toLowerCase().trim()),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type RecoveryAccount = z.infer<typeof recoveryAccountSchema>;
 
-export function Login() {
+export default function RecoveryAccount() {
   const navigate = useNavigate();
-  const { signIn } = useUserAuth();
-
-  const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const { toast } = useToast();
+  const form = useForm<RecoveryAccount>({
+    resolver: zodResolver(recoveryAccountSchema),
   });
 
-  async function onSubmit(values: LoginForm) {
-    const { email, password } = values;
-
+  async function onSubmit(data: RecoveryAccount) {
     try {
-      await signIn({ email, password });
-      navigate("/");
+      await api.post("/forgot-password/rodeoclub", {
+        email: data.email,
+      });
+      navigate("TokenVerification", { state: { email: data.email } });
     } catch (error: any) {
       toast({ title: error.message, variant: "destructive" });
     }
@@ -63,9 +56,9 @@ export function Login() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Autenticação</h1>
+            <h1 className="text-3xl font-bold">Recuperação de senha</h1>
             <p className="text-balance text-muted-foreground">
-              Entre com seu e-mail para acessar sua conta.
+              Entre com seu e-mail para recuperar sua senha.
             </p>
           </div>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -81,24 +74,7 @@ export function Login() {
                   required
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...form.register("password")}
-                  disabled={form.formState.isSubmitting}
-                  required
-                />
-                <div className="flex items-center">
-                  <a
-                    href="/recoveryAccount"
-                    className="ml-auto inline-block text-sm underline"
-                  >
-                    Esqueceu sua senha?
-                  </a>
-                </div>
-              </div>
+
               <Button
                 type="submit"
                 className="w-full rounded bg-[--custom-dark]"
@@ -107,7 +83,7 @@ export function Login() {
                 {form.formState.isSubmitting && (
                   <Loader className="w-4 h-4 animate-spin mr-4" />
                 )}
-                Entrar
+                Prosseguir
               </Button>
             </div>
           </form>
