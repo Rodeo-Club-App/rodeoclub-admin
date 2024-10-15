@@ -157,11 +157,11 @@ export function HomeBanners() {
                                 className="rounded"
                               />
 
-                              <div className="flex items-center md:items-start flex-col">
-                                <div>Ação: {actionLabel[banner.action]}</div>
+                              <div className="flex items-center md:items-start flex-col mt-2">
+                                <div><strong>Ação:</strong> {actionLabel[banner.action]}</div>
 
-                                <div>
-                                  Referência:{" "}
+                                <div className="mt-1">
+                                <strong>Referência:{" "}</strong>
                                   {banner.action === "external_link"
                                     ? banner.reference
                                     : banner.referenceLabel}

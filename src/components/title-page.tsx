@@ -14,7 +14,7 @@ export function Title({ name, children, showBackButton = false }: Props) {
   };
 
   return (
-    <div className="flex items-center gap-4  mb-6">
+    <div className="flex items-center gap-4 mb-6">
       {showBackButton && (
         <Button
           variant="outline"
@@ -26,7 +26,7 @@ export function Title({ name, children, showBackButton = false }: Props) {
           <span className="sr-only">Back</span>
         </Button>
       )}
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+      <h1 className="text-xl sm:text-3xl mr-2 sm:mr-0 font-bold text-gray-800 dark:text-white">
         {name}
       </h1>
 

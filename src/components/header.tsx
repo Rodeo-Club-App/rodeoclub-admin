@@ -2,19 +2,24 @@ import logo from "@/assets/logo-pvt-top.png";
 import { MainNav } from "./main-nav";
 import { UserNav } from "./user-nav";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
+  Box,
+  ChartBar,
+  ClipboardList,
   Home,
-  LineChart,
+  Megaphone,
   Menu,
-  Package,
-  Package2,
-  ShoppingCart,
-  Users2,
+  Rocket,
+  User,
+  Users,
 } from "lucide-react";
 import { Button } from "./ui/button";
+import { Label } from "./ui/label";
 
 export function Header() {
+  const navigate = useNavigate();
+
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
@@ -26,49 +31,82 @@ export function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="sm:max-w-xs">
-            <nav className="grid gap-6 text-lg font-medium">
+            <nav className="grid gap-6 text-lg font-medium mt-5">
               <Link
-                to="#"
-                className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-              >
-                <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-                <span className="sr-only">Acme Inc</span>
-              </Link>
-              <Link
-                to="#"
+                to="/"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
                 <Home className="h-5 w-5" />
                 Dashboard
               </Link>
+
               <Link
-                to="#"
-                className="flex items-center gap-4 px-2.5 text-foreground"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                Orders
-              </Link>
-              <Link
-                to="#"
+                to="/customers"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
-                <Package className="h-5 w-5" />
-                Products
+                <User className="h-5 w-5" />
+                Clientes
               </Link>
+
               <Link
-                to="#"
+                to="/orders"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
-                <Users2 className="h-5 w-5" />
-                Customers
+                <ClipboardList className="h-5 w-5" />
+                Pedidos
               </Link>
+
               <Link
-                to="#"
+                to="/products"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
-                <LineChart className="h-5 w-5" />
-                Settings
+                <Box className="h-5 w-5" />
+                Produtos
               </Link>
+
+              <Link
+                to="/midias"
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <ChartBar className="h-5 w-5" />
+                Mídias
+              </Link>
+
+              <Label className="pl-3 mt-5 text-lg font-medium">
+                Configurações
+              </Label>
+
+              <div className="pl-3">
+                <Button
+                  className="flex text-base mb-2 p-0 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/banners?destination=home")}
+                >
+                  <Home className="h-5 w-5" />
+                  Banners Home
+                </Button>
+                <Button
+                  className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/banners?destination=releases")}
+                >
+                  <Rocket className="h-5 w-5" />
+                  Banners Lançamentos
+                </Button>
+                <Button
+                  className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/")}
+                >
+                  <Megaphone className="h-5 w-5" />
+                  Divulgações
+                </Button>
+
+                <Button
+                  className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/user-admin")}
+                >
+                  <Users className="h-5 w-5" />
+                  Administradores
+                </Button>
+              </div>
             </nav>
           </SheetContent>
         </Sheet>
