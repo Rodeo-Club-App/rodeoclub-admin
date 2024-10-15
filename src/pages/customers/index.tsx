@@ -52,6 +52,7 @@ import {
   ImportCsvUsersModalRef,
 } from "@/components/modals/import-csv-users-modal";
 import { useRef } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export interface CustomerResponse {
   currentPage: number;
@@ -270,92 +271,94 @@ export function Customers() {
                     {isLoading || isRefetching ? (
                       <ListSkeletonTable rows={limit} />
                     ) : (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Nome</TableHead>
-                            <TableHead className="sm:table-cell">CPF</TableHead>
+                      <ScrollArea>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Nome</TableHead>
+                              <TableHead className="pl-4 sm:pl-0">
+                                CPF
+                              </TableHead>
 
-                            <TableHead className="sm:table-cell">
-                              Parceiro
-                            </TableHead>
-                            <TableHead className="w-64 md:table-cell">
-                              Data (Registro no APP)
-                            </TableHead>
+                              <TableHead className="">Parceiro</TableHead>
+                              <TableHead className="">
+                                Data (Registro no APP)
+                              </TableHead>
 
-                            <TableHead className="md:table-cell w-10 text-right">
-                              <span className="sr-only">Ações</span>
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {data?.users?.map((customer) => (
-                            <TableRow key={customer.id}>
-                              <TableCell className="font-medium text-xs sm:text-sm">
-                                <div className="font-medium">
-                                  {customer.name}
-                                </div>
-                                <div className="hidden text-sm text-muted-foreground md:inline">
-                                  {customer.email}
-                                </div>
-                              </TableCell>
-                              <TableCell className="sm:table-cell">
-                                <div className="font-medium text-xs sm:text-sm">
-                                  {formatCPF(customer.documentNumber ?? "")}
-                                </div>
-                              </TableCell>
-
-                              <TableCell className="hidden md:table-cell">
-                                {customer.partner}
-                              </TableCell>
-
-                              <TableCell className="hidden md:table-cell">
-                                {customer.registerAt ? (
-                                  formatDate(
-                                    customer.registerAt,
-                                    "dd/MM/yyyy HH:mm"
-                                  )
-                                ) : (
-                                  <p className="text-red-300">
-                                    Ainda não se registrou
-                                  </p>
-                                )}
-                              </TableCell>
-
-                              <TableCell className="md:table-cell text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      aria-haspopup="true"
-                                      size="icon"
-                                      variant="ghost"
-                                    >
-                                      <MoreHorizontal className="h-4 w-4" />
-                                      <span className="sr-only">
-                                        Toggle menu
-                                      </span>
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                                    <DropdownMenuItem
-                                      className="cursor-pointer"
-                                      onClick={() =>
-                                        navigate(`/customers/${customer.id}`)
-                                      }
-                                    >
-                                      Editar
-                                    </DropdownMenuItem>
-                                    {/* <DropdownMenuItem className="cursor-pointer">
-                                    Deletar
-                                  </DropdownMenuItem> */}
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
+                              <TableHead className="md:table-cell w-10 text-right">
+                                <span className="sr-only">Ações</span>
+                              </TableHead>
                             </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                          </TableHeader>
+                          <TableBody>
+                            {data?.users?.map((customer) => (
+                              <TableRow key={customer.id}>
+                                <TableCell className="font-medium text-xs sm:text-sm pr-4">
+                                  <div className="font-medium">
+                                    {customer.name}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground md:inline">
+                                    {customer.email}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="min-w-36 sm:table-cell p-4">
+                                  <div className="font-medium text-xs sm:text-sm">
+                                    {formatCPF(customer.documentNumber ?? "")}
+                                  </div>
+                                </TableCell>
+
+                                <TableCell className="min-w-36 pr-4">
+                                  {customer.partner}
+                                </TableCell>
+
+                                <TableCell className="min-w-52">
+                                  {customer.registerAt ? (
+                                    formatDate(
+                                      customer.registerAt,
+                                      "dd/MM/yyyy HH:mm"
+                                    )
+                                  ) : (
+                                    <p className="text-amber-400 font-medium">
+                                      Ainda não se registrou
+                                    </p>
+                                  )}
+                                </TableCell>
+
+                                <TableCell className="md:table-cell text-right">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        aria-haspopup="true"
+                                        size="icon"
+                                        variant="ghost"
+                                      >
+                                        <MoreHorizontal className="h-4 w-4" />
+                                        <span className="sr-only">
+                                          Toggle menu
+                                        </span>
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuLabel>
+                                        Ações
+                                      </DropdownMenuLabel>
+                                      <DropdownMenuItem
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          navigate(`/customers/${customer.id}`)
+                                        }
+                                      >
+                                        Editar
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                        <ScrollBar orientation="horizontal" />
+                      </ScrollArea>
                     )}
                   </CardContent>
                   <div className="flex w-fulljustify-end px-8 py-6">

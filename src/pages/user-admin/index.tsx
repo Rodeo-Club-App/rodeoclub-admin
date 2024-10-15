@@ -126,7 +126,7 @@ export function UserAdmin() {
                           <TableBody>
                             {data?.map((member) => (
                               <TableRow key={member.id}>
-                                <TableCell className="font-medium text-xs sm:text-sm">
+                                <TableCell className="font-medium text-xs sm:text-sm py-5">
                                   <div className="font-medium">
                                     {member.name}
                                   </div>

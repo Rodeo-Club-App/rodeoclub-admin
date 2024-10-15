@@ -13,6 +13,7 @@ import { Orders } from "@/pages/orders";
 import { Customers } from "@/pages/customers";
 import { CustomerForm } from "@/pages/customers/form";
 import { UserAdmin } from "@/pages/user-admin";
+import { Products } from "@/pages/products";
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
       {
         path: "/user-admin",
         element: <UserAdmin />,
+      },
+      {
+        path: "/products",
+        element: <Products />,
       },
     ],
   },

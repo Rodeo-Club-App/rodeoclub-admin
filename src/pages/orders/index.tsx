@@ -1,4 +1,4 @@
-import { File, ListFilter, Loader, Loader2, Search, X } from "lucide-react";
+import { File, Loader, Loader2, Search, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import * as XLSX from "xlsx";
@@ -55,13 +55,13 @@ import { AppLayout } from "../_layout";
 import { PDFReport } from "./pdf-report";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export interface OrderReport {
   period: string | null;
@@ -573,67 +573,70 @@ export function Orders() {
                     {isLoading || isRefetching ? (
                       <ListSkeletonTable rows={limit} />
                     ) : (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Nº pedido</TableHead>
-                            <TableHead className="sm:table-cell">
-                              Cliente
-                            </TableHead>
+                      <ScrollArea>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Nº pedido</TableHead>
+                              <TableHead className="sm:table-cell">
+                                Cliente
+                              </TableHead>
 
-                            <TableHead className="sm:table-cell">
-                              Status
-                            </TableHead>
-                            <TableHead className="hidden md:table-cell">
-                              Data
-                            </TableHead>
-                            <TableHead className="hidden md:table-cell">
-                              Valor
-                            </TableHead>
-                            <TableHead className="hidden md:table-cell text-right">
-                              Parceiro
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {orderList?.orders.map((order) => (
-                            <TableRow
-                              key={order.id}
-                              className={`cursor-pointer ${
-                                orderId === order.id ? "bg-gray-200" : ""
-                              }`}
-                              onClick={() => handleRowClick(order)}
-                            >
-                              <TableCell className="font-medium text-xs sm:text-sm">
-                                #{order.externalId}
-                              </TableCell>
-                              <TableCell className="sm:table-cell">
-                                <div className="font-medium text-xs sm:text-sm">
-                                  {order?.customer?.name}
-                                </div>
-                              </TableCell>
-                              <TableCell className="sm:table-cell">
-                                <Badge
-                                  className={`text-xs sm:text-sm ${
-                                    statusColors[order.status] || ""
-                                  }`}
-                                >
-                                  {formattedStatus[order.status]}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                {formatDate(order.createdAt)}
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                {order.total}
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell text-right">
-                                {order.customer.partner}
-                              </TableCell>
+                              <TableHead className="sm:table-cell">
+                                Status
+                              </TableHead>
+                              <TableHead className="md:table-cell">
+                                Data
+                              </TableHead>
+                              <TableHead className="md:table-cell">
+                                Valor
+                              </TableHead>
+                              <TableHead className="md:table-cell text-right">
+                                Parceiro
+                              </TableHead>
                             </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                          </TableHeader>
+                          <TableBody>
+                            {orderList?.orders.map((order) => (
+                              <TableRow
+                                key={order.id}
+                                className={`cursor-pointer ${
+                                  orderId === order.id ? "bg-gray-200" : ""
+                                }`}
+                                onClick={() => handleRowClick(order)}
+                              >
+                                <TableCell className="min-w-24 font-medium text-xs sm:text-sm">
+                                  #{order.externalId}
+                                </TableCell>
+                                <TableCell className=" min-w-48">
+                                  <div className="font-medium text-xs sm:text-sm">
+                                    {order?.customer?.name}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="min-w-28">
+                                  <Badge
+                                    className={`text-xs sm:text-sm ${
+                                      statusColors[order.status] || ""
+                                    }`}
+                                  >
+                                    {formattedStatus[order.status]}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="min-w-32">
+                                  {formatDate(order.createdAt)}
+                                </TableCell>
+                                <TableCell className="min-w-32">
+                                  {order.total}
+                                </TableCell>
+                                <TableCell className="min-w-32 text-right">
+                                  {order.customer.partner}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                        <ScrollBar orientation="horizontal" />
+                      </ScrollArea>
                     )}
                   </CardContent>
                   <div className="flex w-fulljustify-end px-8 py-6">
