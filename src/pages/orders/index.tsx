@@ -1,6 +1,7 @@
 import { File, Loader, Loader2, Search, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import * as XLSX from "xlsx";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,6 +53,14 @@ import { useDebounce } from "use-debounce";
 import { z } from "zod";
 import { AppLayout } from "../_layout";
 import { PDFReport } from "./pdf-report";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export interface OrderReport {
@@ -75,6 +84,14 @@ interface OrderList {
   total: string;
   totalCents: number;
   status: "on-hold" | "completed" | "canceled" | "pending" | "processing";
+  items: ItemProduct[];
+}
+
+interface ItemProduct {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
 interface OrderResponse {
@@ -280,7 +297,7 @@ export function Orders() {
     return "";
   };
 
-  const handleExportReport = async () => {
+  const handleExportReport = async (type: "pdf" | "excel") => {
     setIsExporting(true);
 
     const searchParams = {
@@ -303,6 +320,7 @@ export function Orders() {
             search: searchParams.debouncedSearchQuery,
             partnerId: searchParams.partnerId,
             status: searchParams.status,
+            includeProducts: true,
             startAt: searchParams.startAt
               ? format(parseISO(searchParams.startAt), "yyyy-MM-dd")
               : undefined,
@@ -341,9 +359,68 @@ export function Orders() {
       orders: allOrders,
     };
 
-    const url = await renderUrl(data);
+    if (type === "pdf") {
+      const url = await renderUrl(data);
 
-    window.open(url, "_blank");
+      window.open(url, "_blank");
+    }
+
+    if (type === "excel") {
+      const rows = [];
+
+      rows.push([
+        "Nº Pedido",
+        "Cliente",
+        "Status",
+        "Valor do Pedido",
+        "Produto",
+        "Valor Unitário",
+        "Quantidade",
+        "Parceiro",
+        "Data",
+      ]);
+
+      data.orders.forEach((order) => {
+        const orderRow = [
+          order.externalId,
+          order.customer.name,
+          formattedStatus[order.status],
+          formatCentsToReal(order.totalCents),
+          "",
+          "",
+          "",
+          order.customer.partner,
+          formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
+        ];
+
+        rows.push(orderRow);
+
+        order.items.forEach((item) => {
+          const itemRow = [
+            "",
+            order.customer.name,
+            "",
+            "",
+            item.name,
+            formatCentsToReal(item.price),
+            item.quantity,
+            order.customer.partner,
+            "",
+          ];
+
+          rows.push(itemRow);
+        });
+      });
+
+      const worksheet = XLSX.utils.aoa_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+      const excelFilename = `relatorio_de_pedidos.xlsx`;
+
+      XLSX.writeFile(workbook, excelFilename);
+    }
+
     setIsExporting(false);
   };
 
@@ -448,19 +525,39 @@ export function Orders() {
                     </Select>
                   </div>
 
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-10 gap-1 text-sm"
-                    onClick={handleExportReport}
-                    disabled={isExporting}
-                  >
-                    <File className="h-3.5 w-3.5" />
-                    <span className="sr-only md:not-sr-only">Exportar</span>
-                    {isExporting && (
-                      <Loader2 className="animate-spin w-4 h-4" />
-                    )}
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-10 gap-1 text-sm"
+                        disabled={isExporting}
+                      >
+                        <File className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                          Exportar
+                        </span>
+
+                        {isExporting && (
+                          <Loader2 className="animate-spin w-4 h-4" />
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Exportar em</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => handleExportReport("pdf")}
+                      >
+                        PDF
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleExportReport("excel")}
+                      >
+                        Excel
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 
