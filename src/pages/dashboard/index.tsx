@@ -1,8 +1,6 @@
 import {
   Bar,
   BarChart,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -19,7 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Badge } from "@/components/ui/badge";
 import {
   ChevronUp,
   DollarSign,
@@ -41,31 +38,8 @@ const salesData = [
   { name: "Jun", total: 6100 },
 ];
 
-const visitorsData = [
-  { name: "Mon", visitors: 2100 },
-  { name: "Tue", visitors: 2400 },
-  { name: "Wed", visitors: 2200 },
-  { name: "Thu", visitors: 2800 },
-  { name: "Fri", visitors: 3100 },
-  { name: "Sat", visitors: 2700 },
-  { name: "Sun", visitors: 2300 },
-];
-
 const partners = [
   { id: "#3210", customer: "Aurora Due", status: "Shipped", amount: 42.25 },
-];
-
-const recentOrders = [
-  { id: "#3210", customer: "Olivia Martin", status: "Shipped", amount: 42.25 },
-  { id: "#3209", customer: "Ava Johnson", status: "Pending", amount: 74.99 },
-  {
-    id: "#3208",
-    customer: "Michael Johnson",
-    status: "Completed",
-    amount: 64.75,
-  },
-  { id: "#3207", customer: "Lisa Anderson", status: "Shipped", amount: 34.5 },
-  { id: "#3206", customer: "Daniel Smith", status: "Pending", amount: 89.99 },
 ];
 
 const topProducts = [

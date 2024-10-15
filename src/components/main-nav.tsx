@@ -51,35 +51,6 @@ export function MainNav({
       >
         Clientes
       </Link>
-      <Link
-        to="/orders"
-        className={cn(
-          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/orders" && "text-amber-400"
-        )}
-      >
-        Pedidos
-      </Link>
-
-      <Link
-        to="/products"
-        className={cn(
-          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/products" && "text-amber-400"
-        )}
-      >
-        Produtos
-      </Link>
-
-      <Link
-        to="/midias"
-        className={cn(
-          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/midias" && "text-amber-400"
-        )}
-      >
-        Mídias
-      </Link>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="w-24">
@@ -97,7 +68,7 @@ export function MainNav({
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => navigate("/banners?destination=home")}
+              onClick={() => navigate("/orders")}
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
               <span>Pedidos</span>
@@ -105,7 +76,7 @@ export function MainNav({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => navigate("/banners?destination=releases")}
+              onClick={() => navigate("/products")}
             >
               <Package className="mr-2 h-4 w-4" />
               <span>Produtos</span>
@@ -113,7 +84,7 @@ export function MainNav({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => navigate("/banners?destination=releases")}
+              onClick={() => navigate("/")}
             >
               <Eye className="mr-2 h-4 w-4" />
               <span>Acessos</span>
@@ -166,6 +137,7 @@ export function MainNav({
           </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
+
       {/* <Link
         to="/orders"
         className={cn(
@@ -175,16 +147,6 @@ export function MainNav({
       >
         Relatórios
       </Link> */}
-
-      <Link
-        to="/products"
-        className={cn(
-          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/products" && "text-amber-400"
-        )}
-      >
-        Produtos
-      </Link>
 
       <Link
         to="/midias"

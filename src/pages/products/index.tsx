@@ -84,6 +84,7 @@ export function Products() {
           page: pageCount,
           limit: limit,
           searchName: debouncedSearchQuery,
+          onlyStock: false,
         },
       });
 
