@@ -112,47 +112,49 @@ export function UpdatePasswordModal() {
             mesma para acessar o aplicativo.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label>Senha atual</Label>
-                <FormField
-                  control={form.control}
-                  name="currentPassword"
-                  render={({ field }) => (
-                    <FormItem className="col-span-3">
-                      <FormControl>
-                        <Input placeholder="" {...field} />
-                      </FormControl>
+        <div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label>Senha atual</Label>
+                  <FormField
+                    control={form.control}
+                    name="currentPassword"
+                    render={({ field }) => (
+                      <FormItem className="col-span-3">
+                        <FormControl>
+                          <Input placeholder="" {...field} />
+                        </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label>Nova senha</Label>
-                <FormField
-                  control={form.control}
-                  name="newPassword"
-                  render={({ field }) => (
-                    <FormItem className="col-span-3">
-                      <FormControl>
-                        <Input placeholder="" {...field} />
-                      </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label>Nova senha</Label>
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem className="col-span-3">
+                        <FormControl>
+                          <Input placeholder="" {...field} />
+                        </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit">Salvar</Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              <DialogFooter>
+                <Button type="submit">Salvar</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

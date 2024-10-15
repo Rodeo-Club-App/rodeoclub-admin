@@ -9,13 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useSearchParams } from "react-router-dom";
 
 export function UserNav() {
   const { user } = useUserAuth();
+  const [_, setSearchParams] = useSearchParams();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage src="/avatars/01.png" alt={user?.name} />
@@ -33,6 +35,19 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Button
+            onClick={() =>
+              setSearchParams((p) => {
+                p.set("editPassword", "true");
+
+                return p;
+              })
+            }
+          >
+            Trocar senha
+          </Button>
+        </DropdownMenuItem>
         {/* <DropdownMenuGroup> */}
         {/* <DropdownMenuItem>
             Profile
