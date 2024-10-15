@@ -51,6 +51,10 @@ const visitorsData = [
   { name: "Sun", visitors: 2300 },
 ];
 
+const partners = [
+  { id: "#3210", customer: "Aurora Due", status: "Shipped", amount: 42.25 },
+];
+
 const recentOrders = [
   { id: "#3210", customer: "Olivia Martin", status: "Shipped", amount: 42.25 },
   { id: "#3209", customer: "Ava Johnson", status: "Pending", amount: 74.99 },
@@ -83,7 +87,7 @@ export function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total de vendas
+                  Valor total vendas
                 </CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -101,7 +105,7 @@ export function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Novos clientes
+                  Qtd Clientes
                 </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -119,7 +123,7 @@ export function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total de pedidos
+                  Qtd total pedidos
                 </CardTitle>
                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -137,7 +141,7 @@ export function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Produtos ativos
+                  Qtd Produtos
                 </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -154,39 +158,67 @@ export function Dashboard() {
             </Card>
           </div>
 
-          {/* Charts */}
           <div className="grid gap-6 mb-8 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Balanço de vendas</CardTitle>
+                <CardTitle>Top parceiros com mais vendas</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={salesData}>
-                    <XAxis
-                      dataKey="name"
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(value) => `$${value}`}
-                    />
-                    <Tooltip
-                      contentStyle={{ background: "#333", border: "none" }}
-                      labelStyle={{ color: "#fff" }}
-                      itemStyle={{ color: "#fff" }}
-                    />
-                    <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Parceiro</TableHead>
+                      <TableHead>Qtd vendas</TableHead>
+                      <TableHead className="text-right">Valor Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {partners.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell>{order.customer}</TableCell>
+                        <TableCell>377</TableCell>
+                        <TableCell className="text-right">
+                          ${order.amount.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Top clientes com mais vendas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Qtd vendas</TableHead>
+                      <TableHead className="text-right">Valor Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {topProducts.map((product) => (
+                      <TableRow key={product.name}>
+                        <TableCell className="font-medium">
+                          {product.name}
+                        </TableCell>
+                        <TableCell>{product.sales}</TableCell>
+                        <TableCell className="text-right">
+                          ${product.revenue.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Charts */}
+          {/* <div className="grid gap-6 mb-8 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Taxa de uso do APP</CardTitle>
@@ -222,11 +254,11 @@ export function Dashboard() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
 
           {/* Recent Orders and Top Products */}
           <div className="grid gap-6 mb-8 md:grid-cols-2">
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Pedidos recentes</CardTitle>
               </CardHeader>
@@ -258,7 +290,7 @@ export function Dashboard() {
                   </TableBody>
                 </Table>
               </CardContent>
-            </Card>
+            </Card> */}
             <Card>
               <CardHeader>
                 <CardTitle>Top Produtos mais vendidos</CardTitle>
@@ -268,10 +300,8 @@ export function Dashboard() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Produto</TableHead>
-                      <TableHead>Vendas</TableHead>
-                      <TableHead className="text-right">
-                        Total de Vendas
-                      </TableHead>
+                      <TableHead>Qtd Vendas</TableHead>
+                      <TableHead className="text-right">Valor Total</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -290,71 +320,36 @@ export function Dashboard() {
                 </Table>
               </CardContent>
             </Card>
-          </div>
 
-          <div className="grid gap-6 mb-8 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Top parceiros com mais vendas</CardTitle>
+                <CardTitle>Balanço de vendas</CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Pedido N.</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          {order.id}
-                        </TableCell>
-                        <TableCell>{order.customer}</TableCell>
-                        <TableCell>
-                          <Badge>{order.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          ${order.amount.toFixed(2)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Top clientes com mais vendas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Vendas</TableHead>
-                      <TableHead className="text-right">
-                        Total de Vendas
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {topProducts.map((product) => (
-                      <TableRow key={product.name}>
-                        <TableCell className="font-medium">
-                          {product.name}
-                        </TableCell>
-                        <TableCell>{product.sales}</TableCell>
-                        <TableCell className="text-right">
-                          ${product.revenue.toLocaleString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <ResponsiveContainer width="100%" height={350}>
+                  <BarChart data={salesData}>
+                    <XAxis
+                      dataKey="name"
+                      stroke="#888888"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="#888888"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `$${value}`}
+                    />
+                    <Tooltip
+                      contentStyle={{ background: "#333", border: "none" }}
+                      labelStyle={{ color: "#fff" }}
+                      itemStyle={{ color: "#fff" }}
+                    />
+                    <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
           </div>

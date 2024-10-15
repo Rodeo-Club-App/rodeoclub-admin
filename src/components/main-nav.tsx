@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Home, Rocket, Users } from "lucide-react";
+import { Eye, Home, Package, Rocket, ShoppingCart, Users } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import {
@@ -43,15 +43,111 @@ export function MainNav({
       >
         Clientes
       </Link>
-      <Link
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="w-24">
+          <Button
+            variant="ghost"
+            className="hover:bg-transparent text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            Relatórios
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>Relatórios</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/banners?destination=home")}
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              <span>Pedidos</span>
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/banners?destination=releases")}
+            >
+              <Package className="mr-2 h-4 w-4" />
+              <span>Produtos</span>
+              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/banners?destination=releases")}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              <span>Acessos</span>
+              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            {/* <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem> */}
+            {/* <DropdownMenuItem>
+              <Keyboard className="mr-2 h-4 w-4" />
+              <span>Keyboard shortcuts</span>
+              <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+            </DropdownMenuItem> */}
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            {/* <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                <UserPlus className="mr-2 h-4 w-4" />
+                <span>Invite users</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Mail className="mr-2 h-4 w-4" />
+                    <span>Email</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>Message</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    <span>More...</span>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub> */}
+            {/* <DropdownMenuItem className="cursor-pointer">
+              <Plus className="mr-2 h-4 w-4" />
+              <span>New Team</span>
+              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+            </DropdownMenuItem> */}
+          </DropdownMenuGroup>
+          {/* <DropdownMenuSeparator />
+          <DropdownMenuItem className="cursor-pointer">
+            <Github className="mr-2 h-4 w-4" />
+            <span>GitHub</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            <LifeBuoy className="mr-2 h-4 w-4" />
+            <span>Support</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            <Cloud className="mr-2 h-4 w-4" />
+            <span>API</span>
+          </DropdownMenuItem> */}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {/* <Link
         to="/orders"
         className={cn(
           "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
           location.pathname === "/orders" && "text-amber-400"
         )}
       >
-        Pedidos
-      </Link>
+        Relatórios
+      </Link> */}
 
       <Link
         to="/divulgacao"
