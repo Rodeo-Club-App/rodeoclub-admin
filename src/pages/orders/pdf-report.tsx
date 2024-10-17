@@ -1,31 +1,12 @@
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-  Image,
-  Font,
-} from "@react-pdf/renderer";
+import React from "react";
+import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { formattedStatus } from "@/utils/status-enum";
 import { formatDate } from "@/utils/format-iso-date";
 import { OrderReport } from ".";
-import RobotoRegular from "@/assets/fonts/Roboto-Regular.ttf";
-import RobotoBold from "@/assets/fonts/Roboto-Bold.ttf";
-import logo from "@/assets/logo-pvt-top.png";
 
-Font.register({
-  family: "Roboto",
-  fonts: [
-    {
-      src: RobotoRegular,
-    },
-    {
-      src: RobotoBold,
-      fontWeight: "bold",
-    },
-  ],
-});
+import OrderReportHeader from "@/components/orderReportHeader";
+import { formatCentsToReal } from "@/utils/money";
+import { registerFonts } from "@/utils/register-fonts";
 
 const styles = StyleSheet.create({
   page: {
@@ -33,14 +14,6 @@ const styles = StyleSheet.create({
     padding: 20,
     fontSize: 11,
     fontFamily: "Roboto",
-  },
-  header: {
-    fontSize: 14,
-    margintop: 5,
-    textAlign: "center",
-    alignSelf: "center",
-    marginLeft: 10,
-    fontWeight: "bold",
   },
   table: {
     display: "flex",
@@ -67,7 +40,7 @@ const styles = StyleSheet.create({
   tableCol: {
     borderRightColor: "#bfbfbf",
     borderRightWidth: 1,
-    padding: 8,
+    padding: 5,
     textAlign: "left",
   },
   tableRowOdd: {
@@ -82,11 +55,12 @@ const styles = StyleSheet.create({
   },
   badge: {
     borderRadius: "100%",
-    paddingHorizontal: 8,
     paddingVertical: 4,
+    width: 60,
     fontSize: 8,
     fontWeight: "bold",
     textAlign: "center",
+    left: 0.4,
   },
   badgeYellow: {
     backgroundColor: "#FBBF24",
@@ -110,12 +84,15 @@ const styles = StyleSheet.create({
   },
   pageNumber: {
     position: "absolute",
-    fontSize: 12,
-    bottom: 30,
-    left: 0,
-    right: 0,
+    fontSize: 10,
+    bottom: 10,
+    right: 20,
     textAlign: "center",
     color: "grey",
+  },
+  footer: {
+    marginTop: 5,
+    height: 15,
   },
 });
 
@@ -132,45 +109,30 @@ interface Props {
 }
 
 export function PDFReport({ data }: Props) {
-  const { period, total, orders } = data;
+  registerFonts();
+  const { period, total, orders, totalOrders } = data;
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingBottom: 20,
-          }}
-        >
-          <Image
-            style={{
-              width: 160,
-            }}
-            src={logo}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 10,
-          }}
-        >
-          <Text style={{ fontWeight: "bold" }}>
-            Relatório de Pedidos - Período: {period}
-          </Text>
-        </View>
+      <Page orientation="landscape" style={styles.page}>
+        <OrderReportHeader
+          totals={[
+            { label: "Total de Pedidos", value: totalOrders },
+            { label: "Total", value: total },
+          ]}
+          period={period}
+        />
 
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <Text
               style={[
                 styles.tableColHeader,
-                { width: "15%", fontWeight: "bold" },
+                {
+                  width: 90,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                },
               ]}
             >
               Nº Pedido
@@ -178,7 +140,10 @@ export function PDFReport({ data }: Props) {
             <Text
               style={[
                 styles.tableColHeader,
-                { width: "25%", fontWeight: "bold" },
+                {
+                  width: "26%",
+                  fontWeight: "bold",
+                },
               ]}
             >
               Cliente
@@ -186,7 +151,10 @@ export function PDFReport({ data }: Props) {
             <Text
               style={[
                 styles.tableColHeader,
-                { width: "15%", fontWeight: "bold" },
+                {
+                  width: "12%",
+                  fontWeight: "bold",
+                },
               ]}
             >
               Status
@@ -194,7 +162,52 @@ export function PDFReport({ data }: Props) {
             <Text
               style={[
                 styles.tableColHeader,
-                { width: "15%", fontWeight: "bold" },
+                {
+                  width: "28%",
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              Produto
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: "12%",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                },
+              ]}
+            >
+              Valor UN.
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                { width: "7%", fontWeight: "bold", textAlign: "center" },
+              ]}
+            >
+              Qtd.
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: "12%",
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              Valor Total
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: "14%",
+                  fontWeight: "bold",
+                },
               ]}
             >
               Data
@@ -202,74 +215,106 @@ export function PDFReport({ data }: Props) {
             <Text
               style={[
                 styles.tableColHeader,
-                { width: "15%", fontWeight: "bold" },
-              ]}
-            >
-              Valor
-            </Text>
-            <Text
-              style={[
-                styles.tableColHeader,
-                { width: "15%", fontWeight: "bold" },
+                {
+                  width: "12%",
+                  fontWeight: "bold",
+                },
               ]}
             >
               Parceiro
             </Text>
           </View>
 
-          {orders.map((order, index) => {
+          {data.orders.map((order, index) => {
             const isLastRow = index === orders.length - 1;
             return (
-              <View
-                key={order.id}
-                style={[
-                  styles.tableRow,
-                  index % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd,
-                  ...(isLastRow ? [styles.tableRowLast] : []),
-                ]}
-              >
-                <Text style={[styles.tableCol, { width: "15%" }]}>
-                  {order.externalId}
-                </Text>
-                <Text style={[styles.tableCol, { width: "25%" }]}>
-                  {order.customer.name}
-                </Text>
-                <View style={[styles.tableCol, { width: "15%" }]}>
-                  <Text style={[styles.badge, statusStyles[order.status]]}>
-                    {formattedStatus[order.status]}
+              <React.Fragment key={order.id}>
+                <View
+                  style={[
+                    styles.tableRow,
+                    index % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd,
+                    ...(isLastRow ? [styles.tableRowLast] : []),
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tableCol,
+                      { width: 89.5, textAlign: "center" },
+                    ]}
+                  >
+                    {order.externalId}
+                  </Text>
+                  <Text style={[styles.tableCol, { width: 207 }]}>
+                    {order.customer.name}
+                  </Text>
+                  <View style={[styles.tableCol, { width: 95 }]}>
+                    <Text style={[styles.badge, statusStyles[order.status]]}>
+                      {formattedStatus[order.status]}
+                    </Text>
+                  </View>
+                  <Text style={[styles.tableCol, { width: 223 }]}></Text>
+                  <Text style={[styles.tableCol, { width: 95.5 }]}></Text>
+                  <Text style={[styles.tableCol, { width: 56 }]}></Text>
+                  <Text style={[styles.tableCol, { width: 95.5 }]}>
+                    {formatCentsToReal(order.totalCents)}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.tableCol,
+                      { width: 111.5, textAlign: "center" },
+                    ]}
+                  >
+                    {formatDate(order.createdAt, "dd/MM/yyyy HH:mm")}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.tableCol,
+                      { width: 95.5, textAlign: "center" },
+                    ]}
+                  >
+                    {order.customer.partner}
                   </Text>
                 </View>
-                <Text style={[styles.tableCol, { width: "15%" }]}>
-                  {formatDate(order.createdAt)}
-                </Text>
-                <Text style={[styles.tableCol, { width: "15%" }]}>
-                  {order.total}
-                </Text>
-                <Text style={[styles.tableCol, { width: "15%" }]}>
-                  {order.customer.partner}
-                </Text>
-              </View>
+                {order.items.map((item) => (
+                  <View
+                    key={item.id}
+                    style={[
+                      styles.tableRow,
+                      index % 2 === 0
+                        ? styles.tableRowEven
+                        : styles.tableRowOdd,
+                      ...(isLastRow ? [styles.tableRowLast] : []),
+                    ]}
+                  >
+                    <Text style={[styles.tableCol, { width: 89.5 }]}></Text>
+                    <Text style={[styles.tableCol, { width: 207 }]}></Text>
+                    <Text style={[styles.tableCol, { width: 95 }]}></Text>
+
+                    <Text style={[styles.tableCol, { width: 223 }]}>
+                      {item.name}
+                    </Text>
+                    <Text style={[styles.tableCol, { width: 95.5 }]}>
+                      {formatCentsToReal(item.price)}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCol,
+                        { width: 56, textAlign: "center" },
+                      ]}
+                    >
+                      {item.quantity}
+                    </Text>
+                    <Text style={[styles.tableCol, { width: 95.5 }]}></Text>
+                    <Text style={[styles.tableCol, { width: 111.5 }]}></Text>
+                    <Text style={[styles.tableCol, { width: 95.5 }]}></Text>
+                  </View>
+                ))}
+              </React.Fragment>
             );
           })}
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            marginTop: 15,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignContent: "center",
-            }}
-          >
-            <Text>Total: </Text>
-            <Text style={{ fontWeight: "bold" }}>{total}</Text>
-          </View>
-        </View>
+        <View style={[styles.footer]} fixed />
 
         <Text
           style={styles.pageNumber}

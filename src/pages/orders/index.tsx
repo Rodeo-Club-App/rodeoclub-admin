@@ -67,6 +67,7 @@ export interface OrderReport {
   period: string | null;
   partner: string | null;
   total: string;
+  totalOrders: string;
   orders: OrderList[];
 }
 
@@ -297,6 +298,15 @@ export function Orders() {
     return "";
   };
 
+  const clearDate = () => {
+    setSearchParams((p) => {
+      p.delete("startAt");
+      p.delete("endAt");
+
+      return p;
+    });
+  };
+
   const handleExportReport = async (type: "pdf" | "excel") => {
     setIsExporting(true);
 
@@ -356,12 +366,61 @@ export function Orders() {
         ? partnersList?.find((i) => i.id === Number(partnerId))?.name ?? ""
         : null,
       total: formatCentsToReal(amount),
+      totalOrders: allOrders.length.toString(),
       orders: allOrders,
     };
 
     if (type === "pdf") {
-      const url = await renderUrl(data);
+      const rows = [];
 
+      rows.push([
+        "Nº Pedido",
+        "Cliente",
+        "Status",
+        "Produto",
+        "Valor Unitário",
+        "Quantidade",
+        "Valor do Pedido",
+        "Data",
+        "Parceiro",
+      ]);
+
+      data.orders.forEach((order) => {
+        const orderRow = [
+          order.externalId,
+          order.customer.name,
+          formattedStatus[order.status],
+          "",
+          formatCentsToReal(order.totalCents),
+          "",
+          "",
+          formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
+          order.customer.partner,
+        ];
+
+        rows.push(orderRow);
+
+        order.items.forEach((item) => {
+          const itemRow = [
+            "",
+            "",
+            "",
+            item.name,
+            formatCentsToReal(item.price),
+            item.quantity,
+            "",
+            "",
+            "",
+          ];
+
+          rows.push(itemRow);
+        });
+      });
+
+      const pdf = <PDFReport data={data} />;
+
+      const blob = await ReactPDF.pdf(pdf).toBlob();
+      const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
     }
 
@@ -389,8 +448,8 @@ export function Orders() {
           "",
           "",
           "",
-          order.customer.partner,
           formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
+          order.customer.partner,
         ];
 
         rows.push(orderRow);
@@ -398,13 +457,13 @@ export function Orders() {
         order.items.forEach((item) => {
           const itemRow = [
             "",
-            order.customer.name,
+            "",
             "",
             "",
             item.name,
             formatCentsToReal(item.price),
             item.quantity,
-            order.customer.partner,
+            "",
             "",
           ];
 
@@ -424,12 +483,6 @@ export function Orders() {
     setIsExporting(false);
   };
 
-  const renderUrl = async (data: OrderReport) => {
-    const blob = await ReactPDF.pdf(<PDFReport data={data} />).toBlob(); // Passar os dados para o PDF
-    const url = URL.createObjectURL(blob);
-    return url;
-  };
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Header />
@@ -442,7 +495,7 @@ export function Orders() {
           <div className="md:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
             <Tabs defaultValue="week">
               <div className="flex flex-col md:flex-row md:items-center">
-                <div className="relative md:mr-2 md:grow-0 mb-1 md:mb-0 w-full sm:w-auto">
+                <div className="relative md:mr-2 md:grow-0 md:mb-0 w-full sm:w-auto">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
@@ -458,14 +511,27 @@ export function Orders() {
                   />
                 </div>
 
-                <div className="md:ml-auto flex flex-wrap sm:flex-row mt-2">
-                  <DatePickerWithRange
-                    to={to}
-                    from={from}
-                    onChange={handleRangeChange}
-                  />
+                <div className="md:ml-auto flex flex-wrap sm:flex-row mt-2 mb-1 gap-2 sm:gap-0">
+                  <div className="flex mr-1 items-center">
+                    <DatePickerWithRange
+                      to={to}
+                      from={from}
+                      onChange={handleRangeChange}
+                    />
 
-                  <div className="flex mr-1">
+                    {(from || to) && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearDate}
+                        className="w-8 h-8 hover:text-red-500"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex mr-1 items-center">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -479,6 +545,7 @@ export function Orders() {
                             <SelectItem
                               key={partner.id}
                               value={String(partner.id)}
+                              className="cursor-pointer"
                             >
                               {partner.name}
                             </SelectItem>
@@ -489,7 +556,7 @@ export function Orders() {
                           size="icon"
                           variant="ghost"
                           onClick={clearPartner}
-                          className="w-8 h-8 hover:text-red-500"
+                          className="w-8 h-8 hover:text-red-500 mx-2"
                         >
                           <X className="w-4 h-4" />
                         </Button>
@@ -497,7 +564,7 @@ export function Orders() {
                     </Select>
                   </div>
 
-                  <div className="flex mr-1">
+                  <div className="flex mr-1 items-center">
                     <Select
                       value={status || ""}
                       onValueChange={(e) => onSelectStatus(e)}
@@ -517,7 +584,7 @@ export function Orders() {
                           size="icon"
                           variant="ghost"
                           onClick={clearStatus}
-                          className="w-8 h-8 hover:text-red-500"
+                          className="w-8 h-8 hover:text-red-500 mx-2"
                         >
                           <X className="w-4 h-4" />
                         </Button>
@@ -547,11 +614,13 @@ export function Orders() {
                       <DropdownMenuLabel>Exportar em</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => handleExportReport("pdf")}
                       >
                         PDF
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => handleExportReport("excel")}
                       >
                         Excel
@@ -613,22 +682,22 @@ export function Orders() {
                                     {order?.customer?.name}
                                   </div>
                                 </TableCell>
-                                <TableCell className="min-w-28">
+                                <TableCell className="min-w-28 font-medium ">
                                   <Badge
-                                    className={`text-xs sm:text-sm ${
-                                      statusColors[order.status] || ""
-                                    }`}
+                                    className={`text-xs sm:text-sm cursor-default pb-1 hover:bg-${
+                                      statusColors[order.status]
+                                    } ${statusColors[order.status] || ""} `}
                                   >
                                     {formattedStatus[order.status]}
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="min-w-32">
+                                <TableCell className="min-w-32 font-medium ">
                                   {formatDate(order.createdAt)}
                                 </TableCell>
-                                <TableCell className="min-w-32">
+                                <TableCell className="min-w-32 font-medium ">
                                   {order.total}
                                 </TableCell>
-                                <TableCell className="min-w-32 text-right">
+                                <TableCell className="min-w-32 font-medium text-right">
                                   {order.customer.partner}
                                 </TableCell>
                               </TableRow>

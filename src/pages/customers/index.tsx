@@ -1,4 +1,4 @@
-import { File, FileUp, MoreHorizontal, Plus, Search, X } from "lucide-react";
+import { FileUp, MoreHorizontal, Plus, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -237,22 +237,12 @@ export function Customers() {
                     size="sm"
                     variant="outline"
                     className="h-10 gap-1 text-sm mr-1"
-                    // disabled={isExporting}
+                    onClick={() => importCsvUserModalRef.current?.openModal()}
                   >
-                    <File className="h-3.5 w-3.5" />
-                    <span className="sr-only md:not-sr-only">Exportar</span>
-                    {/* {isExporting && (
-                      <Loader2 className="animate-spin w-4 h-4" />
-                    )} */}
+                    <FileUp className="h-3.5 w-3.5 mt-0.5" />
+                    <span className="sr-only md:not-sr-only">Importar</span>
                   </Button>
 
-                  <Button
-                    size="icon"
-                    onClick={() => importCsvUserModalRef.current?.openModal()}
-                    className="mr-1 bg-white hover:bg-green-500 text-green-500 hover:text-white"
-                  >
-                    <FileUp className="w-4 h-4 " />
-                  </Button>
                   <Button onClick={() => navigate("/customers/new")}>
                     <Plus className="w-4 h-4 mr-1" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -276,9 +266,7 @@ export function Customers() {
                           <TableHeader>
                             <TableRow>
                               <TableHead>Nome</TableHead>
-                              <TableHead className="pl-4 sm:pl-0">
-                                CPF
-                              </TableHead>
+                              <TableHead className="pl-4">CPF</TableHead>
 
                               <TableHead className="">Parceiro</TableHead>
                               <TableHead className="">
@@ -294,7 +282,7 @@ export function Customers() {
                             {data?.users?.map((customer) => (
                               <TableRow key={customer.id}>
                                 <TableCell className="font-medium text-xs sm:text-sm pr-4">
-                                  <div className="font-medium">
+                                  <div>
                                     {customer.name}
                                   </div>
                                   <div className="text-sm text-muted-foreground md:inline">
@@ -307,19 +295,19 @@ export function Customers() {
                                   </div>
                                 </TableCell>
 
-                                <TableCell className="min-w-36 pr-4">
+                                <TableCell className="min-w-36 font-medium  pr-4">
                                   {customer.partner}
                                 </TableCell>
 
-                                <TableCell className="min-w-52">
+                                <TableCell className="min-w-52 font-medium">
                                   {customer.registerAt ? (
                                     formatDate(
                                       customer.registerAt,
                                       "dd/MM/yyyy HH:mm"
                                     )
                                   ) : (
-                                    <p className="text-amber-400 font-medium">
-                                      Ainda não se registrou
+                                    <p className="text-muted-foreground">
+                                      Não se registrou
                                     </p>
                                   )}
                                 </TableCell>

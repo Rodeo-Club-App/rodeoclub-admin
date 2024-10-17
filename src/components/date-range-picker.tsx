@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/popover";
 
 import { ptBR } from "date-fns/locale";
-import { CalendarIcon, XIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import { DateRange } from "react-day-picker";
 
@@ -30,12 +30,8 @@ export function DatePickerWithRange({
   const dateRange: DateRange | undefined =
     from || to ? { from, to } : undefined;
 
-  const clearDates = () => {
-    onChange(undefined);
-  };
-
   return (
-    <div className={cn("grid gap-2 mr-1", className)}>
+    <div className={cn("grid mr-1", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -73,15 +69,6 @@ export function DatePickerWithRange({
               locale={ptBR}
             />
           </PopoverContent>
-          {dateRange && (
-            <Button
-              variant="ghost"
-              onClick={clearDates}
-              className="p-0 z-50 absolute bottom-2 right-2 hover:bg-transparent"
-            >
-              <XIcon size={20} color="#ff0000" />
-            </Button>
-          )}
         </div>
       </Popover>
     </div>

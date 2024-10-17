@@ -17,7 +17,9 @@ import { Products } from "@/pages/products";
 import RecoveryAccount from "@/pages/recoveryAccount/recoveryAccountResquest";
 import TokenVerification from "@/pages/recoveryAccount/tokenVerification";
 import RedefinePassword from "@/pages/recoveryAccount/reset";
- 
+import { LogsCustomers } from "@/pages/logs-customers";
+import { PromotionNotification } from "@/pages/product-promotion-notification";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +61,14 @@ export const router = createBrowserRouter([
       {
         path: "/products",
         element: <Products />,
+      },
+      {
+        path: "/logs",
+        element: <LogsCustomers />,
+      },
+      {
+        path: "/promotion-notifications",
+        element: <PromotionNotification />,
       },
     ],
   },

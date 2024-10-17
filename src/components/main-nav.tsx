@@ -17,7 +17,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
@@ -53,7 +52,7 @@ export function MainNav({
       </Link>
 
       <DropdownMenu>
-        <DropdownMenuTrigger asChild className="w-24">
+        <DropdownMenuTrigger asChild className="w-16">
           <Button
             variant="ghost"
             className="hover:bg-transparent text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
@@ -62,7 +61,7 @@ export function MainNav({
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-56">
+        <DropdownMenuContent className="w-40">
           <DropdownMenuLabel>Relatórios</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -72,7 +71,6 @@ export function MainNav({
             >
               <ShoppingCart className="mr-2 h-4 w-4" />
               <span>Pedidos</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
@@ -80,18 +78,15 @@ export function MainNav({
             >
               <Package className="mr-2 h-4 w-4" />
               <span>Produtos</span>
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/logs")}
             >
               <Eye className="mr-2 h-4 w-4" />
               <span>Acessos</span>
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {/* <DropdownMenuSub>
               <DropdownMenuSubTrigger className="cursor-pointer">
@@ -188,7 +183,7 @@ export function MainNav({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/promotion-notifications")}
             >
               <Megaphone className="mr-2 h-4 w-4" />
               <span>Divulgações</span>

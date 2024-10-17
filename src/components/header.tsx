@@ -97,7 +97,7 @@ export function Header() {
                   </Button>
                   <Button
                     className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/promotion-notifications")}
                   >
                     <Megaphone className="h-5 w-5" />
                     Divulgações
