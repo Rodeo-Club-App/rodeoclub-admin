@@ -28,6 +28,8 @@ import {
 import { Header } from "@/components/header";
 import { Title } from "@/components/title-page";
 import { AppLayout } from "../_layout";
+import { SkeletonDashboard } from "@/components/skeleton-dashboard";
+import { useState } from "react";
 
 const salesData = [
   { name: "Jan", total: 4500 },
@@ -51,430 +53,226 @@ const topProducts = [
 ];
 
 export function Dashboard() {
+  const [isLoading] = useState(false);
+  
   return (
     <>
       <div className="flex-col md:flex">
         <Header />
-        <AppLayout>
-          <Title name="Dashboard" />
-          <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Valor total vendas
-                </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">$45,231.89</div>
-                <p className="text-xs text-muted-foreground flex items-center">
-                  <span className="text-green-500 flex items-center mr-1">
-                    <ChevronUp className="h-4 w-4" />
-                    20.1%
-                  </span>
-                  em relação ao mês passado
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Qtd Clientes
-                </CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">+2,350</div>
-                <p className="text-xs text-muted-foreground flex items-center">
-                  <span className="text-green-500 flex items-center mr-1">
-                    <ChevronUp className="h-4 w-4" />
-                    180.1%
-                  </span>
-                  em relação ao mês passado
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Qtd total pedidos
-                </CardTitle>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">12,234</div>
-                <p className="text-xs text-muted-foreground flex items-center">
-                  <span className="text-green-500 flex items-center mr-1">
-                    <ChevronUp className="h-4 w-4" />
-                    19%
-                  </span>
-                  em relação ao mês passado
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Qtd Produtos
-                </CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">573</div>
-                <p className="text-xs text-muted-foreground flex items-center">
-                  <span className="text-green-500 flex items-center mr-1">
-                    <ChevronUp className="h-4 w-4" />
-                    201
-                  </span>
-                  desde o ultimo mês
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+        {isLoading ? (
+          <SkeletonDashboard />
+        ) : (
+          <AppLayout>
+            <Title name="Dashboard" />
+            <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Valor total vendas
+                  </CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">$45,231.89</div>
+                  <p className="text-xs text-muted-foreground flex items-center">
+                    <span className="text-green-500 flex items-center mr-1">
+                      <ChevronUp className="h-4 w-4" />
+                      20.1%
+                    </span>
+                    em relação ao mês passado
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Qtd Clientes
+                  </CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">+2,350</div>
+                  <p className="text-xs text-muted-foreground flex items-center">
+                    <span className="text-green-500 flex items-center mr-1">
+                      <ChevronUp className="h-4 w-4" />
+                      180.1%
+                    </span>
+                    em relação ao mês passado
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Qtd total pedidos
+                  </CardTitle>
+                  <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">12,234</div>
+                  <p className="text-xs text-muted-foreground flex items-center">
+                    <span className="text-green-500 flex items-center mr-1">
+                      <ChevronUp className="h-4 w-4" />
+                      19%
+                    </span>
+                    em relação ao mês passado
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Qtd Produtos
+                  </CardTitle>
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">573</div>
+                  <p className="text-xs text-muted-foreground flex items-center">
+                    <span className="text-green-500 flex items-center mr-1">
+                      <ChevronUp className="h-4 w-4" />
+                      201
+                    </span>
+                    desde o ultimo mês
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
 
-          <div className="grid gap-6 mb-8 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Top parceiros com mais vendas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Parceiro</TableHead>
-                      <TableHead>Qtd vendas</TableHead>
-                      <TableHead className="text-right">Valor Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {partners.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell>{order.customer}</TableCell>
-                        <TableCell>377</TableCell>
-                        <TableCell className="text-right">
-                          ${order.amount.toFixed(2)}
-                        </TableCell>
+            <div className="grid gap-6 mb-8 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top parceiros com mais vendas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Parceiro</TableHead>
+                        <TableHead>Qtd vendas</TableHead>
+                        <TableHead className="text-right">
+                          Valor Total
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Top clientes com mais vendas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Qtd vendas</TableHead>
-                      <TableHead className="text-right">Valor Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {topProducts.map((product) => (
-                      <TableRow key={product.name}>
-                        <TableCell className="font-medium">
-                          {product.name}
-                        </TableCell>
-                        <TableCell>{product.sales}</TableCell>
-                        <TableCell className="text-right">
-                          ${product.revenue.toLocaleString()}
-                        </TableCell>
+                    </TableHeader>
+                    <TableBody>
+                      {partners.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell>{order.customer}</TableCell>
+                          <TableCell>377</TableCell>
+                          <TableCell className="text-right">
+                            ${order.amount.toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top clientes com mais vendas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Cliente</TableHead>
+                        <TableHead>Qtd vendas</TableHead>
+                        <TableHead className="text-right">
+                          Valor Total
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
+                    </TableHeader>
+                    <TableBody>
+                      {topProducts.map((product) => (
+                        <TableRow key={product.name}>
+                          <TableCell className="font-medium">
+                            {product.name}
+                          </TableCell>
+                          <TableCell>{product.sales}</TableCell>
+                          <TableCell className="text-right">
+                            ${product.revenue.toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
 
-          {/* Charts */}
-          {/* <div className="grid gap-6 mb-8 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Taxa de uso do APP</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  <LineChart data={visitorsData}>
-                    <XAxis
-                      dataKey="name"
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{ background: "#333", border: "none" }}
-                      labelStyle={{ color: "#fff" }}
-                      itemStyle={{ color: "#fff" }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="visitors"
-                      stroke="#8884d8"
-                      strokeWidth={2}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div> */}
-
-          {/* Recent Orders and Top Products */}
-          <div className="grid gap-6 mb-8 md:grid-cols-2">
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>Pedidos recentes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Pedido N.</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {recentOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">
-                          {order.id}
-                        </TableCell>
-                        <TableCell>{order.customer}</TableCell>
-                        <TableCell>
-                          <Badge>{order.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          ${order.amount.toFixed(2)}
-                        </TableCell>
+            <div className="grid gap-6 mb-8 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top Produtos mais vendidos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Produto</TableHead>
+                        <TableHead>Qtd Vendas</TableHead>
+                        <TableHead className="text-right">
+                          Valor Total
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card> */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Produtos mais vendidos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produto</TableHead>
-                      <TableHead>Qtd Vendas</TableHead>
-                      <TableHead className="text-right">Valor Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {topProducts.map((product) => (
-                      <TableRow key={product.name}>
-                        <TableCell className="font-medium">
-                          {product.name}
-                        </TableCell>
-                        <TableCell>{product.sales}</TableCell>
-                        <TableCell className="text-right">
-                          ${product.revenue.toLocaleString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {topProducts.map((product) => (
+                        <TableRow key={product.name}>
+                          <TableCell className="font-medium">
+                            {product.name}
+                          </TableCell>
+                          <TableCell>{product.sales}</TableCell>
+                          <TableCell className="text-right">
+                            ${product.revenue.toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Balanço de vendas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={salesData}>
-                    <XAxis
-                      dataKey="name"
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(value) => `$${value}`}
-                    />
-                    <Tooltip
-                      contentStyle={{ background: "#333", border: "none" }}
-                      labelStyle={{ color: "#fff" }}
-                      itemStyle={{ color: "#fff" }}
-                    />
-                    <Bar dataKey="total" fill="#adfa1d" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Activity Feed */}
-        </AppLayout>
-        {/* <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900">
-          <div className="container mx-auto px-6 py-8"></div>
-        </main> */}
-        {/* <div className="flex-1 space-y-4 p-8 pt-6"> */}
-        {/* <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Revenue
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">$45,231.89</div>
-                    <p className="text-xs text-muted-foreground">
-                      +20.1% em relação ao mês passado
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Subscriptions
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
-                    <p className="text-xs text-muted-foreground">
-                      +180.1% em relação ao mês passado
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <rect width="20" height="14" x="2" y="5" rx="2" />
-                      <path d="M2 10h20" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
-                    <p className="text-xs text-muted-foreground">
-                      +19% em relação ao mês passado
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Active Now
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
-                    <p className="text-xs text-muted-foreground">
-                      +201 since last hour
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
-                  <CardHeader>
-                    <CardTitle>Overview</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <Overview />
-                  </CardContent>
-                </Card>
-                <Card className="col-span-3">
-                  <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
-                    <CardDescription>
-                      You made 265 sales this month.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <RecentSales />
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs> */}
-        {/* </div> */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Balanço de vendas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <BarChart data={salesData}>
+                      <XAxis
+                        dataKey="name"
+                        stroke="#888888"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        stroke="#888888"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={(value) => `$${value}`}
+                      />
+                      <Tooltip
+                        contentStyle={{ background: "#333", border: "none" }}
+                        labelStyle={{ color: "#fff" }}
+                        itemStyle={{ color: "#fff" }}
+                      />
+                      <Bar
+                        dataKey="total"
+                        fill="#adfa1d"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </AppLayout>
+        )}
       </div>
     </>
   );
