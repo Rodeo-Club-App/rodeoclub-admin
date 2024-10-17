@@ -181,10 +181,7 @@ export function MainNav({
               <Rocket className="mr-2 h-4 w-4" />
               <span>Banners Lançamentos</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => navigate("/promotion-notifications")}
-            >
+            <DropdownMenuItem className="cursor-pointer">
               <Megaphone className="mr-2 h-4 w-4" />
               <span>Divulgações</span>
             </DropdownMenuItem>

@@ -66,10 +66,6 @@ export const router = createBrowserRouter([
         path: "/logs",
         element: <LogsCustomers />,
       },
-      {
-        path: "/promotion-notifications",
-        element: <PromotionNotification />,
-      },
     ],
   },
   {
