@@ -18,7 +18,6 @@ import RecoveryAccount from "@/pages/recoveryAccount/recoveryAccountResquest";
 import TokenVerification from "@/pages/recoveryAccount/tokenVerification";
 import RedefinePassword from "@/pages/recoveryAccount/reset";
 import { LogsCustomers } from "@/pages/logs-customers";
-import { PromotionNotification } from "@/pages/product-promotion-notification";
 
 export const router = createBrowserRouter([
   {
