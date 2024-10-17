@@ -433,8 +433,9 @@ export function Orders() {
         "Status",
         "Valor do Pedido",
         "Produto",
-        "Valor Unitário",
         "Quantidade",
+        "Valor Unitário",
+        "Valor Total",
         "Parceiro",
         "Data",
       ]);
@@ -445,6 +446,7 @@ export function Orders() {
           order.customer.name,
           formattedStatus[order.status],
           formatCentsToReal(order.totalCents),
+          "",
           "",
           "",
           "",
@@ -463,6 +465,9 @@ export function Orders() {
             item.name,
             formatCentsToReal(item.price),
             item.quantity,
+            formatCentsToReal(item.price * item.quantity),
+            order.customer.partner,
+            formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
             "",
             "",
           ];
