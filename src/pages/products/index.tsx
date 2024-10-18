@@ -546,6 +546,10 @@ export function Products() {
                                 </TableCell>
                                 <TableCell className="text-sm font-medium pr-4 max-w-56">
                                   {product.name}
+
+                                  <p className="text-sm text-muted-foreground">
+                                    {product.category.name}
+                                  </p>
                                 </TableCell>
 
                                 <TableCell className="text-sm font-medium">
@@ -558,7 +562,7 @@ export function Products() {
 
                                 <TableCell className="">
                                   <Badge
-                                    className={`text-sm font-medium pb-1 cursor-default hover:bg-${
+                                    className={`text-xs font-medium pb-1 cursor-default hover:bg-${
                                       stockColors[product.stock]
                                     } ${stockColors[product.stock]} `}
                                   >

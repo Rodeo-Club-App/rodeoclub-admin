@@ -10,7 +10,7 @@ const stockList = [
 
 const formattedStock: StockStatus = {
   instock: "Em estoque",
-  outofstock: "Fora de estoque",
+  outofstock: "Sem estoque",
   onbackorder: "Em espera",
 };
 
