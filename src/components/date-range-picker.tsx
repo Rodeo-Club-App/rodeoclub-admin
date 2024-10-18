@@ -1,5 +1,5 @@
 import * as React from "react";
-import { format } from "date-fns";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import { DateRange } from "react-day-picker";
+import { useSearchParams } from "react-router-dom";
 
 //@ts-ignore
 interface DatePickerWithRangeProps
@@ -27,6 +28,22 @@ export function DatePickerWithRange({
   onChange,
   className,
 }: DatePickerWithRangeProps) {
+  const [_, setSearchParams] = useSearchParams();
+  const handleSetCurrentMonthRange = () => {
+    const now = new Date();
+    const start = startOfMonth(now);
+    const end = endOfMonth(now);
+
+    const startOfMonthFormatted = format(start, "yyyy-MM-dd");
+    const endOfMonthFormatted = format(end, "yyyy-MM-dd");
+
+    setSearchParams((p) => {
+      p.set("startAt", startOfMonthFormatted);
+      p.set("endAt", endOfMonthFormatted);
+
+      return p;
+    });
+  };
   const dateRange: DateRange | undefined =
     from || to ? { from, to } : undefined;
 
@@ -68,6 +85,12 @@ export function DatePickerWithRange({
               numberOfMonths={1}
               locale={ptBR}
             />
+
+            <div className="flex items-center justify-center">
+              <Button variant="ghost" onClick={handleSetCurrentMonthRange}>
+                Mês corrente
+              </Button>
+            </div>
           </PopoverContent>
         </div>
       </Popover>
