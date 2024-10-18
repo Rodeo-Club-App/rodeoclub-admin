@@ -1,7 +1,14 @@
 import { Header } from "@/components/header";
 import { AppLayout } from "../_layout";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { MoreHorizontal, Search, X } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  File,
+  Loader2,
+  MoreHorizontal,
+  Search,
+  X,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -22,9 +29,11 @@ import {
 
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -49,6 +58,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
+import { formatDateRange } from "@/utils/formatters";
+import { PDFReport } from "./pdf-report";
+import ReactPDF from "@react-pdf/renderer";
+import * as XLSX from "xlsx";
+
+export interface ProductReport {
+  period: string;
+  partner: string | null;
+  total: string;
+  products: IProduct[];
+}
 
 interface Image {
   imageUrl: string;
@@ -65,6 +86,8 @@ interface IProduct {
   price: string;
   priceCents: number;
   updatedAt: string;
+  totalQuantitySold: number;
+  totalSalesValue: number;
   images: Image[];
 }
 
@@ -89,9 +112,13 @@ export function Products() {
   const searchName = searchParams.get("searchName") || "";
   const [debouncedSearchQuery] = useDebounce(searchName, 500);
 
+  const [isExporting, setIsExporting] = useState(false);
+
   const startAt = searchParams.get("startAt") || "";
   const endAt = searchParams.get("endAt") || "";
   const partnerId = searchParams.get("partnerId") || "";
+  const categoryId = searchParams.get("categoryId") || "";
+  const orderType = searchParams.get("orderBy") || "totalSales";
 
   const pageCount = z.coerce.number().parse(searchParams.get("page") ?? "1");
   const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
@@ -107,21 +134,30 @@ export function Products() {
       limit,
       debouncedSearchQuery,
       partnerId,
+      categoryId,
       startAt,
       endAt,
     ],
     queryFn: async () => {
-      const response = await api.get<ProductsResponse>(`/products/rodeoclub`, {
-        params: {
-          page: pageCount,
-          limit: limit,
-          searchName: debouncedSearchQuery,
-          onlyStock: false,
-        },
-      });
+      const response = await api.get<ProductsResponse>(
+        `/products/rodeoclub/search`,
+        {
+          params: {
+            page: pageCount,
+            limit: limit,
+            searchName: debouncedSearchQuery,
+            onlyStock: false,
+            ...(partnerId && { partnerId }),
+            ...(categoryId && { categoryId }),
+            ...(startAt && { startAt }),
+            ...(endAt && { endAt }),
+          },
+        }
+      );
 
       return response.data;
     },
+    refetchOnWindowFocus: false,
   });
 
   function handlePaginate(pageIndex: number) {
@@ -138,6 +174,18 @@ export function Products() {
     staleTime: 15 * 60 * 1000,
   });
 
+  const { data: categories, isLoading: isLoadingCategory } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await api.get<{ id: number; name: string }[]>(
+        "/category/rodeoclub"
+      );
+
+      return response.data;
+    },
+    staleTime: 15 * 60 * 1000,
+  });
+
   const clearPartner = () => {
     setSearchParams((p) => {
       p.delete("partnerId");
@@ -146,9 +194,24 @@ export function Products() {
     });
   };
 
+  const clearCategory = () => {
+    setSearchParams((p) => {
+      p.delete("categoryId");
+
+      return p;
+    });
+  };
+
   const onSelectPartner = (id: string) => {
     setSearchParams((prev) => {
       prev.set("partnerId", id);
+      return prev;
+    });
+  };
+
+  const onSelectCategory = (id: string) => {
+    setSearchParams((prev) => {
+      prev.set("categoryId", id);
       return prev;
     });
   };
@@ -175,6 +238,84 @@ export function Products() {
       return p;
     });
   };
+
+  const handleChangeOrderType = (
+    type: "totalSales" | "totalOrders" | "name"
+  ) => {
+    setSearchParams((p) => {
+      p.set("orderBy", type);
+
+      return p;
+    });
+  };
+
+  const sortedProducts = [...(products?.data || [])].sort((a, b) => {
+    switch (orderType) {
+      case "totalSales":
+        return b.totalSalesValue - a.totalSalesValue;
+      case "totalOrders":
+        return b.totalQuantitySold - a.totalQuantitySold;
+      case "name":
+        return a.name.localeCompare(b.name);
+      default:
+        return 0;
+    }
+  });
+
+  async function handleExportReport(type: "pdf" | "excel") {
+    setIsExporting(true);
+    const data = {
+      period: formatDateRange(startAt, endAt),
+      partner: partnerId
+        ? partnersList?.find((i) => i.id === Number(partnerId))?.name ?? ""
+        : null,
+
+      total: sortedProducts.length.toString(),
+      products: sortedProducts,
+    };
+
+    if (type === "pdf") {
+      const pdf = <PDFReport data={data} />;
+
+      const blob = await ReactPDF.pdf(pdf).toBlob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    }
+
+    if (type === "excel") {
+      const rows = [];
+
+      rows.push([
+        "Produto",
+        "Categoria",
+        "Valor Un.",
+        "Qtd. vendas",
+        "Total vendido",
+      ]);
+
+      data.products.forEach((product) => {
+        const row = [
+          product.name,
+          product.category.name,
+          formatCentsToReal(product.priceCents),
+          product.totalQuantitySold,
+          formatCentsToReal(product.totalSalesValue),
+        ];
+
+        rows.push(row);
+      });
+
+      const worksheet = XLSX.utils.aoa_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Produtos");
+
+      const excelFilename = `relatorio_de_produtos.xlsx`;
+
+      XLSX.writeFile(workbook, excelFilename);
+    }
+
+    setIsExporting(false);
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -256,6 +397,112 @@ export function Products() {
                       )}
                     </Select>
                   </div>
+
+                  <div className="flex mr-1">
+                    <Select
+                      value={categoryId || ""}
+                      onValueChange={(e) => onSelectCategory(e)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {!isLoadingCategory &&
+                          categories?.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={String(category.id)}
+                              className="cursor-pointer"
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                      {categoryId && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={clearCategory}
+                          className="w-8 h-8 hover:text-red-500 mx-2"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </Select>
+                  </div>
+
+                  <div className="flex">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="gap-1">
+                          <ArrowDownWideNarrow className="h-4 w-4" />
+                          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                            Ordenar por
+                          </span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuCheckboxItem
+                          checked={orderType === "totalOrders"}
+                          onClick={() => handleChangeOrderType("totalOrders")}
+                        >
+                          Qtd. vendas
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuCheckboxItem
+                          checked={orderType === "totalSales"}
+                          onClick={() => handleChangeOrderType("totalSales")}
+                        >
+                          Total vendido
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuCheckboxItem
+                          checked={orderType === "name"}
+                          onClick={() => handleChangeOrderType("name")}
+                        >
+                          Nome
+                        </DropdownMenuCheckboxItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  <div className="ml-1 flex">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-10 gap-1 text-sm"
+                          disabled={isExporting}
+                        >
+                          <File className="h-3.5 w-3.5" />
+                          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                            Exportar
+                          </span>
+
+                          {isExporting && (
+                            <Loader2 className="animate-spin w-4 h-4" />
+                          )}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Exportar em</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => handleExportReport("pdf")}
+                        >
+                          PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => handleExportReport("excel")}
+                        >
+                          Excel
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </div>
               <TabsContent value="week">
@@ -279,7 +526,7 @@ export function Products() {
                               <TableHead className="">Valor UN.</TableHead>
                               <TableHead className="">Estoque</TableHead>
                               <TableHead className="">Qtd. vendas</TableHead>
-                              <TableHead className="">Valor total</TableHead>
+                              <TableHead className="">Total vendido</TableHead>
                               <TableHead className="">Atualizado em</TableHead>
 
                               <TableHead className="w-10 text-right">
@@ -288,7 +535,7 @@ export function Products() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {products?.data.map((product) => (
+                            {sortedProducts.map((product) => (
                               <TableRow key={product.id}>
                                 <TableCell>
                                   <img
@@ -320,11 +567,11 @@ export function Products() {
                                 </TableCell>
 
                                 <TableCell className="font-medium ">
-                                  100
+                                  {product.totalQuantitySold}
                                 </TableCell>
 
                                 <TableCell className="font-medium ">
-                                  R$ 46.646,00
+                                  {formatCentsToReal(product.totalSalesValue)}
                                 </TableCell>
 
                                 <TableCell className="text-sm font-medium">

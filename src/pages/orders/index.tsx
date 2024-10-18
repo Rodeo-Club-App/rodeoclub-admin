@@ -188,6 +188,7 @@ export function Orders() {
 
       return response.data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const { data: partnersList, isLoading: isLoadingPartners } = useQuery({

@@ -120,6 +120,7 @@ export function PDFReport({ data }: Props) {
             { label: "Total de Pedidos", value: totalOrders },
             { label: "Total", value: total },
           ]}
+          title="Relatório de Pedidos"
           period={period}
         />
 

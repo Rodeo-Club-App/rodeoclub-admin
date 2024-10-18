@@ -4,9 +4,14 @@ import logo from "@/assets/logo-pvt-top.png";
 interface OrderReportHeaderProps {
   totals?: { label: string; value: string }[];
   period: string | null;
+  title: string;
 }
 
-export function OrderReportHeader({ totals, period }: OrderReportHeaderProps) {
+export function OrderReportHeader({
+  totals,
+  period,
+  title,
+}: OrderReportHeaderProps) {
   return (
     <View>
       <Image
@@ -25,36 +30,38 @@ export function OrderReportHeader({ totals, period }: OrderReportHeaderProps) {
           marginBottom: 10,
         }}
       >
-        Relatório de Pedidos - Período: {period}
+        {title} {period ? ` - Período: ${period}` : ""}
       </Text>
 
-      <View
-        style={{
-          flexDirection: "column",
-          backgroundColor: "white",
-          borderRadius: 10,
-          width: 150,
-          padding: 5,
-          position: "absolute",
-          right: 0,
-          top: 15,
-        }}
-      >
-        {totals?.map((totalItem, index) => (
-          <View
-            key={index}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: 5,
-              paddingHorizontal: 5,
-            }}
-          >
-            <Text>{totalItem.label}: </Text>
-            <Text style={{ fontWeight: "bold" }}>{totalItem.value}</Text>
-          </View>
-        ))}
-      </View>
+      {totals && (
+        <View
+          style={{
+            flexDirection: "column",
+            backgroundColor: "white",
+            borderRadius: 10,
+            width: 150,
+            padding: 5,
+            position: "absolute",
+            right: 0,
+            top: 15,
+          }}
+        >
+          {totals?.map((totalItem, index) => (
+            <View
+              key={index}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingVertical: 5,
+                paddingHorizontal: 5,
+              }}
+            >
+              <Text>{totalItem.label}: </Text>
+              <Text style={{ fontWeight: "bold" }}>{totalItem.value}</Text>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 }

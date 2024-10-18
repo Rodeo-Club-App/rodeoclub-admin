@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Copy, CreditCard, MoreVertical, X } from "lucide-react";
+import { Copy, CreditCard, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,13 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useSearchParams } from "react-router-dom";
 
 interface OrderItem {
@@ -93,7 +86,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           <CardDescription>Data: {orderDate}</CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="icon" variant="outline" className="h-8 w-8">
                 <MoreVertical className="h-3.5 w-3.5" />
@@ -106,7 +99,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem>Deletar</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
 
           <Button
             size="icon"

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 
 import {
+  ChevronDown,
   ChevronUp,
   DollarSign,
   Package,
@@ -29,37 +30,43 @@ import { Header } from "@/components/header";
 import { Title } from "@/components/title-page";
 import { AppLayout } from "../_layout";
 import { SkeletonDashboard } from "@/components/skeleton-dashboard";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/services/api";
+import { SalesAnalytics } from "@/dto/interfaces/sales-indicators";
+import { formatCentsToReal } from "@/utils/money";
 
-const salesData = [
-  { name: "Jan", total: 4500 },
-  { name: "Feb", total: 3800 },
-  { name: "Mar", total: 5200 },
-  { name: "Apr", total: 4800 },
-  { name: "May", total: 5700 },
-  { name: "Jun", total: 6100 },
-];
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">
+          {label} {formatCentsToReal(payload[0].value)}
+        </p>
+      </div>
+    );
+  }
 
-const partners = [
-  { id: "#3210", customer: "Aurora Due", status: "Shipped", amount: 42.25 },
-];
-
-const topProducts = [
-  { name: "Wireless Earbuds", sales: 1234, revenue: 61700 },
-  { name: "Smart Watch", sales: 987, revenue: 98700 },
-  { name: "Bluetooth Speaker", sales: 876, revenue: 43800 },
-  { name: "Laptop Stand", sales: 765, revenue: 22950 },
-  { name: "Phone Case", sales: 654, revenue: 13080 },
-];
+  return null;
+};
 
 export function Dashboard() {
-  const [isLoading] = useState(false);
-  
+  const { data, isLoading, isRefetching } = useQuery({
+    queryKey: ["indicators"],
+    queryFn: async () => {
+      const response = await api.get<SalesAnalytics>(
+        "/home/rodeoclub/indicators"
+      );
+
+      return response.data;
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+
   return (
     <>
       <div className="flex-col md:flex">
         <Header />
-        {isLoading ? (
+        {isLoading || isRefetching || !data ? (
           <SkeletonDashboard />
         ) : (
           <AppLayout>
@@ -73,11 +80,26 @@ export function Dashboard() {
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
+                  <div className="text-2xl font-bold">
+                    {formatCentsToReal(data.salesIndicators.totalSales)}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center">
-                    <span className="text-green-500 flex items-center mr-1">
-                      <ChevronUp className="h-4 w-4" />
-                      20.1%
+                    <span
+                      className={`flex items-center mr-1 ${
+                        data.salesIndicators.salesPercentage < 0
+                          ? "text-red-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {data.salesIndicators.salesPercentage < 0 ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronUp className="h-4 w-4" />
+                      )}
+                      {Math.abs(data.salesIndicators.salesPercentage).toFixed(
+                        1
+                      )}
+                      %
                     </span>
                     em relação ao mês passado
                   </p>
@@ -91,11 +113,26 @@ export function Dashboard() {
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2,350</div>
+                  <div className="text-2xl font-bold">
+                    +{data.salesIndicators.totalClients}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center">
-                    <span className="text-green-500 flex items-center mr-1">
-                      <ChevronUp className="h-4 w-4" />
-                      180.1%
+                    <span
+                      className={`flex items-center mr-1 ${
+                        data.salesIndicators.clientsPercentage < 0
+                          ? "text-red-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {data.salesIndicators.clientsPercentage < 0 ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronUp className="h-4 w-4" />
+                      )}
+                      {Math.abs(data.salesIndicators.clientsPercentage).toFixed(
+                        1
+                      )}
+                      %
                     </span>
                     em relação ao mês passado
                   </p>
@@ -109,11 +146,26 @@ export function Dashboard() {
                   <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">12,234</div>
+                  <div className="text-2xl font-bold">
+                    {data.salesIndicators.totalOrders}
+                  </div>
                   <p className="text-xs text-muted-foreground flex items-center">
-                    <span className="text-green-500 flex items-center mr-1">
-                      <ChevronUp className="h-4 w-4" />
-                      19%
+                    <span
+                      className={`flex items-center mr-1 ${
+                        data.salesIndicators.ordersPercentage < 0
+                          ? "text-red-500"
+                          : "text-green-500"
+                      }`}
+                    >
+                      {data.salesIndicators.ordersPercentage < 0 ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronUp className="h-4 w-4" />
+                      )}
+                      {Math.abs(data.salesIndicators.ordersPercentage).toFixed(
+                        1
+                      )}
+                      %
                     </span>
                     em relação ao mês passado
                   </p>
@@ -127,14 +179,9 @@ export function Dashboard() {
                   <Package className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">573</div>
-                  <p className="text-xs text-muted-foreground flex items-center">
-                    <span className="text-green-500 flex items-center mr-1">
-                      <ChevronUp className="h-4 w-4" />
-                      201
-                    </span>
-                    desde o ultimo mês
-                  </p>
+                  <div className="text-2xl font-bold">
+                    {data.salesIndicators.totalProducts}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -156,12 +203,12 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {partners.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell>{order.customer}</TableCell>
-                          <TableCell>377</TableCell>
+                      {data.salePartnerAnalytic.map((partner) => (
+                        <TableRow key={partner.id}>
+                          <TableCell>{partner.partner.name}</TableCell>
+                          <TableCell>{partner.totalOrders}</TableCell>
                           <TableCell className="text-right">
-                            ${order.amount.toFixed(2)}
+                            {formatCentsToReal(partner.totalSale)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -178,6 +225,7 @@ export function Dashboard() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Cliente</TableHead>
+                        <TableHead>Parceiro</TableHead>
                         <TableHead>Qtd vendas</TableHead>
                         <TableHead className="text-right">
                           Valor Total
@@ -185,14 +233,17 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {topProducts.map((product) => (
-                        <TableRow key={product.name}>
+                      {data.saleClientAnalytic.map((client) => (
+                        <TableRow key={client.id}>
                           <TableCell className="font-medium">
-                            {product.name}
+                            {client.user.name}
                           </TableCell>
-                          <TableCell>{product.sales}</TableCell>
+                          <TableCell className="font-medium">
+                            {client.user.partner?.name}
+                          </TableCell>
+                          <TableCell>{client.totalOrders}</TableCell>
                           <TableCell className="text-right">
-                            ${product.revenue.toLocaleString()}
+                            {formatCentsToReal(client.totalSale)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -219,14 +270,14 @@ export function Dashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {topProducts.map((product) => (
-                        <TableRow key={product.name}>
+                      {data.saleProductAnalytic.map((product) => (
+                        <TableRow key={product.id}>
                           <TableCell className="font-medium">
-                            {product.name}
+                            {product.product.name}
                           </TableCell>
-                          <TableCell>{product.sales}</TableCell>
+                          <TableCell>{product.totalOrders}</TableCell>
                           <TableCell className="text-right">
-                            ${product.revenue.toLocaleString()}
+                            {formatCentsToReal(product.totalSale)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -241,28 +292,32 @@ export function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>
-                    <BarChart data={salesData}>
+                    <BarChart data={data.salesBalanceAnalytic}>
                       <XAxis
-                        dataKey="name"
+                        dataKey="monthName"
                         stroke="#888888"
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
+                        tickFormatter={(value, index) =>
+                          `${value}/${data.salesBalanceAnalytic[index].year}`
+                        }
                       />
                       <YAxis
                         stroke="#888888"
-                        fontSize={12}
+                        fontSize={10}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => `$${value}`}
+                        tickFormatter={(value) => `${formatCentsToReal(value)}`}
                       />
                       <Tooltip
                         contentStyle={{ background: "#333", border: "none" }}
                         labelStyle={{ color: "#fff" }}
                         itemStyle={{ color: "#fff" }}
+                        content={<CustomTooltip />}
                       />
                       <Bar
-                        dataKey="total"
+                        dataKey="totalSale"
                         fill="#adfa1d"
                         radius={[4, 4, 0, 0]}
                       />

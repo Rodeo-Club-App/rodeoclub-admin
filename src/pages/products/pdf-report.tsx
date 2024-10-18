@@ -1,10 +1,10 @@
 import React from "react";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 
-import { formatDate } from "@/utils/format-iso-date";
 import { registerFonts } from "@/utils/register-fonts";
-import { LogReport } from ".";
+import { ProductReport } from ".";
 import OrderReportHeader from "@/components/orderReportHeader";
+import { formatCentsToReal } from "@/utils/money";
 
 const styles = StyleSheet.create({
   page: {
@@ -66,25 +66,85 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-  data: LogReport;
+  data: ProductReport;
 }
 
 export function PDFReport({ data }: Props) {
   registerFonts();
 
-  const { period, total } = data;
+  const { period, partner } = data;
+
+  function calculateSummary({ data }: Props): {
+    totalQuantitySold: number;
+    totalSalesValue: number;
+  } {
+    return data.products.reduce(
+      (acc, product) => {
+        acc.totalQuantitySold += product.totalQuantitySold;
+        acc.totalSalesValue += product.totalSalesValue;
+        return acc;
+      },
+      { totalQuantitySold: 0, totalSalesValue: 0 }
+    );
+  }
+
+  const { totalQuantitySold, totalSalesValue } = calculateSummary({ data });
 
   return (
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
         <OrderReportHeader
-          totals={[{ label: "Total de acessos", value: total }]}
+          totals={[
+            {
+              label: "Produtos vendidos",
+              value: String(totalQuantitySold),
+            },
+            {
+              label: "Total vendido",
+              value: formatCentsToReal(totalSalesValue),
+            },
+          ]}
           period={period}
-          title="Relatório de Acessos"
+          title="Relatório de Produtos"
         />
+
+        {partner && (
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 15,
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+          >
+            Parceiro - {partner}
+          </Text>
+        )}
 
         <View style={styles.table}>
           <View style={styles.tableRow}>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: "25%",
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              Produto
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: "25%",
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              Categoria
+            </Text>
             <Text
               style={[
                 styles.tableColHeader,
@@ -94,60 +154,38 @@ export function PDFReport({ data }: Props) {
                 },
               ]}
             >
-              Cliente
+              Valor Un.
             </Text>
             <Text
               style={[
                 styles.tableColHeader,
                 {
-                  width: "27%",
+                  width: "10%",
                   fontWeight: "bold",
                 },
               ]}
             >
-              Atividade
-            </Text>
-            <Text
-              style={[
-                styles.tableColHeader,
-                {
-                  width: "14%",
-                  fontWeight: "bold",
-                },
-              ]}
-            >
-              Data
+              Qtd. vendas
             </Text>
 
             <Text
               style={[
                 styles.tableColHeader,
                 {
-                  width: "22%",
+                  width: "20%",
                   fontWeight: "bold",
                 },
               ]}
             >
-              Localização
-            </Text>
-            <Text
-              style={[
-                styles.tableColHeader,
-                {
-                  width: "17%",
-                  fontWeight: "bold",
-                },
-              ]}
-            >
-              Parceiro
+              Total vendido
             </Text>
           </View>
 
-          {data.logs.map((log, index) => {
-            const isLastRow = index === data.logs.length - 1;
+          {data.products.map((product, index) => {
+            const isLastRow = index === data.products.length - 1;
 
             return (
-              <React.Fragment key={log.id}>
+              <React.Fragment key={product.id}>
                 <View
                   style={[
                     styles.tableRow,
@@ -156,22 +194,21 @@ export function PDFReport({ data }: Props) {
                   ]}
                   break={isLastRow}
                 >
+                  <Text style={[styles.tableCol, { width: "25%" }]}>
+                    {product.name}
+                  </Text>
+                  <Text style={[styles.tableCol, { width: "25%" }]}>
+                    {product.category.name}
+                  </Text>
                   <Text style={[styles.tableCol, { width: "20%" }]}>
-                    {log.customer.name}
-                  </Text>
-                  <Text style={[styles.tableCol, { width: "27%" }]}>
-                    {log.activity}
+                    {formatCentsToReal(product.priceCents)}
                   </Text>
 
-                  <Text style={[styles.tableCol, { width: "14%" }]}>
-                    {formatDate(log.createdAt, "dd/MM/yyyy HH:mm")}
+                  <Text style={[styles.tableCol, { width: "10%" }]}>
+                    {product.totalQuantitySold}
                   </Text>
-                  <Text style={[styles.tableCol, { width: "22%" }]}>
-                    {log.city}
-                  </Text>
-
-                  <Text style={[styles.tableCol, { width: "17%" }]}>
-                    {log.customer.partner}
+                  <Text style={[styles.tableCol, { width: "20%" }]}>
+                    {formatCentsToReal(product.totalSalesValue)}
                   </Text>
                 </View>
               </React.Fragment>

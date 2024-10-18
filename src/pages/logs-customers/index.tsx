@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { format, formatDate, isValid, parse, parseISO } from "date-fns";
+import { format, formatDate, parseISO } from "date-fns";
 
 import { Pagination } from "@/components/pagination";
 import { useQuery } from "@tanstack/react-query";
@@ -53,6 +53,7 @@ import { listPartners } from "@/api/partners/list-partners";
 import * as XLSX from "xlsx";
 import { PDFReport } from "./pdf-report";
 import ReactPDF from "@react-pdf/renderer";
+import { formatDateRange } from "@/utils/formatters";
 
 export interface LogReport {
   period: string | null;
@@ -180,29 +181,6 @@ export function LogsCustomers() {
 
       return p;
     });
-  };
-
-  const formatDateRange = (startAt: string, endAt: string) => {
-    const parseDate = (dateString: string) => {
-      const parsedDate = parse(dateString, "yyyy-MM-dd", new Date());
-      return isValid(parsedDate) ? parsedDate : null;
-    };
-
-    const startDate = parseDate(startAt);
-    const endDate = parseDate(endAt);
-
-    if (startDate && endDate) {
-      const formattedStart = format(startDate, "dd/MM/yyyy");
-      const formattedEnd = format(endDate, "dd/MM/yyyy");
-      return `de ${formattedStart} até ${formattedEnd}`;
-    } else if (startDate) {
-      const formattedStart = format(startDate, "dd/MM/yyyy");
-      return `a partir de ${formattedStart}`;
-    } else if (endDate) {
-      const formattedEnd = format(endDate, "dd/MM/yyyy");
-      return `até ${formattedEnd}`;
-    }
-    return "";
   };
 
   const handleExportReport = async (type: "pdf" | "excel") => {
