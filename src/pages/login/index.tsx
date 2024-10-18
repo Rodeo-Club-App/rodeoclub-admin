@@ -8,7 +8,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserAuth } from "@/hooks/useUserAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
 
@@ -91,12 +91,12 @@ export function Login() {
                   required
                 />
                 <div className="flex items-center">
-                  <a
-                    href="/recoveryAccount"
+                  <Link
+                    to="/recoveryAccount"
                     className="ml-auto inline-block text-sm underline"
                   >
                     Esqueceu sua senha?
-                  </a>
+                  </Link>
                 </div>
               </div>
               <Button

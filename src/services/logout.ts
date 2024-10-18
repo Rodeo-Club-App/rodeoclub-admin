@@ -15,6 +15,6 @@ export async function logout() {
       removeUserInLocalStorage(),
     ]);
   } catch (error) {
-    throw new AppError("falha ao realizar o logout");
+    throw new AppError("Falha ao realizar o logout");
   }
 }

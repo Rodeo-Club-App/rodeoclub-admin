@@ -2,11 +2,19 @@ import { useUserAuth } from "@/hooks/useUserAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { logout } from "@/services/logout";
 
 export function UserNav() {
+  const navigate = useNavigate();
   const { user } = useUserAuth();
   const [_, setSearchParams] = useSearchParams();
+
+  async function handleLogout() {
+    await logout();
+
+    navigate("/login");
+  }
 
   return (
     <Popover>
@@ -38,7 +46,11 @@ export function UserNav() {
           Alterar senha
         </Button>
         <div className="my-2 border-b" />
-        <Button variant="outline" className="w-full text-left">
+        <Button
+          variant="outline"
+          className="w-full text-left"
+          onClick={handleLogout}
+        >
           Sair
         </Button>
       </PopoverContent>
