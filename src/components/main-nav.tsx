@@ -87,61 +87,9 @@ export function MainNav({
               <span>Acessos</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuGroup>
-            {/* <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="cursor-pointer">
-                <UserPlus className="mr-2 h-4 w-4" />
-                <span>Invite users</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>Email</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    <span>Message</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    <span>More...</span>
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub> */}
-            {/* <DropdownMenuItem className="cursor-pointer">
-              <Plus className="mr-2 h-4 w-4" />
-              <span>New Team</span>
-              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-            </DropdownMenuItem> */}
-          </DropdownMenuGroup>
-          {/* <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer">
-            <Github className="mr-2 h-4 w-4" />
-            <span>GitHub</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            <LifeBuoy className="mr-2 h-4 w-4" />
-            <span>Support</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            <Cloud className="mr-2 h-4 w-4" />
-            <span>API</span>
-          </DropdownMenuItem> */}
+          <DropdownMenuGroup></DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* <Link
-        to="/orders"
-        className={cn(
-          "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
-          location.pathname === "/orders" && "text-amber-400"
-        )}
-      >
-        Relatórios
-      </Link> */}
 
       <Link
         to="/midias"
@@ -181,7 +129,10 @@ export function MainNav({
               <Rocket className="mr-2 h-4 w-4" />
               <span>Banners Lançamentos</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/promotion-notification")}
+            >
               <Megaphone className="mr-2 h-4 w-4" />
               <span>Divulgações</span>
             </DropdownMenuItem>

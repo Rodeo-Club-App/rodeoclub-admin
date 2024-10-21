@@ -65,7 +65,7 @@ interface IProduct {
   description: string | null;
 }
 
-interface ProductResponse {
+export interface ProductResponse {
   count: number;
   page: number;
   pageCount: number;

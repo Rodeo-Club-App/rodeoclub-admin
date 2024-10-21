@@ -422,25 +422,6 @@ export function CustomerForm() {
                           </FormItem>
                         )}
                       />
-                      // <Card x-chunk="dashboard-07-chunk-1">
-                      //   <CardHeader>
-                      //     <CardTitle>Convite</CardTitle>
-                      //     <div className="w-full space-y-6">
-                      //       <div className="space-y-4">
-                      //         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      //           <div className="space-y-0.5">
-                      //             <div className="text-base">
-                      //               Enviar e-mail de convite ao cliente
-                      //             </div>
-                      //           </div>
-                      //           <div>
-                      //             <Switch defaultChecked={false} />
-                      //           </div>
-                      //         </div>
-                      //       </div>
-                      //     </div>
-                      //   </CardHeader>
-                      // </Card>
                     )}
                   </div>
                   <div className="grid auto-rows-max items-start gap-4 lg:gap-8">

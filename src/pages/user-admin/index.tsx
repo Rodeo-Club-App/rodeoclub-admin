@@ -27,7 +27,7 @@ import {
 } from "@/components/modals/delete-user-admin-modal";
 import { useUserAuth } from "@/hooks/useUserAuth";
 
-interface Member {
+export interface Member {
   id: string;
   userId: string;
   name: string;
