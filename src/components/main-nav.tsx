@@ -9,6 +9,7 @@ import {
   RefreshCcwDot,
   Rocket,
   ShoppingCart,
+  Star,
   TabletSmartphone,
   Users,
 } from "lucide-react";
@@ -179,6 +180,13 @@ export function MainNav({
             >
               <Rocket className="mr-2 h-4 w-4" />
               <span>Banners Lançamentos</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/products-highlights")}
+            >
+              <Star className="mr-2 h-4 w-4" />
+              <span>Produtos em destaque</span>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <Megaphone className="mr-2 h-4 w-4" />

@@ -18,6 +18,7 @@ import RecoveryAccount from "@/pages/recoveryAccount/recoveryAccountResquest";
 import TokenVerification from "@/pages/recoveryAccount/tokenVerification";
 import RedefinePassword from "@/pages/recoveryAccount/reset";
 import { LogsCustomers } from "@/pages/logs-customers";
+import { ProductsHighlights } from "@/pages/products-highlights";
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
       {
         path: "/logs",
         element: <LogsCustomers />,
+      },
+      {
+        path: "/products-highlights",
+        element: <ProductsHighlights />,
       },
     ],
   },
