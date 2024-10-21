@@ -1,11 +1,15 @@
 import { cn } from "@/lib/utils";
 import {
+  CloudDownload,
   Eye,
+  GitBranch,
   Home,
   Megaphone,
   Package,
+  RefreshCcwDot,
   Rocket,
   ShoppingCart,
+  TabletSmartphone,
   Users,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -19,14 +23,50 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
+  function handleImportProduts() {
+    toast({
+      title: "Script executado",
+      description:
+        "A importação de novos produtos está em execução em segundo plano, avisaremos você quando a importação finalizar",
+      variant: "success",
+    });
+
+    api.post("/products/rodeoclub/import").then((r) => {
+      toast({
+        title: "Tarefa finalizada!",
+        description: r.data.message,
+        variant: "success",
+      });
+    });
+  }
+  function handleUpdateProducts() {
+    toast({
+      title: "Script executado",
+      description:
+        "A atualização de produtos está em execução em segundo plano",
+      variant: "success",
+    });
+
+    api.post("/products/rodeoclub/update-products-list").then(() => {
+      toast({
+        title: "Tarefa finalizada!",
+        description:
+          "O script de produtos foi concluído e as novas informações já está atualizadas!",
+        variant: "success",
+      });
+    });
+  }
   return (
     <nav
       className={cn("flex items-center space-x-4 lg:space-x-6", className)}
@@ -87,49 +127,6 @@ export function MainNav({
               <span>Acessos</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuGroup>
-            {/* <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="cursor-pointer">
-                <UserPlus className="mr-2 h-4 w-4" />
-                <span>Invite users</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>Email</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    <span>Message</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    <span>More...</span>
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub> */}
-            {/* <DropdownMenuItem className="cursor-pointer">
-              <Plus className="mr-2 h-4 w-4" />
-              <span>New Team</span>
-              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-            </DropdownMenuItem> */}
-          </DropdownMenuGroup>
-          {/* <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer">
-            <Github className="mr-2 h-4 w-4" />
-            <span>GitHub</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            <LifeBuoy className="mr-2 h-4 w-4" />
-            <span>Support</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem disabled>
-            <Cloud className="mr-2 h-4 w-4" />
-            <span>API</span>
-          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -164,7 +161,9 @@ export function MainNav({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Aplicativo</DropdownMenuLabel>
+          <DropdownMenuLabel className="flex items-center gap-2">
+            Aplicativo <TabletSmartphone className="w-4 h-4" />
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
@@ -194,6 +193,28 @@ export function MainNav({
             >
               <Users className="mr-2 h-4 w-4" />
               <span>Administradores</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+
+          <DropdownMenuLabel className="flex items-center gap-2">
+            Automações <GitBranch className="w-4 h-4" />
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={handleImportProduts}
+            >
+              <CloudDownload className="mr-2 h-4 w-4" />
+              <span>Importar novos produtos</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={handleUpdateProducts}
+            >
+              <RefreshCcwDot className="mr-2 h-4 w-4" />
+              <span>Atualizar produtos</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

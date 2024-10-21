@@ -581,7 +581,7 @@ export function Products() {
                                 <TableCell className="text-sm font-medium">
                                   {formatDate(
                                     new Date(product.updatedAt),
-                                    "dd/MM/yyyy"
+                                    "dd/MM/yyyy HH:mm"
                                   )}
                                 </TableCell>
 

@@ -1,4 +1,12 @@
-import { FileUp, MoreHorizontal, Plus, Search, X } from "lucide-react";
+import {
+  FileSpreadsheet,
+  Mail,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Settings2,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,12 +41,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { format, parseISO } from "date-fns";
-import { DateRange } from "react-day-picker";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useDebounce } from "use-debounce";
-import { z } from "zod";
-import { AppLayout } from "../_layout";
+import {
+  ImportCsvUsersModal,
+  ImportCsvUsersModalRef,
+} from "@/components/modals/import-csv-users-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,13 +52,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { formatCPF } from "@/utils/formatters";
 import {
-  ImportCsvUsersModal,
-  ImportCsvUsersModalRef,
-} from "@/components/modals/import-csv-users-modal";
-import { useRef } from "react";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
+import { formatCPF } from "@/utils/formatters";
+import { format, parseISO } from "date-fns";
+import { useRef } from "react";
+import { DateRange } from "react-day-picker";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDebounce } from "use-debounce";
+import { z } from "zod";
+import { AppLayout } from "../_layout";
 
 export interface CustomerResponse {
   currentPage: number;
@@ -74,6 +89,7 @@ export interface ICustomer {
 }
 
 export function Customers() {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -117,6 +133,7 @@ export function Customers() {
 
       return response.data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const parseDate = (param: string | null) =>
@@ -163,6 +180,46 @@ export function Customers() {
 
       return prev;
     });
+  }
+
+  async function sendEmailFirstAccess() {
+    try {
+      const response = await api.post("/user/rodeoclub/send-welcome-bulk");
+
+      toast({
+        variant: "success",
+        title: "Sucesso",
+        description: response.data.message,
+        action: <ToastAction altText="Ok">Ok</ToastAction>,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Falha ao enviar e-mail",
+        variant: "destructive",
+        description:
+          "Houve um erro ao enviar e-mails de primeiro acesso " + error.message,
+      });
+    }
+  }
+
+  async function handleSendUserFirstAccess(id: string) {
+    try {
+      await api.get(`/user/rodeoclub/resend-email/${id}`);
+
+      toast({
+        variant: "success",
+        title: "Sucesso",
+        description: "E-mail enviado",
+        action: <ToastAction altText="Ok">Ok</ToastAction>,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Falha ao enviar e-mail",
+        variant: "destructive",
+        description:
+          "Houve um erro ao enviar e-mail de primeiro acesso " + error.message,
+      });
+    }
   }
 
   return (
@@ -233,15 +290,39 @@ export function Customers() {
                     </Select>
                   </div>
 
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-10 gap-1 text-sm mr-1"
-                    onClick={() => importCsvUserModalRef.current?.openModal()}
-                  >
-                    <FileUp className="h-3.5 w-3.5 mt-0.5" />
-                    <span className="sr-only md:not-sr-only">Importar</span>
-                  </Button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="icon" className="mr-2">
+                        <Settings2 className="w-4 h-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="grid gap-4">
+                        <h4 className="font-medium leading-none">Opções</h4>
+                        <div className="grid gap-2">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={sendEmailFirstAccess}
+                          >
+                            <Mail className="mr-2 h-4 w-4" />
+                            Enviar e-mails de primeiro acesso
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() =>
+                              importCsvUserModalRef.current?.openModal()
+                            }
+                          >
+                            <FileSpreadsheet className="mr-2 h-4 w-4" />
+                            Importar usuários por CSV
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
 
                   <Button onClick={() => navigate("/customers/new")}>
                     <Plus className="w-4 h-4 mr-1" />
@@ -282,9 +363,7 @@ export function Customers() {
                             {data?.users?.map((customer) => (
                               <TableRow key={customer.id}>
                                 <TableCell className="font-medium text-xs sm:text-sm pr-4">
-                                  <div>
-                                    {customer.name}
-                                  </div>
+                                  <div>{customer.name}</div>
                                   <div className="text-sm text-muted-foreground md:inline">
                                     {customer.email}
                                   </div>
@@ -337,6 +416,14 @@ export function Customers() {
                                         }
                                       >
                                         Editar
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleSendUserFirstAccess(customer.id)
+                                        }
+                                      >
+                                        Reenviar e-mail de Primeiro Acesso
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
