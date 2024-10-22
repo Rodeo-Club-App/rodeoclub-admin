@@ -163,15 +163,16 @@ export function ProductsHighlights() {
             <Tabs defaultValue="week">
               <TabsContent value="week">
                 <Card x-chunk="dashboard-05-chunk-3">
-                  <CardHeader className="px-7 flex flex-row w-full justify-between items-center">
-                    <div>
-                      <CardTitle>Produtos em destaque</CardTitle>
-                      <CardDescription>
+                  <CardHeader className="px-7 flex sm:flex-row w-full justify-between items-center">
+                    <div className="flex flex-col items-center sm:items-start mb-3 sm:mb-0 mr-5">
+                      <CardTitle className="text-lg sm:text-2xl">
+                        Produtos em destaque
+                      </CardTitle>
+                      <CardDescription className="mt-1 sm:mb-0 text-center sm:text-left">
                         Gerencie os produtos em destaques, definindo ordenações
                         e escolhendo seus itens
                       </CardDescription>
                     </div>
-
                     <Button
                       disabled={loading}
                       onClick={handleSave}
@@ -199,9 +200,9 @@ export function ProductsHighlights() {
                                 <TableHeader>
                                   <TableRow>
                                     <TableHead></TableHead>
-                                    <TableHead className="">Nome</TableHead>
+                                    <TableHead className="pl-5 sm:pl-0">Nome</TableHead>
                                     <TableHead className="">Estoque</TableHead>
-                                    <TableHead className="w-10 ">
+                                    <TableHead className="w-10">
                                       <span className="">Destacado</span>
                                     </TableHead>
                                   </TableRow>
@@ -223,16 +224,16 @@ export function ProductsHighlights() {
                                             <img
                                               src={product.imageUrl}
                                               alt={product.name}
-                                              className="min-w-24 min-h-24 max-w-24 h-24 object-contain rounded-sm"
+                                              className="min-w-24 max-w-24 object-contain rounded-sm"
                                             />
                                           </TableCell>
-                                          <TableCell className="text-sm font-medium pr-4 max-w-56">
+                                          <TableCell className="pl-5 sm:pl-0 text-sm font-medium pr-4 min-w-56">
                                             {product.name}
                                             <p className="text-sm text-muted-foreground">
                                               {product.category.name}
                                             </p>
                                           </TableCell>
-                                          <TableCell>
+                                          <TableCell className="min-w-36">
                                             <Badge
                                               className={`text-xs font-medium pb-1 cursor-default hover:bg-${
                                                 stockColors[product.stock]
@@ -241,7 +242,7 @@ export function ProductsHighlights() {
                                               {formattedStock[product.stock]}
                                             </Badge>
                                           </TableCell>
-                                          <TableCell className="md:table-cell">
+                                          <TableCell className="md:table-cell min-w-36">
                                             {product.isHighlighted ? (
                                               <Button
                                                 size="sm"
