@@ -124,7 +124,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             {items.map((item, index) => (
               <li
                 key={index}
-                className="flex flex-col md:flex-row lg:flex-col xl:flex-row items-center"
+                className="flex flex-col md:flex-row xxl:flex-col xl:flex-row items-center"
               >
                 <img
                   src={item.imageUrl}

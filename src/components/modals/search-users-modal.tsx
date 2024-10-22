@@ -106,10 +106,12 @@ export const SearchUsersModal = forwardRef<
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogTitle>Adicionar um novo administrador</DialogTitle>
-        <ScrollArea className="sm:max-w-2xl m-2">
-          <div className="grid gap-4 py-4">
+      <DialogContent className="sm:max-w-lg">
+        <DialogTitle className="mt-3 text-base md:text-xl">
+          Adicionar novo administrador
+        </DialogTitle>
+        <ScrollArea>
+          <div className="grid gap-4 p-1">
             <div className="relative">
               <Search className="absolute left-2 top-3 h-4 w-4 text-gray-500" />
               <Input
@@ -122,7 +124,7 @@ export const SearchUsersModal = forwardRef<
                     return p;
                   })
                 }
-                className="pl-8 w-[250px] ml-2"
+                className="pl-8 rounded-sm"
               />
             </div>
             {isLoading ? (
@@ -135,7 +137,7 @@ export const SearchUsersModal = forwardRef<
                   data?.users.map((user) => (
                     <li
                       key={user.id}
-                      className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
+                      className="py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => onSelectUser(user.id, user.name)}
                     >
                       {user.name}
@@ -150,7 +152,11 @@ export const SearchUsersModal = forwardRef<
               </div>
             )}
 
-            {selectedMember && <p>{selectedMember.name} selecionado</p>}
+            {selectedMember && (
+              <div className="bg-slate-200 p-6 flex justify-center rounded-sm">
+                <p className="font-bold uppercase">{selectedMember.name}</p>
+              </div>
+            )}
           </div>
         </ScrollArea>
         <DialogFooter>

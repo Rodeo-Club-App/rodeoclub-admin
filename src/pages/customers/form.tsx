@@ -308,7 +308,9 @@ export function CustomerForm() {
                   <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                     <Card x-chunk="dashboard-07-chunk-0">
                       <CardHeader>
-                        <CardTitle>Dados do Cliente</CardTitle>
+                        <CardTitle className="text-base sm:text-lg md:text-xl">
+                          Dados do Cliente
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid gap-6">
@@ -422,31 +424,14 @@ export function CustomerForm() {
                           </FormItem>
                         )}
                       />
-                      // <Card x-chunk="dashboard-07-chunk-1">
-                      //   <CardHeader>
-                      //     <CardTitle>Convite</CardTitle>
-                      //     <div className="w-full space-y-6">
-                      //       <div className="space-y-4">
-                      //         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      //           <div className="space-y-0.5">
-                      //             <div className="text-base">
-                      //               Enviar e-mail de convite ao cliente
-                      //             </div>
-                      //           </div>
-                      //           <div>
-                      //             <Switch defaultChecked={false} />
-                      //           </div>
-                      //         </div>
-                      //       </div>
-                      //     </div>
-                      //   </CardHeader>
-                      // </Card>
                     )}
                   </div>
                   <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                     <Card x-chunk="dashboard-07-chunk-3">
                       <CardHeader>
-                        <CardTitle>Parceiro</CardTitle>
+                        <CardTitle className="text-base sm:text-lg md:text-xl">
+                          Parceiro
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid gap-3">
@@ -455,7 +440,6 @@ export function CustomerForm() {
                             name="partnerId"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Parceiro</FormLabel>
                                 <Select
                                   onValueChange={field.onChange}
                                   value={field.value}
@@ -483,7 +467,9 @@ export function CustomerForm() {
                     </Card>
                     <Card x-chunk="dashboard-07-chunk-2">
                       <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle>Endereços</CardTitle>
+                        <CardTitle className="text-base sm:text-lg md:text-xl">
+                          Endereços
+                        </CardTitle>
                         <Button
                           size="icon"
                           className="w-8 h-8"

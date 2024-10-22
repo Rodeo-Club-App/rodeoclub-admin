@@ -182,6 +182,15 @@ export function Customers() {
     });
   }
 
+  const clearDate = () => {
+    setSearchParams((p) => {
+      p.delete("startAt");
+      p.delete("endAt");
+
+      return p;
+    });
+  };
+
   async function sendEmailFirstAccess() {
     try {
       const response = await api.post("/user/rodeoclub/send-welcome-bulk");
@@ -229,13 +238,13 @@ export function Customers() {
       <AppLayout>
         <main
           className={
-            "md:grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8"
+            "lg:grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8"
           }
         >
-          <div className="md:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
+          <div className="lg:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
             <Tabs defaultValue="week">
-              <div className="flex flex-col md:flex-row md:items-center">
-                <div className="relative md:mr-2 md:grow-0 mb-1 md:mb-0 w-full sm:w-auto">
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
+                <div className="relative md:mr-2 md:grow-0 w-full sm:w-auto">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
@@ -251,14 +260,27 @@ export function Customers() {
                   />
                 </div>
 
-                <div className="md:ml-auto flex flex-wrap sm:flex-row mt-2">
-                  <DatePickerWithRange
-                    to={to}
-                    from={from}
-                    onChange={handleRangeChange}
-                  />
+                <div className="md:ml-auto gap-2 flex flex-wrap sm:flex-row md:gap-0">
+                  <div className="flex items-center w-full xs:w-auto md:mr-1">
+                    <DatePickerWithRange
+                      to={to}
+                      from={from}
+                      onChange={handleRangeChange}
+                    />
 
-                  <div className="flex mr-1">
+                    {(from || to) && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearDate}
+                        className="w-8 h-8 hover:text-red-500"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -350,9 +372,7 @@ export function Customers() {
                               <TableHead className="pl-4">CPF</TableHead>
 
                               <TableHead className="">Parceiro</TableHead>
-                              <TableHead className="">
-                                Data (Registro no APP)
-                              </TableHead>
+                              <TableHead>Data (Registro no APP)</TableHead>
 
                               <TableHead className="md:table-cell w-10 text-right">
                                 <span className="sr-only">Ações</span>

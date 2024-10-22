@@ -206,7 +206,7 @@ export function BannersForm() {
 
           <Card className="w-full">
             <CardContent className="pt-6 flex flex-col md:flex-row gap-6">
-              <div className="flex flex-col items-center w-full md:w-[300px]">
+              <div className="flex flex-col items-center w-full md:w-[300px] ">
                 {selectedMedia ? (
                   <img
                     src={selectedMedia.url}
@@ -224,7 +224,7 @@ export function BannersForm() {
                 )}
 
                 <Button
-                  className="mt-4 w-full md:w-auto"
+                  className="mt-4 w-full xs:w-[150px] md:w-auto"
                   onClick={() => viewMediaModal.current?.openModal()}
                 >
                   {id && id !== "new" ? "Alterar imagem" : "Adicionar imagem"}
@@ -350,7 +350,7 @@ export function BannersForm() {
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button
-                className="w-full md:w-auto"
+                className="w-full md:w-auto xs:w-[150px]"
                 disabled={isLoading}
                 onClick={onSubmit}
               >
