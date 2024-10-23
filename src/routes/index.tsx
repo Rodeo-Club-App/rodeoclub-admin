@@ -68,13 +68,12 @@ export const router = createBrowserRouter([
         element: <LogsCustomers />,
       },
       {
-
         path: "/promotion-notification",
         element: <PromotionNotification />,
-
+      },
+      {
         path: "/products-highlights",
         element: <ProductsHighlights />,
-
       },
     ],
   },

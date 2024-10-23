@@ -2,7 +2,7 @@ import logo from "@/assets/logo-pvt-top.png";
 import { MainNav } from "./main-nav";
 import { UserNav } from "./user-nav";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Box,
   ChartBar,
@@ -30,7 +30,6 @@ import { ScrollArea } from "./ui/scroll-area";
 
 export function Header() {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const editPassword = searchParams.get("editPassword") as "true" | "false";
@@ -102,24 +101,8 @@ export function Header() {
 
                   <Link
                     to="/midias"
-                    className="flex items-center gap-4 text-sm font-medium  text-muted-foreground hover:text-foreground"
-                  >
-
-                    <Rocket className="h-5 w-5" />
-                    Banners Lançamentos
-                  </Link>
-                  <Button
                     className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
-                    onClick={() => navigate("/promotion-notification")}
                   >
-                    <Megaphone className="h-5 w-5" />
-                    Divulgações
-                  </Button>
-
-                  <Link
-                    to="/user-admin"
-                    className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
->
                     <ChartBar className="h-5 w-5" />
                     Mídias
                   </Link>
@@ -162,42 +145,45 @@ export function Header() {
                     <TabletSmartphone className="w-4 h-4" />
                   </div>
 
-                  <div className="">
-                    <Button
-                      className="flex text-base mb-1 p-0 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
-                      onClick={() => navigate("/banners?destination=home")}
+                  <div className="gap-5 flex flex-col">
+                    <Link
+                      to="/banners?destination=home"
+                      className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
                     >
                       <Home className="h-5 w-5" />
                       Banners Home
-                    </Button>
-                    <Button
-                      className="flex p-0 text-base mb-1 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
-                      onClick={() => navigate("/banners?destination=releases")}
+                    </Link>
+                    <Link
+                      to="/banners?destination=releases"
+                      className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
                     >
                       <Rocket className="h-5 w-5" />
                       <span className="flex flex-wrap text-left whitespace-normal">
                         Banners Lançamentos
                       </span>
-                    </Button>
-                    <Button
-                      className="flex p-0 text-base mb-1 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
-                      onClick={() => navigate("/products-highlights")}
+                    </Link>
+                    <Link
+                      to="/products-highlights"
+                      className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
                     >
-                      <Star className="mr-2 h-4 w-4" />
+                      <Star className="h-4 w-4" />
                       Produtos em destaque
-                    </Button>
-                    <Button className="flex p-0 text-base mb-1 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground">
+                    </Link>
+                    <Link
+                      to="/promotion-notification"
+                      className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
+                    >
                       <Megaphone className="h-5 w-5" />
                       Divulgações
-                    </Button>
+                    </Link>
 
-                    <Button
-                      className="flex p-0 text-base mb-1 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
-                      onClick={() => navigate("/user-admin")}
+                    <Link
+                      to="/user-admin"
+                      className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
                     >
                       <Users className="h-5 w-5" />
                       Administradores
-                    </Button>
+                    </Link>
                   </div>
 
                   <div className="flex items-center">
