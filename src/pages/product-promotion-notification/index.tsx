@@ -3,7 +3,7 @@ import { Title } from "@/components/title-page";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AppLayout } from "../_layout";
-import { Edit, Loader } from "lucide-react";
+import { Edit, Loader, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,7 +14,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import { Switch } from "@/components/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,15 +52,15 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
 import { CustomerResponse } from "../customers";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const notificationSchema = z.object({
   title: z.string({ required_error: "O título é obrigatório" }),
   description: z.string({ required_error: "A descrição é obrigatória" }),
-  imageUrl: z.string().url("URL da imagem inválida").optional(),
   type: z.enum(["alert", "promotion"]).default("alert"),
   sendToAllUsers: z.boolean().default(true),
-  partnerId: z.string().optional(),
-  userId: z.string().optional(),
+  partnerIds: z.array(z.string()).optional(),
+  userIds: z.array(z.string()).optional(),
 });
 
 type NotificationSchema = z.infer<typeof notificationSchema>;
@@ -70,26 +76,26 @@ export function PromotionNotification() {
 
   const [searchName, setSearchName] = useState("");
   const [debouncedSearchName] = useDebounce(searchName, 500);
-  const [_, setReference] = useState("");
+  const [reference, setReference] = useState("");
   const [referenceLabel, setReferenceLabel] = useState("");
 
   const handleMediaSelect = (media: MediaProps | null) => {
     setSelectedMedia(media);
   };
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const [debouncedSearchQuery] = useDebounce(search, 500);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isRefetching } = useQuery({
     queryKey: ["users-search", debouncedSearchQuery],
-    enabled: search !== undefined,
+    enabled: !!search,
     queryFn: async () => {
       const response = await api.post<CustomerResponse>(
         "/user/rodeoclub/search",
         {
           ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
-          excludeIds: excludeIds,
+          // excludeIds: excludeIds,
         },
         {
           params: {
@@ -125,28 +131,40 @@ export function PromotionNotification() {
     staleTime: 15 * 60 * 1000,
   });
 
-  const [excludeIds] = useState<string[]>([]);
-
   const form = useForm<NotificationSchema>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
       sendToAllUsers: true,
       type: "alert",
+      userIds: [],
+      partnerIds: [],
     },
   });
+
+  console.log(form.formState.errors);
 
   async function handleSubmit() {
     await form.handleSubmit(onSubmit)();
   }
 
   async function onSubmit(values: NotificationSchema) {
+    const { title, description, userIds, partnerIds, type } = values;
     try {
-      console.log(values);
-
-      await api.post("/notifications/rodeoclub", values);
+      const response = await api.post<{
+        message: string;
+        count: number;
+      }>("/notifications/rodeoclub", {
+        title,
+        description,
+        mediaId: selectedMedia?.id,
+        users: userIds,
+        type,
+        ...(reference && { reference: Number(reference) }),
+        partnerIds: partnerIds?.map((i) => Number(i)),
+      });
       toast({
         title: "Sucesso",
-        description: "Notificação enviada com sucesso",
+        description: `${response.data.count} notificações enviadas com sucesso`,
         variant: "success",
       });
       navigate("/");
@@ -211,6 +229,7 @@ export function PromotionNotification() {
                           )}
 
                           <Button
+                            type="button"
                             className="mt-4 w-full md:w-auto"
                             onClick={() => viewMediaModal.current?.openModal()}
                           >
@@ -269,33 +288,38 @@ export function PromotionNotification() {
                       control={form.control}
                       name="type"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between p-4">
+                        <FormItem className="flex flex-col  p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">
                               Tipo de Notificação
                             </FormLabel>
                             <FormDescription>
                               Selecione o tipo de notificação que deseja enviar.
-                              Atualmente, você está escolhendo:{" "}
-                              <strong>
-                                {field.value === "promotion"
-                                  ? "Promoção"
-                                  : "Alerta"}
-                              </strong>
-                              .
                             </FormDescription>
                           </div>
                           <FormControl>
-                            <Switch
-                              checked={field.value === "alert"}
-                              onCheckedChange={() =>
-                                field.onChange(
-                                  field.value === "alert"
-                                    ? "promotion"
-                                    : "alert"
-                                )
-                              }
-                            />
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex flex-col space-y-1"
+                            >
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="alert" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  Avisos gerais / alertas
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="promotion" />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  Promoção de Produtos
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
                           </FormControl>
 
                           <FormMessage />
@@ -341,65 +365,6 @@ export function PromotionNotification() {
                 </div>
 
                 <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                  <Card x-chunk="dashboard-07-chunk-3">
-                    <CardHeader>
-                      <CardTitle>Parceiro</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-3">
-                        <FormField
-                          control={form.control}
-                          name="partnerId"
-                          render={({ field }) => (
-                            <FormItem>
-                              <Select
-                                isMulti
-                                closeMenuOnSelect={false}
-                                components={animatedComponents}
-                                styles={{
-                                  control: (provided) => ({
-                                    ...provided,
-                                    borderRadius: "12px",
-                                    borderColor: "#dfdfdf",
-                                    boxShadow: "none",
-                                    fontSize: "14px ",
-                                    lineHeight: "1.25rem",
-                                    "&:hover": {
-                                      borderColor: "#000000",
-                                      borderWidth: "2px",
-                                    },
-                                  }),
-                                }}
-                                placeholder="Selecione um ou mais parceiros..."
-                                options={
-                                  partnersList?.map((partner) => ({
-                                    value: String(partner.id),
-                                    label: partner.name,
-                                  })) || []
-                                }
-                                onChange={(selectedOptions: any) => {
-                                  const selectedValues = selectedOptions.map(
-                                    (option: any) => option.value
-                                  );
-                                  field.onChange(selectedValues);
-                                }}
-                                value={(Array.isArray(field.value)
-                                  ? field.value
-                                  : []
-                                ).map((value) => ({
-                                  value: value,
-                                  label:
-                                    partnersList?.find(
-                                      (partner) => String(partner.id) === value
-                                    )?.name || "",
-                                }))}
-                              />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
                   {form.watch("type") === "promotion" && (
                     <Card x-chunk="dashboard-07-chunk-3">
                       <CardHeader>
@@ -459,13 +424,85 @@ export function PromotionNotification() {
                   {form.watch("sendToAllUsers") === false && (
                     <Card x-chunk="dashboard-07-chunk-3">
                       <CardHeader>
-                        <CardTitle>Clientes</CardTitle>
+                        <CardTitle>Parceiro</CardTitle>
+                        <CardDescription>
+                          Quando um ou mais parceiros forem selecionados,
+                          notificações serão enviadas aos clientes vinculados a
+                          esses parceiros.{" "}
+                        </CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="grid gap-3">
                           <FormField
                             control={form.control}
-                            name="userId"
+                            name="partnerIds"
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  isMulti
+                                  closeMenuOnSelect={false}
+                                  components={animatedComponents}
+                                  styles={{
+                                    control: (provided) => ({
+                                      ...provided,
+                                      borderRadius: "12px",
+                                      borderColor: "#dfdfdf",
+                                      boxShadow: "none",
+                                      fontSize: "14px ",
+                                      lineHeight: "1.25rem",
+                                      "&:hover": {
+                                        borderColor: "#000000",
+                                        borderWidth: "2px",
+                                      },
+                                    }),
+                                  }}
+                                  placeholder="Selecione um ou mais parceiros..."
+                                  options={
+                                    partnersList?.map((partner) => ({
+                                      value: String(partner.id),
+                                      label: partner.name,
+                                    })) || []
+                                  }
+                                  onChange={(selectedOptions: any) => {
+                                    const selectedValues = selectedOptions.map(
+                                      (option: any) => option.value
+                                    );
+                                    field.onChange(selectedValues);
+                                  }}
+                                  value={(Array.isArray(field.value)
+                                    ? field.value
+                                    : []
+                                  ).map((value) => ({
+                                    value: value,
+                                    label:
+                                      partnersList?.find(
+                                        (partner) =>
+                                          String(partner.id) === value
+                                      )?.name || "",
+                                  }))}
+                                />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {form.watch("sendToAllUsers") === false && (
+                    <Card x-chunk="dashboard-07-chunk-3">
+                      <CardHeader>
+                        <CardTitle>Clientes</CardTitle>
+                        <CardDescription>
+                          Quando um ou mais clientes forem selecionados,
+                          notificações serão enviadas apenas a esses clientes.
+                        </CardDescription>{" "}
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid gap-3">
+                          <FormField
+                            control={form.control}
+                            name="userIds"
                             render={({ field }) => (
                               <FormItem>
                                 <Select
@@ -486,7 +523,29 @@ export function PromotionNotification() {
                                       },
                                     }),
                                   }}
+                                  isLoading={isLoading || isRefetching}
+                                  loadingMessage={() => (
+                                    <Loader className="animate-spin w-4 h-4" />
+                                  )}
+                                  noOptionsMessage={() => (
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <SearchX className="w-4 h-4" />
+                                      Nada encontrado
+                                    </div>
+                                  )}
                                   placeholder="Pesquise um ou mais clientes..."
+                                  onInputChange={(e) => {
+                                    setSearchParams((p) => {
+                                      p.set("search", e);
+
+                                      return p;
+                                    });
+                                  }}
                                   options={
                                     data?.users.map((user) => ({
                                       value: String(user.id),
