@@ -128,6 +128,8 @@ export function MainNav({
               <span>Acessos</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
+          <DropdownMenuGroup></DropdownMenuGroup>
+
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -173,12 +175,17 @@ export function MainNav({
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
+
+              onClick={() => navigate("/promotion-notification")}
+            >
+
               onClick={() => navigate("/products-highlights")}
             >
               <Star className="mr-2 h-4 w-4" />
               <span>Produtos em destaque</span>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
+
               <Megaphone className="mr-2 h-4 w-4" />
               <span>Divulgações</span>
             </DropdownMenuItem>

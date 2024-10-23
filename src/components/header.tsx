@@ -104,6 +104,22 @@ export function Header() {
                     to="/midias"
                     className="flex items-center gap-4 text-sm font-medium  text-muted-foreground hover:text-foreground"
                   >
+
+                    <Rocket className="h-5 w-5" />
+                    Banners Lançamentos
+                  </Link>
+                  <Button
+                    className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+                    onClick={() => navigate("/promotion-notification")}
+                  >
+                    <Megaphone className="h-5 w-5" />
+                    Divulgações
+                  </Button>
+
+                  <Link
+                    to="/user-admin"
+                    className="flex p-0 text-base mb-2 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+>
                     <ChartBar className="h-5 w-5" />
                     Mídias
                   </Link>
