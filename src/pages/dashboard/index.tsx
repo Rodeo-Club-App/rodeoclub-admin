@@ -34,6 +34,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { SalesAnalytics } from "@/dto/interfaces/sales-indicators";
 import { formatCentsToReal } from "@/utils/money";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -75,7 +76,7 @@ export function Dashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Valor total vendas
+                    Valor Total Vendas
                   </CardTitle>
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -108,7 +109,7 @@ export function Dashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Qtd Clientes
+                    Qtd. Clientes
                   </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -141,7 +142,7 @@ export function Dashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Qtd total pedidos
+                    Qtd. Total Pedidos
                   </CardTitle>
                   <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -174,7 +175,7 @@ export function Dashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Qtd Produtos
+                    Qtd. Produtos
                   </CardTitle>
                   <Package className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -186,109 +187,141 @@ export function Dashboard() {
               </Card>
             </div>
 
-            <div className="grid gap-6 mb-8 md:grid-cols-2">
+            <div className="md:grid gap-6 mb-8 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Top parceiros com mais vendas</CardTitle>
+                  <CardTitle className="uppercase text-xl">
+                    Top parceiros com mais vendas
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Parceiro</TableHead>
-                        <TableHead>Qtd vendas</TableHead>
-                        <TableHead className="text-right">
-                          Valor Total
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {data.salePartnerAnalytic.map((partner) => (
-                        <TableRow key={partner.id}>
-                          <TableCell>{partner.partner.name}</TableCell>
-                          <TableCell>{partner.totalOrders}</TableCell>
-                          <TableCell className="text-right">
-                            {formatCentsToReal(partner.totalSale)}
-                          </TableCell>
+                  <ScrollArea>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Parceiro</TableHead>
+                          <TableHead className="text-center">
+                            Qtd vendas
+                          </TableHead>
+                          <TableHead className="text-right">
+                            Valor Total
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {data.salePartnerAnalytic.map((partner) => (
+                          <TableRow key={partner.id}>
+                            <TableCell className="min-w-40 pr-4">
+                              {partner.partner.name}
+                            </TableCell>
+                            <TableCell className="min-w-28 text-center font-medium">
+                              {partner.totalOrders}
+                            </TableCell>
+                            <TableCell className="text-right min-w-28">
+                              {formatCentsToReal(partner.totalSale)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                 </CardContent>
               </Card>
-              <Card>
+
+              <Card className="mt-6 md:mt-0">
                 <CardHeader>
-                  <CardTitle>Top clientes com mais vendas</CardTitle>
+                  <CardTitle className="uppercase text-xl">
+                    Top clientes com mais vendas
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Cliente</TableHead>
-                        <TableHead>Parceiro</TableHead>
-                        <TableHead>Qtd vendas</TableHead>
-                        <TableHead className="text-right">
-                          Valor Total
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {data.saleClientAnalytic.map((client) => (
-                        <TableRow key={client.id}>
-                          <TableCell className="font-medium">
-                            {client.user.name}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {client.user.partner?.name}
-                          </TableCell>
-                          <TableCell>{client.totalOrders}</TableCell>
-                          <TableCell className="text-right">
-                            {formatCentsToReal(client.totalSale)}
-                          </TableCell>
+                  <ScrollArea>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Cliente</TableHead>
+                          <TableHead>Parceiro</TableHead>
+                          <TableHead className="text-center">
+                            Qtd vendas
+                          </TableHead>
+                          <TableHead className="text-right">
+                            Valor Total
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {data.saleClientAnalytic.map((client) => (
+                          <TableRow key={client.id}>
+                            <TableCell className="font-medium min-w-48 pr-4">
+                              {client.user.name}
+                            </TableCell>
+                            <TableCell className="font-medium min-w-36">
+                              {client.user.partner?.name}
+                            </TableCell>
+                            <TableCell className="min-w-28 text-center font-medium">
+                              {client.totalOrders}
+                            </TableCell>
+                            <TableCell className="text-right min-w-28">
+                              {formatCentsToReal(client.totalSale)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                 </CardContent>
               </Card>
             </div>
 
-            <div className="grid gap-6 mb-8 md:grid-cols-2">
+            <div className="md:grid gap-6 mb-8 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Produtos mais vendidos</CardTitle>
+                  <CardTitle className="uppercase text-xl">
+                    Top Produtos mais vendidos
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Produto</TableHead>
-                        <TableHead>Qtd Vendas</TableHead>
-                        <TableHead className="text-right">
-                          Valor Total
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {data.saleProductAnalytic.map((product) => (
-                        <TableRow key={product.id}>
-                          <TableCell className="font-medium">
-                            {product.product.name}
-                          </TableCell>
-                          <TableCell>{product.totalOrders}</TableCell>
-                          <TableCell className="text-right">
-                            {formatCentsToReal(product.totalSale)}
-                          </TableCell>
+                  <ScrollArea>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Produto</TableHead>
+                          <TableHead className="text-center">
+                            Qtd Vendas
+                          </TableHead>
+                          <TableHead className="text-right">
+                            Valor Total
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {data.saleProductAnalytic.map((product) => (
+                          <TableRow key={product.id}>
+                            <TableCell className="font-medium min-w-48 pr-4">
+                              {product.product.name}
+                            </TableCell>
+                            <TableCell className="min-w-28 text-center font-medium">
+                              {product.totalOrders}
+                            </TableCell>
+                            <TableCell className="min-w-28 text-right">
+                              {formatCentsToReal(product.totalSale)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="mt-6 md:mt-0">
                 <CardHeader>
-                  <CardTitle>Balanço de vendas</CardTitle>
+                  <CardTitle className="uppercase text-xl">
+                    Balanço de vendas
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={350}>

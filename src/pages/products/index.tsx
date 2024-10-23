@@ -323,18 +323,18 @@ export function Products() {
       <AppLayout>
         <main
           className={
-            "md:grid flex-1 items-start gap-4 lg:p-4 sm:px-6 sm:py-0 md:gap-8"
+            "lg:grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8"
           }
         >
-          <div className="md:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
+          <div className="lg:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
             <Tabs defaultValue="week">
-              <div className="flex flex-col md:flex-row md:items-center">
-                <div className="relative md:mr-2 md:grow-0 mb-1 md:mb-0 w-full sm:w-auto">
+              <div className="flex flex-col md:flex-row lg:items-center gap-2 md:gap-0">
+                <div className="relative lg:mr-2 md:grow-0 w-full sm:w-auto">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
                     placeholder="Buscar por nome..."
-                    className="pl-8 pr-4 py-2 w-full  md:w-[336px] rounded-lg bg-background"
+                    className="pl-8 pr-4 py-2 w-full md:w-auto lg:w-[336px]  rounded-lg bg-background"
                     value={searchName}
                     onChange={(event) =>
                       setSearchParams((p) => {
@@ -345,8 +345,8 @@ export function Products() {
                   />
                 </div>
 
-                <div className="md:ml-auto flex flex-wrap sm:flex-row mt-2 mb-1 gap-2 sm:gap-0">
-                  <div className="flex mr-1 items-center">
+                <div className="md:ml-auto gap-2 flex flex-wrap sm:flex-row md:gap-0">
+                  <div className="flex items-center w-full xs:w-auto md:mr-1">
                     <DatePickerWithRange
                       to={to}
                       from={from}
@@ -365,7 +365,7 @@ export function Products() {
                     )}
                   </div>
 
-                  <div className="flex mr-1">
+                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -398,7 +398,7 @@ export function Products() {
                     </Select>
                   </div>
 
-                  <div className="flex mr-1">
+                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={categoryId || ""}
                       onValueChange={(e) => onSelectCategory(e)}
@@ -436,7 +436,7 @@ export function Products() {
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="gap-1">
                           <ArrowDownWideNarrow className="h-4 w-4" />
-                          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                          <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">
                             Ordenar por
                           </span>
                         </Button>
@@ -476,7 +476,7 @@ export function Products() {
                           disabled={isExporting}
                         >
                           <File className="h-3.5 w-3.5" />
-                          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                          <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">
                             Exportar
                           </span>
 
@@ -541,13 +541,13 @@ export function Products() {
                                   <img
                                     src={product.images[0].imageUrl}
                                     alt={product.name}
-                                    className="min-w-24 min-h-24 max-w-24 h-24 object-contain rounded-sm"
+                                    className="min-w-24 max-w-24 object-contain rounded-sm"
                                   />
                                 </TableCell>
                                 <TableCell className="text-sm font-medium pr-4 max-w-56">
                                   {product.name}
 
-                                  <p className="text-sm text-muted-foreground">
+                                  <p className="min-w-36 text-sm text-muted-foreground">
                                     {product.category.name}
                                   </p>
                                 </TableCell>
@@ -560,9 +560,9 @@ export function Products() {
                                   {formatCentsToReal(product.priceCents)}
                                 </TableCell>
 
-                                <TableCell className="">
+                                <TableCell className="min-w-36">
                                   <Badge
-                                    className={`text-xs font-medium pb-1 cursor-default hover:bg-${
+                                    className={`text-sm font-medium pb-1 cursor-default hover:bg-${
                                       stockColors[product.stock]
                                     } ${stockColors[product.stock]} `}
                                   >
@@ -570,22 +570,22 @@ export function Products() {
                                   </Badge>
                                 </TableCell>
 
-                                <TableCell className="font-medium ">
+                                <TableCell className="text-sm font-medium">
                                   {product.totalQuantitySold}
                                 </TableCell>
 
-                                <TableCell className="font-medium ">
+                                <TableCell className="text-sm font-medium">
                                   {formatCentsToReal(product.totalSalesValue)}
                                 </TableCell>
 
-                                <TableCell className="text-sm font-medium">
+                                <TableCell className="min-w-32 text-sm font-medium">
                                   {formatDate(
                                     new Date(product.updatedAt),
-                                    "dd/MM/yyyy"
+                                    "dd/MM/yyyy HH:mm"
                                   )}
                                 </TableCell>
 
-                                <TableCell className="md:table-cell text-right">
+                                <TableCell className=" w-10 text-right">
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button

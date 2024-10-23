@@ -48,7 +48,7 @@ export function DatePickerWithRange({
     from || to ? { from, to } : undefined;
 
   return (
-    <div className={cn("grid mr-1", className)}>
+    <div className={cn("grid w-full xs:w-auto", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button

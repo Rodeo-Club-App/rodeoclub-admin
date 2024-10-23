@@ -1,4 +1,12 @@
-import { FileUp, MoreHorizontal, Plus, Search, X } from "lucide-react";
+import {
+  FileSpreadsheet,
+  Mail,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Settings2,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,12 +41,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { format, parseISO } from "date-fns";
-import { DateRange } from "react-day-picker";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useDebounce } from "use-debounce";
-import { z } from "zod";
-import { AppLayout } from "../_layout";
+import {
+  ImportCsvUsersModal,
+  ImportCsvUsersModalRef,
+} from "@/components/modals/import-csv-users-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,13 +52,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { formatCPF } from "@/utils/formatters";
 import {
-  ImportCsvUsersModal,
-  ImportCsvUsersModalRef,
-} from "@/components/modals/import-csv-users-modal";
-import { useRef } from "react";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
+import { formatCPF } from "@/utils/formatters";
+import { format, parseISO } from "date-fns";
+import { useRef } from "react";
+import { DateRange } from "react-day-picker";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDebounce } from "use-debounce";
+import { z } from "zod";
+import { AppLayout } from "../_layout";
 
 export interface CustomerResponse {
   currentPage: number;
@@ -74,6 +89,7 @@ export interface ICustomer {
 }
 
 export function Customers() {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -117,6 +133,7 @@ export function Customers() {
 
       return response.data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const parseDate = (param: string | null) =>
@@ -165,6 +182,55 @@ export function Customers() {
     });
   }
 
+  const clearDate = () => {
+    setSearchParams((p) => {
+      p.delete("startAt");
+      p.delete("endAt");
+
+      return p;
+    });
+  };
+
+  async function sendEmailFirstAccess() {
+    try {
+      const response = await api.post("/user/rodeoclub/send-welcome-bulk");
+
+      toast({
+        variant: "success",
+        title: "Sucesso",
+        description: response.data.message,
+        action: <ToastAction altText="Ok">Ok</ToastAction>,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Falha ao enviar e-mail",
+        variant: "destructive",
+        description:
+          "Houve um erro ao enviar e-mails de primeiro acesso " + error.message,
+      });
+    }
+  }
+
+  async function handleSendUserFirstAccess(id: string) {
+    try {
+      await api.get(`/user/rodeoclub/resend-email/${id}`);
+
+      toast({
+        variant: "success",
+        title: "Sucesso",
+        description: "E-mail enviado",
+        action: <ToastAction altText="Ok">Ok</ToastAction>,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Falha ao enviar e-mail",
+        variant: "destructive",
+        description:
+          "Houve um erro ao enviar e-mail de primeiro acesso " + error.message,
+      });
+    }
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Header />
@@ -172,13 +238,13 @@ export function Customers() {
       <AppLayout>
         <main
           className={
-            "md:grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8"
+            "lg:grid flex-1 items-start gap-4 md:p-4 sm:px-6 sm:py-0 md:gap-8"
           }
         >
-          <div className="md:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
+          <div className="lg:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
             <Tabs defaultValue="week">
-              <div className="flex flex-col md:flex-row md:items-center">
-                <div className="relative md:mr-2 md:grow-0 mb-1 md:mb-0 w-full sm:w-auto">
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
+                <div className="relative md:mr-2 md:grow-0 w-full sm:w-auto">
                   <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
@@ -194,14 +260,27 @@ export function Customers() {
                   />
                 </div>
 
-                <div className="md:ml-auto flex flex-wrap sm:flex-row mt-2">
-                  <DatePickerWithRange
-                    to={to}
-                    from={from}
-                    onChange={handleRangeChange}
-                  />
+                <div className="md:ml-auto gap-2 flex flex-wrap sm:flex-row md:gap-0">
+                  <div className="flex items-center w-full xs:w-auto md:mr-1">
+                    <DatePickerWithRange
+                      to={to}
+                      from={from}
+                      onChange={handleRangeChange}
+                    />
 
-                  <div className="flex mr-1">
+                    {(from || to) && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearDate}
+                        className="w-8 h-8 hover:text-red-500"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -233,15 +312,39 @@ export function Customers() {
                     </Select>
                   </div>
 
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-10 gap-1 text-sm mr-1"
-                    onClick={() => importCsvUserModalRef.current?.openModal()}
-                  >
-                    <FileUp className="h-3.5 w-3.5 mt-0.5" />
-                    <span className="sr-only md:not-sr-only">Importar</span>
-                  </Button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="icon" className="mr-2">
+                        <Settings2 className="w-4 h-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="grid gap-4">
+                        <h4 className="font-medium leading-none">Opções</h4>
+                        <div className="grid gap-2">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={sendEmailFirstAccess}
+                          >
+                            <Mail className="mr-2 h-4 w-4" />
+                            Enviar e-mails de primeiro acesso
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                            onClick={() =>
+                              importCsvUserModalRef.current?.openModal()
+                            }
+                          >
+                            <FileSpreadsheet className="mr-2 h-4 w-4" />
+                            Importar usuários por CSV
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
 
                   <Button onClick={() => navigate("/customers/new")}>
                     <Plus className="w-4 h-4 mr-1" />
@@ -269,9 +372,7 @@ export function Customers() {
                               <TableHead className="pl-4">CPF</TableHead>
 
                               <TableHead className="">Parceiro</TableHead>
-                              <TableHead className="">
-                                Data (Registro no APP)
-                              </TableHead>
+                              <TableHead>Data (Registro no APP)</TableHead>
 
                               <TableHead className="md:table-cell w-10 text-right">
                                 <span className="sr-only">Ações</span>
@@ -282,9 +383,7 @@ export function Customers() {
                             {data?.users?.map((customer) => (
                               <TableRow key={customer.id}>
                                 <TableCell className="font-medium text-xs sm:text-sm pr-4">
-                                  <div>
-                                    {customer.name}
-                                  </div>
+                                  <div>{customer.name}</div>
                                   <div className="text-sm text-muted-foreground md:inline">
                                     {customer.email}
                                   </div>
@@ -337,6 +436,14 @@ export function Customers() {
                                         }
                                       >
                                         Editar
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleSendUserFirstAccess(customer.id)
+                                        }
+                                      >
+                                        Reenviar e-mail de Primeiro Acesso
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>

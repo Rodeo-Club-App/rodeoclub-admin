@@ -116,7 +116,7 @@ export function UpdatePasswordModal() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="sm:grid sm:grid-cols-4 items-center gap-4">
                   <Label>Senha atual</Label>
                   <FormField
                     control={form.control}
@@ -132,7 +132,7 @@ export function UpdatePasswordModal() {
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="sm:grid sm:grid-cols-4 items-center gap-4">
                   <Label>Nova senha</Label>
                   <FormField
                     control={form.control}
