@@ -57,6 +57,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 const notificationSchema = z.object({
   title: z.string({ required_error: "O título é obrigatório" }),
   description: z.string({ required_error: "A descrição é obrigatória" }),
+  alternativeDescription: z.string().optional(),
   type: z.enum(["alert", "promotion"]).default("alert"),
   sendToAllUsers: z.boolean().default(true),
   partnerIds: z.array(z.string()).optional(),
@@ -136,6 +137,7 @@ export function PromotionNotification() {
     defaultValues: {
       sendToAllUsers: true,
       type: "alert",
+      alternativeDescription: "",
       userIds: [],
       partnerIds: [],
     },
@@ -148,7 +150,14 @@ export function PromotionNotification() {
   }
 
   async function onSubmit(values: NotificationSchema) {
-    const { title, description, userIds, partnerIds, type } = values;
+    const {
+      title,
+      description,
+      userIds,
+      partnerIds,
+      type,
+      alternativeDescription,
+    } = values;
     try {
       const response = await api.post<{
         message: string;
@@ -156,6 +165,7 @@ export function PromotionNotification() {
       }>("/notifications/rodeoclub", {
         title,
         description,
+        alternativeDescription,
         mediaId: selectedMedia?.id,
         users: userIds,
         type,
@@ -250,6 +260,22 @@ export function PromotionNotification() {
                                       placeholder="Digite o assunto..."
                                       {...field}
                                     />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid gap-3">
+                            <FormField
+                              control={form.control}
+                              name="alternativeDescription"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Sub descrição</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="" {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
