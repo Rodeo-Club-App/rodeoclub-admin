@@ -365,7 +365,7 @@ export function Products() {
                     )}
                   </div>
 
-                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
+                  <div className="flex items-center flex-row sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -398,7 +398,7 @@ export function Products() {
                     </Select>
                   </div>
 
-                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
+                  <div className="flex items-center flex-row  mr-1">
                     <Select
                       value={categoryId || ""}
                       onValueChange={(e) => onSelectCategory(e)}
@@ -418,17 +418,18 @@ export function Products() {
                             </SelectItem>
                           ))}
                       </SelectContent>
-                      {categoryId && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={clearCategory}
-                          className="w-8 h-8 hover:text-red-500 mx-2"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
                     </Select>
+
+                    {categoryId && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearCategory}
+                        className="w-8 h-8 hover:text-red-500 mx-2 "
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
 
                   <div className="flex">

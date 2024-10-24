@@ -341,7 +341,7 @@ export function LogsCustomers() {
                     )}
                   </div>
 
-                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
+                  <div className="flex items-center sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -361,17 +361,18 @@ export function LogsCustomers() {
                             </SelectItem>
                           ))}
                       </SelectContent>
-                      {partnerId && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={clearPartner}
-                          className="w-8 h-8 hover:text-red-500 mx-2"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
                     </Select>
+
+                    {partnerId && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearPartner}
+                        className="w-8 h-8 hover:text-red-500 mx-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
 
                   <DropdownMenu>

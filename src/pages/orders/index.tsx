@@ -537,7 +537,7 @@ export function Orders() {
                     )}
                   </div>
 
-                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
+                  <div className="flex items-center sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={partnerId || ""}
                       onValueChange={(e) => onSelectPartner(e)}
@@ -557,20 +557,21 @@ export function Orders() {
                             </SelectItem>
                           ))}
                       </SelectContent>
-                      {partnerId && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={clearPartner}
-                          className="w-8 h-8 hover:text-red-500 mx-2"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
                     </Select>
+
+                    {partnerId && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearPartner}
+                        className="w-8 h-8 hover:text-red-500 mx-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
 
-                  <div className="flex-1 sm:flex-initial sm:max-w-32 mr-1">
+                  <div className="flex items-center sm:flex-initial sm:max-w-32 mr-1">
                     <Select
                       value={status || ""}
                       onValueChange={(e) => onSelectStatus(e)}
@@ -585,17 +586,18 @@ export function Orders() {
                           </SelectItem>
                         ))}
                       </SelectContent>
-                      {status && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={clearStatus}
-                          className="w-8 h-8 hover:text-red-500 mx-2"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
                     </Select>
+
+                    {status && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={clearStatus}
+                        className="w-8 h-8 hover:text-red-500 mx-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
 
                   <DropdownMenu>
@@ -607,7 +609,9 @@ export function Orders() {
                         disabled={isExporting}
                       >
                         <File className="h-3.5 w-3.5" />
-                        <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">Exportar</span>
+                        <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">
+                          Exportar
+                        </span>
 
                         {isExporting && (
                           <Loader2 className="animate-spin w-4 h-4" />
