@@ -53,6 +53,10 @@ import makeAnimated from "react-select/animated";
 
 import { CustomerResponse } from "../customers";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  PreviewDrawerModal,
+  PreviewDrawerRef,
+} from "@/components/preview-card";
 
 const notificationSchema = z.object({
   title: z.string({ required_error: "O título é obrigatório" }),
@@ -72,6 +76,7 @@ export function PromotionNotification() {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [selectedMedia, setSelectedMedia] = useState<MediaProps | null>(null);
   const viewMediaModal = useRef<ViewMediaModalRef>(null);
+  const previewDrawerModal = useRef<PreviewDrawerRef>(null);
 
   const animatedComponents = makeAnimated();
 
@@ -194,13 +199,34 @@ export function PromotionNotification() {
         ref={viewMediaModal}
         onImageSelected={handleMediaSelect}
       />
+      <PreviewDrawerModal
+        ref={previewDrawerModal}
+        title={form.watch("title") ?? ""}
+        description={form.watch("description") ?? ""}
+        selectedMedia={selectedMedia}
+        alternativeDescription={form.watch("alternativeDescription") ?? ""}
+      />
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Header />
         <AppLayout>
           <Title name={"Criar Notificação"}>
-            <div className="hidden items-center gap-2 md:ml-auto md:flex">
+            <div className="gap-2 md:ml-auto md:flex">
               <Button
-                className="w-full md:w-auto"
+                className="w-full sm:w-auto bg-white text-stone-800 border-stone-800 border hover:bg-slate-50"
+                onClick={() =>
+                  previewDrawerModal.current?.openPreviewModal({
+                    title: form.watch("title"),
+                    description: form.watch("description"),
+                    selectedMedia: selectedMedia,
+                    alternativeDescription:
+                      form.watch("alternativeDescription") ?? "",
+                  })
+                }
+              >
+                Preview
+              </Button>
+              <Button
+                className="w-full sm:w-auto"
                 disabled={form.formState.isSubmitting}
                 onClick={handleSubmit}
               >
@@ -211,14 +237,16 @@ export function PromotionNotification() {
               </Button>
             </div>
           </Title>
+
           <Form {...form}>
             <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+              <div
+                className={`grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8`}
+              >
                 <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                   <Card x-chunk="dashboard-07-chunk-0">
-                    <CardHeader></CardHeader>
                     <CardContent>
-                      <div className="flex w-full">
+                      <div className="flex flex-col sm:flex-row w-full pt-6">
                         <div className="flex flex-col items-center w-full md:w-[300px]">
                           {selectedMedia ? (
                             <img
@@ -247,7 +275,7 @@ export function PromotionNotification() {
                           </Button>
                         </div>
 
-                        <div className="ml-4 w-full">
+                        <div className="sm:ml-4 w-full mt-4 sm:mt-0">
                           <div className="grid gap-3">
                             <FormField
                               control={form.control}
@@ -267,7 +295,7 @@ export function PromotionNotification() {
                             />
                           </div>
 
-                          <div className="grid gap-3">
+                          <div className="mt-5 grid gap-3">
                             <FormField
                               control={form.control}
                               name="alternativeDescription"
