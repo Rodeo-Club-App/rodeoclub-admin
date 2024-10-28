@@ -17,6 +17,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, Plus } from "lucide-react";
 import { Title } from "@/components/title-page";
 import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 // Types
 export type Banner = {
@@ -33,9 +34,11 @@ interface HomeBannersResponse {
 }
 
 export function HomeBanners() {
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const destination = searchParams.get("destination");
   const navigate = useNavigate();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const [banners, setBanners] = useState<Banner[]>([]);
 
@@ -91,6 +94,27 @@ export function HomeBanners() {
     );
   };
 
+  async function handleDeleteBanner(id: string) {
+    setIsUpdating(true);
+    try {
+      await api.delete(`/home/rodeoclub/${id}/${destination}`);
+
+      await fetchHome();
+      toast({
+        title: "Banner removido",
+        variant: "success",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Falha ao remover banner",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
   return (
     <div className="flex-col md:flex">
       <Header />
@@ -117,10 +141,10 @@ export function HomeBanners() {
           <Card className="mb-4">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                {mutationPosition.isPending
+                {mutationPosition.isPending || isUpdating
                   ? "Atualizando posições"
                   : "Banners"}
-                {mutationPosition.isPending && (
+                {(mutationPosition.isPending || isUpdating) && (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 )}
               </CardTitle>
@@ -158,15 +182,18 @@ export function HomeBanners() {
                               />
 
                               <div className="flex items-center md:items-start flex-col mt-2">
-                                <div><strong>Ação:</strong> {actionLabel[banner.action]}</div>
+                                <div>
+                                  <strong>Ação:</strong>{" "}
+                                  {actionLabel[banner.action]}
+                                </div>
 
                                 <div className="mt-1">
-                                <strong>Referência:{" "}</strong>
+                                  <strong>Referência: </strong>
                                   {banner.action === "external_link"
                                     ? banner.reference
                                     : banner.referenceLabel}
                                 </div>
-                                <div className="mt-5">
+                                <div className="mt-5 gap-2 flex">
                                   <Button
                                     onClick={() =>
                                       navigate(
@@ -175,6 +202,16 @@ export function HomeBanners() {
                                     }
                                   >
                                     Editar
+                                  </Button>
+
+                                  <Button
+                                    variant="destructive"
+                                    disabled={isUpdating}
+                                    onClick={() =>
+                                      handleDeleteBanner(String(banner.id))
+                                    }
+                                  >
+                                    Remover
                                   </Button>
                                 </div>
                               </div>
