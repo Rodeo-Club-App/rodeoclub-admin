@@ -27,12 +27,14 @@ import { UpdatePasswordModal } from "./modals/update-password-modal";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/services/api";
 import { ScrollArea } from "./ui/scroll-area";
+import { AddCategoryModal } from "./modals/add-category-modal";
 
 export function Header() {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
   const editPassword = searchParams.get("editPassword") as "true" | "false";
+  const newCategory = searchParams.get("newCategory") as "true" | "false";
 
   function handleImportProduts() {
     toast({
@@ -225,6 +227,7 @@ export function Header() {
       </div>
 
       {editPassword !== "false" && editPassword && <UpdatePasswordModal />}
+      {newCategory !== "false" && newCategory && <AddCategoryModal />}
     </>
   );
 }

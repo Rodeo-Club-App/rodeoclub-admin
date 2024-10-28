@@ -4,16 +4,22 @@ import {
   Eye,
   GitBranch,
   Home,
+  List,
   Megaphone,
   Package,
-  RefreshCcwDot,
+  RefreshCcw,
   Rocket,
   ShoppingCart,
   Star,
   TabletSmartphone,
   Users,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -33,6 +39,7 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [_, setSearchParams] = useSearchParams();
   const location = useLocation();
 
   function handleImportProduts() {
@@ -64,6 +71,33 @@ export function MainNav({
         title: "Tarefa finalizada!",
         description:
           "O script de produtos foi concluído e as novas informações já está atualizadas!",
+        variant: "success",
+      });
+    });
+  }
+
+  function handleImportCategory() {
+    new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+      setSearchParams((p) => {
+        p.set("newCategory", "true");
+        return p;
+      });
+    });
+  }
+
+  function handleUpdateCategories() {
+    toast({
+      title: "Script executado",
+      description:
+        "A atualização de categorias está em execução em segundo plano",
+      variant: "success",
+    });
+
+    api.get("/sub-category/rodeoclub/sync").then(() => {
+      toast({
+        title: "Tarefa finalizada!",
+        description:
+          "O script de categorias foi concluído e as novas informações já está atualizadas!",
         variant: "success",
       });
     });
@@ -215,8 +249,32 @@ export function MainNav({
               className="cursor-pointer"
               onClick={handleUpdateProducts}
             >
-              <RefreshCcwDot className="mr-2 h-4 w-4" />
+              <RefreshCcw className="mr-2 h-4 w-4" />
               <span>Atualizar produtos</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuLabel className="flex items-center gap-2">
+            Categorias
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={handleImportCategory}
+            >
+              <List className="mr-2 w-4 h-4" />
+              <span>Agregar nova categoria</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={handleUpdateCategories}
+            >
+              <RefreshCcw className="mr-2 w-4 h-4" />
+              <span>Atualizar categorias</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
