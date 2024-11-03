@@ -22,6 +22,15 @@ import { Button } from "@/components/ui/button";
 import { CheckIcon, PlusCircleIcon } from "lucide-react";
 import { api } from "@/services/api";
 
+interface Props {
+  id: number;
+  group: string;
+  subCategories: {
+    id: number;
+    name: string;
+  }[];
+}
+
 export function DataFilterCategory() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -32,9 +41,7 @@ export function DataFilterCategory() {
   const { data: categoriesList } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await api.get<{ id: number; name: string }[]>(
-        "/category/rodeoclub?showAll=true"
-      );
+      const response = await api.get<Props[]>("/category/rodeoclub/groups");
 
       return response.data;
     },
@@ -113,6 +120,7 @@ export function DataFilterCategory() {
                   </Badge>
                 ) : (
                   categoriesList
+                    ?.flatMap((option) => option.subCategories)
                     ?.filter((option) =>
                       selectedCategories.has(String(option.id))
                     )
@@ -137,7 +145,7 @@ export function DataFilterCategory() {
           <CommandList>
             <CommandEmpty>Nenhum resultado.</CommandEmpty>
             <CommandGroup>
-              {categoriesList?.map((option) => {
+              {/* {categoriesList?.map((option) => {
                 const isSelected = selectedCategories.has(String(option.id));
                 return (
                   <CommandItem
@@ -157,10 +165,39 @@ export function DataFilterCategory() {
                       <CheckIcon className={cn("h-4 w-4")} />
                     </div>
 
-                    <span>{option.name}</span>
+                    <span>{option.group}</span>
                   </CommandItem>
                 );
-              })}
+              })} */}
+
+              {categoriesList?.map((option) => (
+                <div key={option.id} className="mb-2">
+                  <span className="font-bold text-sm">{option.group}</span>
+                  {option.subCategories.map((sub) => {
+                    const isSelected = selectedCategories.has(String(sub.id));
+                    return (
+                      <CommandItem
+                        key={sub.id}
+                        onSelect={() => {
+                          handleFilterCategory(sub.id); // Seleciona apenas a subcategoria
+                        }}
+                      >
+                        <div
+                          className={cn(
+                            "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                            isSelected
+                              ? "bg-primary text-primary-foreground"
+                              : "opacity-50 [&_svg]:invisible"
+                          )}
+                        >
+                          <CheckIcon className={cn("h-4 w-4")} />
+                        </div>
+                        <span>{sub.name}</span>
+                      </CommandItem>
+                    );
+                  })}
+                </div>
+              ))}
             </CommandGroup>
             {selectedCategories.size > 0 && (
               <>
