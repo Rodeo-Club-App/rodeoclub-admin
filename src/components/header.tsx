@@ -2,7 +2,7 @@ import logo from "@/assets/logo-pvt-top.png";
 import { MainNav } from "./main-nav";
 import { UserNav } from "./user-nav";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Box,
   ChartBar,
@@ -12,8 +12,10 @@ import {
   GitBranch,
   Handshake,
   Home,
+  Logs,
   Megaphone,
   Menu,
+  // RefreshCcw,
   RefreshCcwDot,
   Rocket,
   ShoppingCart,
@@ -31,6 +33,7 @@ import { ScrollArea } from "./ui/scroll-area";
 import { AddCategoryModal } from "./modals/add-category-modal";
 
 export function Header() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
@@ -220,6 +223,24 @@ export function Header() {
                     >
                       <RefreshCcwDot className="h-4 w-4" />
                       Atualizar produtos
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center">
+                    <Label className="text-base font-medium mr-1">
+                      Categorias
+                    </Label>
+                  </div>
+
+                  <div className="">
+                    <Button
+                      className="flex items-center justify-start text-base mb-1 p-0 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
+                      onClick={() => navigate("/categories")}
+                    >
+                      <Logs className="mr-2 w-4 h-4" />
+                      <span className="flex flex-wrap text-left whitespace-normal">
+                        Ver todas
+                      </span>
                     </Button>
                   </div>
                 </nav>
