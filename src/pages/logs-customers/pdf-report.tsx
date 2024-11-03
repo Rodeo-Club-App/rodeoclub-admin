@@ -72,7 +72,7 @@ interface Props {
 export function PDFReport({ data }: Props) {
   registerFonts();
 
-  const { period, total } = data;
+  const { period, total, partner } = data;
 
   return (
     <Document>
@@ -82,6 +82,19 @@ export function PDFReport({ data }: Props) {
           period={period}
           title="Relatório de Acessos"
         />
+
+        {partner && (
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 15,
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+          >
+            Parceiro(s) - {partner}
+          </Text>
+        )}
 
         <View style={styles.table}>
           <View style={styles.tableRow}>

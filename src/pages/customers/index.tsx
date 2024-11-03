@@ -29,17 +29,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { formatDate } from "@/utils/format-iso-date";
 
-import { listPartners } from "@/api/partners/list-partners";
 import { DatePickerWithRange } from "@/components/date-range-picker";
 import { Pagination } from "@/components/pagination";
 import { ListSkeletonTable } from "@/components/skeleton-rows";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import {
   ImportCsvUsersModal,
@@ -68,6 +60,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDebounce } from "use-debounce";
 import { z } from "zod";
 import { AppLayout } from "../_layout";
+import { DataFilterPartners } from "../orders/data-filter-partners";
 
 export interface CustomerResponse {
   currentPage: number;
@@ -98,7 +91,7 @@ export function Customers() {
 
   const startAt = searchParams.get("startAt") || "";
   const endAt = searchParams.get("endAt") || "";
-  const partnerId = searchParams.get("partnerId") || "";
+  const partners = searchParams.get("partners") || "";
 
   const pageCount = z.coerce.number().parse(searchParams.get("page") ?? "1");
   const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
@@ -110,7 +103,7 @@ export function Customers() {
       pageCount,
       limit,
       debouncedSearchQuery,
-      partnerId,
+      partners,
       startAt,
       endAt,
     ],
@@ -119,7 +112,9 @@ export function Customers() {
         "/user/rodeoclub/search",
         {
           ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
-          ...(partnerId && { partnerId: partnerId }),
+          ...(partners !== "" && {
+            partnerIds: partners?.split(",").map((id) => Number(id.trim())),
+          }),
           ...(startAt && { startAt: format(parseISO(startAt), "yyyy-MM-dd") }),
           ...(endAt && { endAt: format(parseISO(endAt), "yyyy-MM-dd") }),
         },
@@ -139,12 +134,6 @@ export function Customers() {
   const parseDate = (param: string | null) =>
     param ? parseISO(param) : undefined;
 
-  const { data: partnersList, isLoading: isLoadingPartners } = useQuery({
-    queryKey: ["partners"],
-    queryFn: listPartners,
-    staleTime: 15 * 60 * 1000,
-  });
-
   const from = parseDate(startAt);
   const to = parseDate(endAt);
 
@@ -157,21 +146,6 @@ export function Customers() {
     else searchParams.delete("endAt");
 
     setSearchParams(searchParams);
-  };
-
-  const clearPartner = () => {
-    setSearchParams((p) => {
-      p.delete("partnerId");
-
-      return p;
-    });
-  };
-
-  const onSelectPartner = (id: string) => {
-    setSearchParams((prev) => {
-      prev.set("partnerId", id);
-      return prev;
-    });
   };
 
   function handlePaginate(pageIndex: number) {
@@ -249,7 +223,7 @@ export function Customers() {
                   <Input
                     type="search"
                     placeholder="Buscar por nome..."
-                    className="pl-8 pr-4 py-2 w-full md:w-auto lg:w-[336px] rounded-lg bg-background"
+                    className="pl-8 h-8 pr-4 py-2 w-full md:w-auto lg:w-[336px] rounded-lg bg-background"
                     value={search}
                     onChange={(event) =>
                       setSearchParams((p) => {
@@ -280,42 +254,15 @@ export function Customers() {
                     )}
                   </div>
 
-                  <div className="flex items-center sm:flex-initial sm:max-w-32 mr-1">
-                    <Select
-                      value={partnerId || ""}
-                      onValueChange={(e) => onSelectPartner(e)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Parceiro" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {!isLoadingPartners &&
-                          partnersList?.map((partner) => (
-                            <SelectItem
-                              key={partner.id}
-                              value={String(partner.id)}
-                            >
-                              {partner.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-
-                    {partnerId && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={clearPartner}
-                        className="w-8 h-8 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
+                  <DataFilterPartners />
 
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="icon" className="mr-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="mr-2 h-8"
+                      >
                         <Settings2 className="w-4 h-4" />
                       </Button>
                     </PopoverTrigger>
@@ -347,7 +294,10 @@ export function Customers() {
                     </PopoverContent>
                   </Popover>
 
-                  <Button onClick={() => navigate("/customers/new")}>
+                  <Button
+                    className="h-8"
+                    onClick={() => navigate("/customers/new")}
+                  >
                     <Plus className="w-4 h-4 mr-1" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Cadastrar
@@ -369,7 +319,7 @@ export function Customers() {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Nome</TableHead>
+                              <TableHead>Cliente</TableHead>
                               <TableHead className="pl-4">CPF</TableHead>
 
                               <TableHead className="">Parceiro</TableHead>
@@ -382,7 +332,13 @@ export function Customers() {
                           </TableHeader>
                           <TableBody>
                             {data?.users?.map((customer) => (
-                              <TableRow key={customer.id}>
+                              <TableRow
+                                className="hover:cursor-pointer"
+                                key={customer.id}
+                                onClick={() =>
+                                  navigate(`/customers/${customer.id}`)
+                                }
+                              >
                                 <TableCell className="font-medium text-xs sm:text-sm pr-4">
                                   <div>{customer.name}</div>
                                   <div className="text-sm text-muted-foreground md:inline">

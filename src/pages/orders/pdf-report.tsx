@@ -82,6 +82,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF4444",
     color: "#FFFFFF",
   },
+  badgeBlue: {
+    backgroundColor: "#3B82F6",
+    color: "#FFFFFF",
+  },
   pageNumber: {
     position: "absolute",
     fontSize: 10,
@@ -102,6 +106,8 @@ const statusStyles = {
   pending: styles.badgeOrange,
   completed: styles.badgeGreen,
   canceled: styles.badgeRed,
+  "em-transporte": styles.badgeBlue,
+  "em-separacao": styles.badgeOrange,
 };
 
 interface Props {

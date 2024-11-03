@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Copy, CreditCard, X } from "lucide-react";
+import { Copy, CreditCard, Truck, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +29,8 @@ interface OrderCardProps {
   shippingAddress: string;
   shippingValue: string;
   billingAddress: string;
+  trackingCode: string | null;
+  trackingUrl: string | null;
   total: string;
   customer: {
     name: string;
@@ -38,7 +40,6 @@ interface OrderCardProps {
 
   payment?: {
     method: string;
-    number: string;
   };
 }
 
@@ -53,6 +54,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   total,
   customer,
   payment,
+  trackingCode,
+  trackingUrl,
 }) => {
   const [_, setSearchParams] = useSearchParams();
   const [copySuccess, setCopySuccess] = useState(false);
@@ -166,6 +169,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
             <address className="grid gap-0.5 not-italic text-muted-foreground">
               <span>{shippingAddress}</span>
             </address>
+
+            {trackingUrl && trackingCode && (
+              <Button
+                className="bg-blue-500"
+                onClick={() => window.open(trackingUrl, "_blank")}
+              >
+                <Truck className="w-4 h-4 mr-1" /> {trackingCode}
+              </Button>
+            )}
           </div>
           <div className="grid auto-rows-max gap-3">
             <div className="font-semibold">Informações de pagamento</div>
@@ -209,7 +221,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 <CreditCard className="h-4 w-4" />
                 {payment?.method}
               </dt>
-              <dd>{payment?.number}</dd>
             </div>
           </dl>
         </div>

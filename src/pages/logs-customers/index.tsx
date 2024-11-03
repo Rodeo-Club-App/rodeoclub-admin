@@ -1,8 +1,4 @@
 import { Header } from "@/components/header";
-import { AppLayout } from "../_layout";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { useSearchParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -18,42 +14,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useSearchParams } from "react-router-dom";
+import { AppLayout } from "../_layout";
 
 import { format, formatDate, parseISO } from "date-fns";
 
 import { Pagination } from "@/components/pagination";
-import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
+import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import { z } from "zod";
 
 import { ListSkeletonTable } from "@/components/skeleton-rows";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { File, Loader2, Search, X } from "lucide-react";
-import { useState } from "react";
-import { DatePickerWithRange } from "@/components/date-range-picker";
-import { DateRange } from "react-day-picker";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { listPartners } from "@/api/partners/list-partners";
-import * as XLSX from "xlsx";
-import { PDFReport } from "./pdf-report";
-import ReactPDF from "@react-pdf/renderer";
-import { formatDateRange } from "@/utils/formatters";
+import { DataFilters } from "./data-filter";
 
 export interface LogReport {
   period: string | null;
@@ -68,7 +43,7 @@ interface Customer {
   partner: string | null;
 }
 
-interface ILog {
+export interface ILog {
   id: number;
   activity: string;
   type: string;
@@ -77,7 +52,7 @@ interface ILog {
   customer: Customer;
 }
 
-interface LogResponse {
+export interface LogResponse {
   currentPage: number;
   count: number;
   pageCount: number;
@@ -85,20 +60,15 @@ interface LogResponse {
 }
 
 export function LogsCustomers() {
-  const parseDate = (param: string | null) =>
-    param ? parseISO(param) : undefined;
-
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const [debouncedSearchQuery] = useDebounce(search, 500);
   const startAt = searchParams.get("startAt") || "";
   const endAt = searchParams.get("endAt") || "";
-  const partnerId = searchParams.get("partnerId") || "";
+  const partners = searchParams.get("partners") || "";
 
   const pageCount = z.coerce.number().parse(searchParams.get("page") ?? "1");
   const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
-
-  const [isExporting, setIsExporting] = useState(false);
 
   const { data, isLoading, isRefetching } = useQuery({
     queryKey: [
@@ -106,7 +76,7 @@ export function LogsCustomers() {
       pageCount,
       limit,
       debouncedSearchQuery,
-      partnerId,
+      partners,
       startAt,
       endAt,
     ],
@@ -115,7 +85,9 @@ export function LogsCustomers() {
         `/logs/rodeoclub`,
         {
           ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
-          ...(partnerId && { partnerId: partnerId }),
+          ...(partners !== "" && {
+            partnerIds: partners?.split(",").map((id) => Number(id.trim())),
+          }),
           ...(startAt && { startAt: format(parseISO(startAt), "yyyy-MM-dd") }),
           ...(endAt && { endAt: format(parseISO(endAt), "yyyy-MM-dd") }),
         },
@@ -131,41 +103,6 @@ export function LogsCustomers() {
     },
   });
 
-  const { data: partnersList, isLoading: isLoadingPartners } = useQuery({
-    queryKey: ["partners"],
-    queryFn: listPartners,
-    staleTime: 15 * 60 * 1000,
-  });
-
-  const from = parseDate(startAt);
-  const to = parseDate(endAt);
-
-  const handleRangeChange = (range: DateRange | undefined) => {
-    if (range?.from)
-      searchParams.set("startAt", format(range.from, "yyyy-MM-dd"));
-    else searchParams.delete("startAt");
-
-    if (range?.to) searchParams.set("endAt", format(range.to, "yyyy-MM-dd"));
-    else searchParams.delete("endAt");
-
-    setSearchParams(searchParams);
-  };
-
-  const clearPartner = () => {
-    setSearchParams((p) => {
-      p.delete("partnerId");
-
-      return p;
-    });
-  };
-
-  const onSelectPartner = (id: string) => {
-    setSearchParams((prev) => {
-      prev.set("partnerId", id);
-      return prev;
-    });
-  };
-
   function handlePaginate(pageIndex: number) {
     setSearchParams((prev) => {
       prev.set("page", pageIndex.toString());
@@ -173,125 +110,6 @@ export function LogsCustomers() {
       return prev;
     });
   }
-
-  const clearDate = () => {
-    setSearchParams((p) => {
-      p.delete("startAt");
-      p.delete("endAt");
-
-      return p;
-    });
-  };
-
-  const handleExportReport = async (type: "pdf" | "excel") => {
-    setIsExporting(true);
-
-    const searchParams = {
-      debouncedSearchQuery,
-      startAt,
-      endAt,
-      partnerId,
-    };
-
-    const allLogs: ILog[] = [];
-    let page = 1;
-    let hasMore = true;
-
-    while (hasMore) {
-      try {
-        const response = await api.post<LogResponse>(
-          "/logs/rodeoclub/",
-          {
-            search: searchParams.debouncedSearchQuery,
-            partnerId: searchParams.partnerId,
-
-            startAt: searchParams.startAt
-              ? format(parseISO(searchParams.startAt), "yyyy-MM-dd")
-              : undefined,
-            endAt: searchParams.endAt
-              ? format(parseISO(searchParams.endAt), "yyyy-MM-dd")
-              : undefined,
-          },
-          {
-            params: {
-              page: page,
-              limit: limit,
-            },
-          }
-        );
-
-        const data = response.data;
-        allLogs.push(...data.logs);
-
-        hasMore = data.logs.length === limit;
-        page += 1;
-      } catch (err) {
-        break;
-      }
-    }
-
-    const data = {
-      period: formatDateRange(startAt, endAt),
-      partner: partnerId
-        ? partnersList?.find((i) => i.id === Number(partnerId))?.name ?? ""
-        : null,
-
-      total: allLogs.length.toString(),
-      logs: allLogs,
-    };
-
-    if (type === "pdf") {
-      const rows = [];
-
-      rows.push(["Cliente", "Atividade", "Data", "Localização, Parceiro"]);
-
-      data.logs.forEach((log) => {
-        const orderRow = [
-          log.customer.name,
-          log.activity,
-          formatDate(log.createdAt, "dd/MM/yyyy HH:mm"),
-          log.city,
-          log.customer.partner,
-        ];
-
-        rows.push(orderRow);
-      });
-
-      const pdf = <PDFReport data={data} />;
-
-      const blob = await ReactPDF.pdf(pdf).toBlob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
-    }
-
-    if (type === "excel") {
-      const rows = [];
-
-      rows.push(["Cliente", "Atividade", "Data", "Localização", "Parceiro"]);
-
-      data.logs.forEach((log) => {
-        const orderRow = [
-          log.customer.name,
-          log.activity,
-          formatDate(log.createdAt, "dd/MM/yyyy HH:mm"),
-          log.city,
-          log.customer.partner,
-        ];
-
-        rows.push(orderRow);
-      });
-
-      const worksheet = XLSX.utils.aoa_to_sheet(rows);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Logs");
-
-      const excelFilename = `relatorio_de_acessos.xlsx`;
-
-      XLSX.writeFile(workbook, excelFilename);
-    }
-
-    setIsExporting(false);
-  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -304,114 +122,7 @@ export function LogsCustomers() {
         >
           <div className="lg:grid auto-rows-max items-start gap-4 md:gap-8 w-full">
             <Tabs defaultValue="week">
-              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
-                <div className="relative md:mr-2 md:grow-0 w-full sm:w-auto">
-                  <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Buscar por nome..."
-                    className="pl-8 pr-4 py-2 w-full md:w-auto lg:w-[336px] rounded-lg bg-background"
-                    value={search}
-                    onChange={(event) =>
-                      setSearchParams((p) => {
-                        p.set("search", event.target.value);
-                        return p;
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="md:ml-auto gap-2 flex flex-wrap sm:flex-row md:gap-0">
-                  <div className="flex items-center w-full xs:w-auto md:mr-1">
-                    <DatePickerWithRange
-                      to={to}
-                      from={from}
-                      onChange={handleRangeChange}
-                    />
-
-                    {(from || to) && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={clearDate}
-                        className="w-8 h-8 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center sm:flex-initial sm:max-w-32 mr-1">
-                    <Select
-                      value={partnerId || ""}
-                      onValueChange={(e) => onSelectPartner(e)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Parceiro" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {!isLoadingPartners &&
-                          partnersList?.map((partner) => (
-                            <SelectItem
-                              key={partner.id}
-                              value={String(partner.id)}
-                              className="cursor-pointer"
-                            >
-                              {partner.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-
-                    {partnerId && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={clearPartner}
-                        className="w-8 h-8 hover:text-red-500 mx-2"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-10 gap-1 text-sm"
-                        disabled={isExporting}
-                      >
-                        <File className="h-3.5 w-3.5" />
-                        <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          Exportar
-                        </span>
-
-                        {isExporting && (
-                          <Loader2 className="animate-spin w-4 h-4" />
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Exportar em</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => handleExportReport("pdf")}
-                      >
-                        PDF
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="cursor-pointer"
-                        onClick={() => handleExportReport("excel")}
-                      >
-                        Excel
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
+              <DataFilters />
               <TabsContent value="week">
                 <Card x-chunk="dashboard-05-chunk-3">
                   <CardHeader className="px-7">

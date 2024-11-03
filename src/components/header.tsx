@@ -10,6 +10,7 @@ import {
   CloudDownload,
   Eye,
   GitBranch,
+  Handshake,
   Home,
   Megaphone,
   Menu,
@@ -185,6 +186,14 @@ export function Header() {
                     >
                       <Users className="h-5 w-5" />
                       Administradores
+                    </Link>
+
+                    <Link
+                      to="/partners"
+                      className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
+                    >
+                      <Handshake className="h-5 w-5" />
+                      Parceiros
                     </Link>
                   </div>
 

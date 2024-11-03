@@ -3,8 +3,9 @@ import {
   CloudDownload,
   Eye,
   GitBranch,
+  Handshake,
   Home,
-  List,
+  Logs,
   Megaphone,
   Package,
   RefreshCcw,
@@ -230,6 +231,14 @@ export function MainNav({
               <Users className="mr-2 h-4 w-4" />
               <span>Administradores</span>
             </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/partners")}
+            >
+              <Handshake className="mr-2 h-4 w-4" />
+              <span>Parceiros</span>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
 
@@ -263,9 +272,16 @@ export function MainNav({
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="cursor-pointer"
+              onClick={() => navigate("/categories")}
+            >
+              <Logs className="mr-2 w-4 h-4" />
+              <span>Ver todas</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
               onClick={handleImportCategory}
             >
-              <List className="mr-2 w-4 h-4" />
+              <CloudDownload className="mr-2 h-4 w-4" />
               <span>Agregar nova categoria</span>
             </DropdownMenuItem>
 

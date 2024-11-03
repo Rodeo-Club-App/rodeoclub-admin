@@ -6,7 +6,8 @@ const statusList = [
   { key: "processing" },
   { key: "on-hold" },
   { key: "pending" },
-  // { key: "completed" },
+  { key: "em-transporte" },
+  { key: "em-separacao" },
   // { key: "canceled" },
 ];
 
@@ -16,6 +17,8 @@ const formattedStatus: OrderStatus = {
   pending: "Pendente",
   completed: "Concluído",
   canceled: "Cancelado",
+  "em-transporte": "Em transporte",
+  "em-separacao": "Em separação",
 };
 
 export { formattedStatus, statusList };

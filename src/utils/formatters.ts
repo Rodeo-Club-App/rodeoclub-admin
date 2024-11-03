@@ -17,6 +17,15 @@ const formatCPF = (value: string) => {
   )}.${onlyDigits.slice(6, 9)}-${onlyDigits.slice(9, 11)}`;
 };
 
+const formatCNPJ = (v: string) => {
+  v = v.replace(/\D/g, "");
+  v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+  v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+  v = v.replace(/(\d{4})(\d)/, "$1-$2");
+  return v.length > 18 ? v.slice(0, 18) : v;
+};
+
 const formatPhoneNumber = (value: string) => {
   const onlyDigits = value.replace(/\D/g, "");
 
@@ -27,6 +36,18 @@ const formatPhoneNumber = (value: string) => {
     2,
     7
   )}-${onlyDigits.slice(7, 11)}`;
+};
+
+const formatDateOfBirth = (value: string) => {
+  const onlyDigits = value.replace(/\D/g, "");
+
+  if (onlyDigits.length <= 2) return onlyDigits; // Retorna o dia
+  if (onlyDigits.length <= 4)
+    return `${onlyDigits.slice(0, 2)}/${onlyDigits.slice(2)}`; // Retorna dd/mm
+  return `${onlyDigits.slice(0, 2)}/${onlyDigits.slice(
+    2,
+    4
+  )}/${onlyDigits.slice(4, 8)}`; // Retorna dd/mm/aaaa
 };
 
 function formatCep(text: string) {
@@ -60,4 +81,11 @@ const formatDateRange = (startAt: string, endAt: string) => {
   return "";
 };
 
-export { formatCPF, formatPhoneNumber, formatCep, formatDateRange };
+export {
+  formatCPF,
+  formatCNPJ,
+  formatPhoneNumber,
+  formatCep,
+  formatDateRange,
+  formatDateOfBirth,
+};

@@ -20,6 +20,8 @@ import RedefinePassword from "@/pages/recoveryAccount/reset";
 import { LogsCustomers } from "@/pages/logs-customers";
 import { PromotionNotification } from "@/pages/product-promotion-notification";
 import { ProductsHighlights } from "@/pages/products-highlights";
+import { Categories } from "@/pages/categories";
+import { Partners } from "@/pages/partners";
 
 export const router = createBrowserRouter([
   {
@@ -74,6 +76,14 @@ export const router = createBrowserRouter([
       {
         path: "/products-highlights",
         element: <ProductsHighlights />,
+      },
+      {
+        path: "/categories",
+        element: <Categories />,
+      },
+      {
+        path: "/partners",
+        element: <Partners />,
       },
     ],
   },

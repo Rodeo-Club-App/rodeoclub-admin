@@ -1,12 +1,13 @@
 import { api } from "../../services/api";
 
-interface Partner {
+export interface IPartner {
   id: number;
   name: string;
+  cnpj: string | null;
 }
 
 export async function listPartners() {
-  const response = await api.get<Partner[]>("/partners/rodeoclub");
+  const response = await api.get<IPartner[]>("/partners/rodeoclub");
 
   return response.data;
 }

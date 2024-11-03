@@ -117,7 +117,7 @@ export function PDFReport({ data }: Props) {
               marginBottom: 10,
             }}
           >
-            Parceiro - {partner}
+            Parceiro(s) - {partner}
           </Text>
         )}
 

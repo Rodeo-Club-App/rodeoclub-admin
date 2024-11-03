@@ -36,7 +36,11 @@ import {
 } from "@/components/ui/form";
 
 import { api } from "@/services/api";
-import { formatCPF, formatPhoneNumber } from "@/utils/formatters";
+import {
+  formatCPF,
+  formatDateOfBirth,
+  formatPhoneNumber,
+} from "@/utils/formatters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -48,6 +52,7 @@ interface CustomerResponse {
   email: string;
   phone: string;
   documentNumber: string;
+  birthdate: string | null;
   partner: null | {
     id: number;
     name: string;
@@ -70,6 +75,7 @@ const userSchema = z.object({
     })
     .email("Padrão incorreto")
     .min(1, { message: "Insira o nome." }),
+  birthdate: z.string().optional(),
   documentNumber: z
     .string({
       required_error: "Insira o CPF.",
@@ -174,13 +180,21 @@ export function CustomerForm() {
         `user/rodeoclub/profile/${id}`
       );
 
-      const { name, email, partner, phone, documentNumber, address } =
-        response.data;
+      const {
+        name,
+        email,
+        partner,
+        phone,
+        documentNumber,
+        address,
+        birthdate,
+      } = response.data;
 
       form.reset({
         name,
         email,
-        phone,
+        phone: phone ?? "",
+        birthdate: birthdate ?? "",
         partnerId: String(partner?.id) ?? "",
         documentNumber: formatCPF(documentNumber),
         address,
@@ -226,6 +240,7 @@ export function CustomerForm() {
       phone,
       partnerId,
       address,
+      birthdate,
       sendNotification,
       excludeAddress,
     } = values;
@@ -236,7 +251,8 @@ export function CustomerForm() {
           email,
           phone,
           name,
-          partnerId,
+          ...(partnerId && { partnerId }),
+          birthdate,
           documentNumber,
           address,
           sendNotification,
@@ -253,7 +269,8 @@ export function CustomerForm() {
           email,
           phone,
           name,
-          partnerId,
+          ...(partnerId && { partnerId }),
+          birthdate,
           documentNumber,
           address,
           sendNotification,
@@ -346,7 +363,7 @@ export function CustomerForm() {
                               )}
                             />
                           </div>
-                          <div className="grid grid-cols-4 gap-2">
+                          <div className="grid grid-cols-6 gap-2">
                             <div className="col-span-2">
                               <FormField
                                 control={form.control}
@@ -387,6 +404,31 @@ export function CustomerForm() {
                                         onChange={(e) => {
                                           const formattedValue =
                                             formatPhoneNumber(e.target.value);
+                                          field.onChange(formattedValue);
+                                        }}
+                                      />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            <div className="col-span-2">
+                              <FormField
+                                control={form.control}
+                                name="birthdate"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Data de Nascimento</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder=""
+                                        {...field}
+                                        onChange={(e) => {
+                                          const formattedValue =
+                                            formatDateOfBirth(e.target.value);
                                           field.onChange(formattedValue);
                                         }}
                                       />
