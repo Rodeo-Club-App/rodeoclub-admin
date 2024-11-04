@@ -22,12 +22,15 @@ import { Button } from "@/components/ui/button";
 import { CheckIcon, PlusCircleIcon } from "lucide-react";
 import { api } from "@/services/api";
 
-interface Props {
+export interface SubCategoriesGroup {
   id: number;
   group: string;
+  position: number;
   subCategories: {
     id: number;
     name: string;
+    imageUrl: string;
+    positionGroup: number;
   }[];
 }
 
@@ -41,7 +44,9 @@ export function DataFilterCategory() {
   const { data: categoriesList } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const response = await api.get<Props[]>("/category/rodeoclub/groups");
+      const response = await api.get<SubCategoriesGroup[]>(
+        "/category/rodeoclub/groups"
+      );
 
       return response.data;
     },
