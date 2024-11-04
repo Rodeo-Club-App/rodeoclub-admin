@@ -105,7 +105,7 @@ const statusStyles = {
   "on-hold": styles.badgeGray,
   pending: styles.badgeOrange,
   completed: styles.badgeGreen,
-  canceled: styles.badgeRed,
+  cancelled: styles.badgeRed,
   "em-transporte": styles.badgeBlue,
   "em-separacao": styles.badgeOrange,
 };

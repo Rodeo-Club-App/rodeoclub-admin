@@ -59,7 +59,7 @@ export interface OrderList {
   customer: Customer;
   total: string;
   totalCents: number;
-  status: "on-hold" | "completed" | "canceled" | "pending" | "processing";
+  status: "on-hold" | "completed" | "cancelled" | "pending" | "processing";
   items: ItemProduct[];
 }
 
@@ -109,7 +109,7 @@ const statusColors = {
   "em-transporte": "bg-blue-500 text-white",
   completed: "bg-green-500 text-white",
   "em-separacao": "bg-orange-500 text-white",
-  canceled: "bg-red-500 text-white",
+  cancelled: "bg-red-500 text-white",
 };
 
 export function Orders() {
