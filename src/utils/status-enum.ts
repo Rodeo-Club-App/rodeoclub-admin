@@ -9,6 +9,9 @@ const statusList = [
   { key: "em-transporte" },
   { key: "em-separacao" },
   { key: "cancelled" },
+  { key: "refunded" },
+  { key: "trash" },
+  { key: "failed" },
 ];
 
 const formattedStatus: OrderStatus = {
@@ -19,6 +22,9 @@ const formattedStatus: OrderStatus = {
   cancelled: "Cancelado",
   "em-transporte": "Em transporte",
   "em-separacao": "Em separação",
+  refunded: "Reembolsado",
+  trash: "Arquivado",
+  failed: "Falha",
 };
 
 export { formattedStatus, statusList };

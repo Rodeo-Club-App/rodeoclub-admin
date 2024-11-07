@@ -228,7 +228,9 @@ export function DataFilters() {
           )}
         </div>
 
-        <DataFilterPartners />
+        <div className="mr-1">
+          <DataFilterPartners />
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

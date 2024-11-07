@@ -86,6 +86,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#3B82F6",
     color: "#FFFFFF",
   },
+  badgerefunded: {
+    backgroundColor: "#14B8A6",
+    color: "#FFFFFF",
+  },
+  badgeTrash: {
+    backgroundColor: "#D1D5DB",
+    color: "#000000",
+  },
+  badgeFailed: {
+    backgroundColor: "#B91C1C",
+    color: "#FFFFFF",
+  },
   pageNumber: {
     position: "absolute",
     fontSize: 10,
@@ -108,6 +120,9 @@ const statusStyles = {
   cancelled: styles.badgeRed,
   "em-transporte": styles.badgeBlue,
   "em-separacao": styles.badgeOrange,
+  refunded: styles.badgerefunded,
+  trash: styles.badgeTrash,
+  failed: styles.badgeFailed,
 };
 
 interface Props {

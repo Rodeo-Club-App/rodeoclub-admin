@@ -59,7 +59,15 @@ export interface OrderList {
   customer: Customer;
   total: string;
   totalCents: number;
-  status: "on-hold" | "completed" | "cancelled" | "pending" | "processing";
+  status:
+    | "on-hold"
+    | "completed"
+    | "cancelled"
+    | "pending"
+    | "processing"
+    | "refunded"
+    | "trash"
+    | "failed";
   items: ItemProduct[];
 }
 
@@ -95,6 +103,7 @@ interface OrderDetailsResponse {
   subTotal: string;
   shipping: string;
   customer: Customer;
+  discount?: number | null;
   paymentMethod: string;
   trackingCode: string | null;
   trackingUrl: string | null;
@@ -110,6 +119,9 @@ const statusColors = {
   completed: "bg-green-500 text-white",
   "em-separacao": "bg-orange-500 text-white",
   cancelled: "bg-red-500 text-white",
+  refunded: "bg-teal-500 text-white",
+  trash: "bg-gray-300 text-black",
+  failed: "bg-red-700 text-white",
 };
 
 export function Orders() {
@@ -334,6 +346,7 @@ export function Orders() {
                     payment={{
                       method: orderData.paymentMethod,
                     }}
+                    discount={orderData.discount}
                     billingAddress={orderData.billing}
                     trackingCode={orderData.trackingCode}
                     trackingUrl={orderData.trackingUrl}

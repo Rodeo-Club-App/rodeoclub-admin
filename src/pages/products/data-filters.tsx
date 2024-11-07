@@ -140,6 +140,7 @@ export function DataFilters({ products }: Props) {
 
     setIsExporting(false);
   }
+  
   return (
     <div className="flex flex-col md:flex-row lg:items-center gap-2 md:gap-0">
       <div className="relative lg:mr-2 md:grow-0 w-full sm:w-auto">
@@ -213,12 +214,14 @@ export function DataFilters({ products }: Props) {
           </Select>
         </div> */}
 
-        <DataFilterCategory />
+        <div className="ml-1">
+          <DataFilterCategory />
+        </div>
 
         <div className="flex">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-1 h-8">
+              <Button variant="outline" className="ml-1 h-8">
                 <ArrowDownWideNarrow className="h-4 w-4" />
                 <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">
                   Ordenar por

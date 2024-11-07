@@ -22,6 +22,7 @@ import {
   Star,
   TabletSmartphone,
   User,
+  User2,
   Users,
 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -144,7 +145,15 @@ export function Header() {
                     Acessos
                   </Link>
 
-                  <div className="flex items-center  mt-5">
+                  <Link
+                    to="/clients"
+                    className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
+                  >
+                    <User2 className="h-5 w-5" />
+                    Clientes
+                  </Link>
+
+                  <div className="flex items-center mt-2">
                     <Label className="text-base font-medium mr-1">
                       Aplicativo
                     </Label>
@@ -172,7 +181,7 @@ export function Header() {
                       to="/products-highlights"
                       className="flex items-center gap-4 text-base font-medium  text-muted-foreground hover:text-foreground"
                     >
-                      <Star className="h-4 w-4" />
+                      <Star className="h-5 w-5" />
                       Produtos em destaque
                     </Link>
                     <Link
@@ -212,7 +221,7 @@ export function Header() {
                       className="flex items-center justify-start text-base mb-1 p-0 bg-transparent hover:bg-transparent gap-4 text-muted-foreground hover:text-foreground"
                       onClick={handleImportProduts}
                     >
-                      <CloudDownload className="h-4 w-4" />
+                      <CloudDownload className="h-5 w-5" />
                       <span className="flex flex-wrap text-left whitespace-normal">
                         Importar novos produtos
                       </span>

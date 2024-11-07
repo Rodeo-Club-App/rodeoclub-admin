@@ -79,6 +79,7 @@ export interface ICustomer {
   invitedAt: Date | null;
   registerAt: Date | null;
   partner: string;
+  birthdate: string | null;
 }
 
 export function Customers() {
@@ -254,7 +255,9 @@ export function Customers() {
                     )}
                   </div>
 
-                  <DataFilterPartners />
+                  <div className="mr-1">
+                    <DataFilterPartners />
+                  </div>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -321,6 +324,7 @@ export function Customers() {
                             <TableRow>
                               <TableHead>Cliente</TableHead>
                               <TableHead className="pl-4">CPF</TableHead>
+                              <TableHead className="pl-4">Nascimento</TableHead>
 
                               <TableHead className="">Parceiro</TableHead>
                               <TableHead>Data (Registro no APP)</TableHead>
@@ -348,6 +352,11 @@ export function Customers() {
                                 <TableCell className="min-w-36 sm:table-cell p-4">
                                   <div className="font-medium text-xs sm:text-sm">
                                     {formatCPF(customer.documentNumber ?? "")}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="min-w-36 sm:table-cell p-4">
+                                  <div className="font-medium text-xs sm:text-sm">
+                                    {customer.birthdate}
                                   </div>
                                 </TableCell>
 

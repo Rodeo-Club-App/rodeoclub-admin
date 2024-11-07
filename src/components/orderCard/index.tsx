@@ -13,6 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { useSearchParams } from "react-router-dom";
+import { formatCentsToReal } from "@/utils/money";
 
 interface OrderItem {
   imageUrl: string;
@@ -26,6 +27,7 @@ interface OrderCardProps {
   orderDate: string;
   items: OrderItem[];
   subtotal: string;
+  discount?: number | null;
   shippingAddress: string;
   shippingValue: string;
   billingAddress: string;
@@ -56,6 +58,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   payment,
   trackingCode,
   trackingUrl,
+  discount,
 }) => {
   const [_, setSearchParams] = useSearchParams();
   const [copySuccess, setCopySuccess] = useState(false);
@@ -154,6 +157,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <span className="text-muted-foreground">Frete</span>
               <span>{shippingValue}</span>
             </li>
+            {!!discount && Number(discount) > 0 && (
+              <li className="flex items-center justify-between font-semibold">
+                <span className="text-muted-foreground">Desconto</span>
+                <span>{formatCentsToReal(discount)}</span>
+              </li>
+            )}
+
             <li className="flex items-center justify-between font-semibold">
               <span className="text-muted-foreground">Total</span>
               <span>{total}</span>
