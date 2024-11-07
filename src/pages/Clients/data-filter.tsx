@@ -153,6 +153,7 @@ export function DataFilters() {
 
       rows.push([
         "Cliente",
+        "Marca",
         "Nascimento",
         "Parceiro",
         "Qtd. compras",
@@ -162,12 +163,25 @@ export function DataFilters() {
       data.clients.forEach((client) => {
         const clientRow = [
           client.user.name,
+          "",
           client.user.birthdate,
           client.partner?.name ?? "",
           client.totalOrders,
           client.totalSpentsFormatted,
         ];
         rows.push(clientRow);
+
+        client.topBrands.forEach((brand) => {
+          const brandRow = [
+            "",
+            brand.brand,
+            "",
+            "",
+            brand.quantity,
+            brand.totalSpentFormatted,
+          ];
+          rows.push(brandRow);
+        });
       });
 
       const worksheet = XLSX.utils.aoa_to_sheet(rows);
