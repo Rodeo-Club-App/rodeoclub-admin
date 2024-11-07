@@ -301,9 +301,9 @@ export function CustomerForm() {
             showBackButton
             name={id && id !== "new" ? "Editar Cliente" : "Cadastrar Cliente"}
           >
-            <div className="hidden items-center gap-2 md:ml-auto md:flex">
+            <div className=" items-center gap-2 md:ml-auto md:flex">
               <Button
-                className="w-full md:w-auto"
+                className="w-full "
                 disabled={isLoading || form.formState.isSubmitting}
                 onClick={handleSubmit}
               >
