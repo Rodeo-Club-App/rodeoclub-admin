@@ -13,6 +13,7 @@ import { DatePickerWithRange } from "@/components/date-range-picker";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -21,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDateRange } from "@/utils/formatters";
 import ReactPDF from "@react-pdf/renderer";
-import { File, Loader2, Search, X } from "lucide-react";
+import { ArrowDownWideNarrow, File, Loader2, Search, X } from "lucide-react";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import * as XLSX from "xlsx";
@@ -46,6 +47,7 @@ export function DataFilters() {
   const startAt = searchParams.get("startAt") || "";
   const endAt = searchParams.get("endAt") || "";
   const partners = searchParams.get("partners") || "";
+  const sort = searchParams.get("orderBy") || "name";
 
   const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
   const [debouncedSearchQuery] = useDebounce(search, 500);
@@ -196,6 +198,13 @@ export function DataFilters() {
     setIsExporting(false);
   };
 
+  const handleChangeOrderType = (type: "ordersCount" | "name") => {
+    setSearchParams((p) => {
+      p.set("orderBy", type);
+
+      return p;
+    });
+  };
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
       <div className="relative md:mr-2 md:grow-0 w-full sm:w-auto">
@@ -236,6 +245,36 @@ export function DataFilters() {
 
         <div className="mr-1">
           <DataFilterPartners />
+        </div>
+
+        <div className="flex">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-1 h-8">
+                <ArrowDownWideNarrow className="h-4 w-4" />
+                <span className="sr-only xl:not-sr-only xl:whitespace-nowrap">
+                  Ordenar por
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={sort === "ordersCount"}
+                onClick={() => handleChangeOrderType("ordersCount")}
+              >
+                Qtd. vendas
+              </DropdownMenuCheckboxItem>
+
+              <DropdownMenuCheckboxItem
+                checked={sort === "name"}
+                onClick={() => handleChangeOrderType("name")}
+              >
+                Nome
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <DropdownMenu>

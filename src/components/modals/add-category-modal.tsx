@@ -20,11 +20,21 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { useState } from "react";
 import { Loader2, RefreshCwIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SubCategoriesGroup } from "@/pages/products/data-filter-category";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "../ui/select";
 // interface UpdatePasswordModalProps {}
 
 export interface UpdatePasswordModalRef {
@@ -37,6 +47,8 @@ const addCategorySchema = z.object({
       required_error: "Insira um ID .",
     })
     .min(1, { message: "Insira um ID ." }),
+
+  groupId: z.string().optional(),
 });
 
 interface CategoryFound {
@@ -62,13 +74,17 @@ export function AddCategoryModal() {
     },
   });
 
-  // const [isOpen, setIsOpen] = useState(false);
+  const { data: categoriesList } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const response = await api.get<SubCategoriesGroup[]>(
+        "/category/rodeoclub/groups"
+      );
 
-  // useImperativeHandle(ref, () => ({
-  //   openModal: () => {
-  //     setIsOpen(true);
-  //   },
-  // }));
+      return response.data;
+    },
+    staleTime: 15 * 60 * 1000,
+  });
 
   const closeModal = () => {
     form.reset({
@@ -79,7 +95,6 @@ export function AddCategoryModal() {
 
       return p;
     });
-    // setIsOpen(false);
   };
 
   async function onSubmit(values: AddCategoryFormScehma) {
@@ -103,7 +118,9 @@ export function AddCategoryModal() {
   async function handleSyncCategory() {
     setLoading(true);
     try {
-      await api.patch(`/sub-category/rodeoclub/${category?.category.id}`);
+      await api.patch(`/sub-category/rodeoclub/${category?.category.id}`, {
+        groupId: form.getValues("groupId"),
+      });
 
       toast({
         variant: "success",
@@ -122,6 +139,7 @@ export function AddCategoryModal() {
       setLoading(false);
     }
   }
+
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="sm:max-w-[425px]">
@@ -158,6 +176,31 @@ export function AddCategoryModal() {
                 <p>
                   Categoria encontrada:{" "}
                   <strong>{category?.category.name}</strong>
+                  <FormField
+                    control={form.control}
+                    name="groupId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Grupo</FormLabel>
+                        <Select onValueChange={field.onChange}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione um grupo" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categoriesList?.map((group) => (
+                              <SelectItem value={String(group.id)}>
+                                {group.group}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   {category.existInDb && (
                     <p>
                       <strong className="font-bold text-red-500">

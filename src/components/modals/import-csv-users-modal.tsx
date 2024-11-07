@@ -58,6 +58,7 @@ export const ImportCsvUsersModal = forwardRef<
             firstName: row.Nome,
             lastName: row.Sobrenome,
             email: row.Email,
+            birthdate: row.Nascimento,
             cpf: row.CPF,
             phone: row.Telefone,
             partner: row.Parceiro,

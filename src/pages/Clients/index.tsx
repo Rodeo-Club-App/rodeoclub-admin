@@ -69,6 +69,7 @@ export function Clients() {
   const startAt = searchParams.get("startAt") || "";
   const endAt = searchParams.get("endAt") || "";
   const partners = searchParams.get("partners") || "";
+  const sort = searchParams.get("orderBy") || "name";
 
   const pageCount = z.coerce.number().parse(searchParams.get("page") ?? "1");
   const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
@@ -82,6 +83,7 @@ export function Clients() {
       partners,
       startAt,
       endAt,
+      sort,
     ],
     queryFn: async () => {
       const response = await api.post<ClientsResponse>(
@@ -93,6 +95,7 @@ export function Clients() {
           }),
           ...(startAt && { startAt: format(parseISO(startAt), "yyyy-MM-dd") }),
           ...(endAt && { endAt: format(parseISO(endAt), "yyyy-MM-dd") }),
+          sort: sort,
         },
         {
           params: {
