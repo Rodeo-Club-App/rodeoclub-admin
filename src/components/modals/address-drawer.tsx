@@ -215,7 +215,7 @@ export const AddressDrawer = forwardRef<AddressDrawerRef, AddressDrawerProps>(
       <Drawer direction="right" open={isOpen} onOpenChange={closeModal}>
         <DrawerContent
           aria-describedby="address"
-          className="h-screen top-0 right-0 left-auto mt-0 w-[500px] rounded-none"
+          className="h-screen top-0 right-0 left-auto mt-0 w-full sm:w-[500px] rounded-none"
         >
           <ScrollArea>
             <DrawerHeader>
@@ -227,8 +227,8 @@ export const AddressDrawer = forwardRef<AddressDrawerRef, AddressDrawerProps>(
                 className="grid items-start gap-4 p-4"
                 onSubmit={form.handleSubmit(onSubmit)}
               >
-                <div className="grid grid-cols-4 gap-2">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="col-span-1">
                     <FormField
                       control={form.control}
                       name="firstName"
@@ -245,7 +245,7 @@ export const AddressDrawer = forwardRef<AddressDrawerRef, AddressDrawerProps>(
                     />
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1">
                     <FormField
                       control={form.control}
                       name="lastName"
@@ -355,7 +355,7 @@ export const AddressDrawer = forwardRef<AddressDrawerRef, AddressDrawerProps>(
                     )}
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                   <div className="col-span-3">
                     <FormField
                       control={form.control}
@@ -391,7 +391,7 @@ export const AddressDrawer = forwardRef<AddressDrawerRef, AddressDrawerProps>(
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                   <div className="col-span-3">
                     <FormField
                       control={form.control}
