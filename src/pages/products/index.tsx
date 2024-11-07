@@ -24,12 +24,16 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { api } from "@/services/api";
 import { formatCentsToReal } from "@/utils/money";
 import { formattedStock } from "@/utils/stock-enum";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { useDebounce } from "use-debounce";
 import { z } from "zod";
 
 import { DataFilters } from "./data-filters";
+
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export interface ProductReport {
   period: string;
@@ -53,6 +57,7 @@ export interface IProduct {
   price: string;
   priceCents: number;
   updatedAt: string;
+  deletedAt: string;
   totalQuantitySold: number;
   totalSalesValue: number;
   images: Image[];
@@ -72,6 +77,8 @@ const stockColors = {
 };
 
 export function Products() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const searchName = searchParams.get("searchName") || "";
   const [debouncedSearchQuery] = useDebounce(searchName, 500);
@@ -149,6 +156,27 @@ export function Products() {
         return 0;
     }
   });
+
+  async function toggleVisibleProduct(id: number) {
+    try {
+      const response = await api.patch(`/products/rodeoclub/${id}`);
+
+      toast({
+        title: "Sucesso",
+        description: response.data.message,
+        variant: "success",
+      });
+
+      queryClient.refetchQueries({
+        queryKey: ["products"],
+      });
+    } catch (error) {
+      toast({
+        title: "Falha ao remover produto",
+        variant: "destructive",
+      });
+    }
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -243,28 +271,21 @@ export function Products() {
                                 </TableCell>
 
                                 <TableCell className=" w-10 text-right">
-                                  {/* <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        aria-haspopup="true"
-                                        size="icon"
-                                        variant="ghost"
-                                      >
-                                        <MoreHorizontal className="h-4 w-4" />
-                                        <span className="sr-only">
-                                          Toggle menu
-                                        </span>
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                      <DropdownMenuLabel>
-                                        Ações
-                                      </DropdownMenuLabel>
-                                      <DropdownMenuItem className="cursor-pointer">
-                                        Sincronizar produto
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu> */}
+                                  <Button
+                                    aria-haspopup="true"
+                                    size="icon"
+                                    variant="ghost"
+                                    className="bg-zinc-100"
+                                    onClick={() =>
+                                      toggleVisibleProduct(product.id)
+                                    }
+                                  >
+                                    {!!product.deletedAt ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             ))}
