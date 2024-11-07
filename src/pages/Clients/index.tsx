@@ -41,6 +41,11 @@ export interface ClientList {
   user: {
     name: string;
     email: string;
+    birthdate: string | null;
+  };
+  partner: {
+    id: number | null;
+    name: string | null;
   };
   totalOrders: number;
   totalSpent: number;
@@ -132,7 +137,7 @@ export function Clients() {
               <TabsContent value="week">
                 <Card x-chunk="dashboard-05-chunk-3">
                   <CardHeader className="px-7 flex flex-row justify-between items-center">
-                    <CardTitle>Clientes</CardTitle>
+                    <CardTitle>Relatório de clientes</CardTitle>
                     <Button
                       size="sm"
                       variant="outline"
@@ -154,6 +159,9 @@ export function Clients() {
                           <div className="flex w-full  border-b border-gray-200 h-8 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
                             <div className="font-medium w-full min-w-56 sm:px-4">
                               Cliente
+                            </div>
+                            <div className="font-medium w-full min-w-56 sm:px-4">
+                              Nascimento
                             </div>
                             <div className="w-full min-w-64 font-medium">
                               Parceiro
@@ -190,7 +198,10 @@ export function Clients() {
                                       </div>
                                     </div>
                                     <div className="w-full font-medium text-left">
-                                      Appsplix Developers
+                                      {customer.user.birthdate}
+                                    </div>
+                                    <div className="w-full font-medium text-left">
+                                      {customer.partner.name}
                                     </div>
                                     <div className=" w-full font-medium text-center">
                                       {customer.totalOrders}
@@ -211,6 +222,10 @@ export function Clients() {
                                           className="rounded-full"
                                           width={120}
                                         />
+                                      </div>
+
+                                      <div className="w-full  font-medium text-left ">
+                                        {/* {brand.brand} */}
                                       </div>
 
                                       <div className="w-full  font-medium text-left ">

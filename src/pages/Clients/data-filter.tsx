@@ -93,7 +93,7 @@ export function DataFilters() {
     while (hasMore) {
       try {
         const response = await api.post<ClientsResponse>(
-          "/user/rodeoclub/search",
+          "/orders/rodeoclub/users",
           {
             search: searchParams.debouncedSearchQuery,
             ...(searchParams.partners !== "" && {
@@ -141,20 +141,6 @@ export function DataFilters() {
     };
 
     if (type === "pdf") {
-      const rows = [];
-
-      rows.push(["Cliente", "Parceiro", "Qtd. compras", "Total de compras"]);
-
-      data.clients.forEach((client) => {
-        const clientRow = [
-          client.user.name,
-          "Parceiro",
-          client.totalOrders,
-          client.totalSpentsFormatted,
-        ];
-        rows.push(clientRow);
-      });
-
       const pdf = <PDFReport data={data} />;
 
       const blob = await ReactPDF.pdf(pdf).toBlob();
@@ -165,12 +151,19 @@ export function DataFilters() {
     if (type === "excel") {
       const rows = [];
 
-      rows.push(["Cliente", "Parceiro", "Qtd. compras", "Total de compras"]);
+      rows.push([
+        "Cliente",
+        "Nascimento",
+        "Parceiro",
+        "Qtd. compras",
+        "Total de compras",
+      ]);
 
       data.clients.forEach((client) => {
         const clientRow = [
           client.user.name,
-          "Parceiro",
+          client.user.birthdate,
+          client.partner?.name ?? "",
           client.totalOrders,
           client.totalSpentsFormatted,
         ];

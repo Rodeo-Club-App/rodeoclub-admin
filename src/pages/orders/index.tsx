@@ -103,6 +103,7 @@ interface OrderDetailsResponse {
   subTotal: string;
   shipping: string;
   customer: Customer;
+  discount?: number | null;
   paymentMethod: string;
   trackingCode: string | null;
   trackingUrl: string | null;
@@ -345,6 +346,7 @@ export function Orders() {
                     payment={{
                       method: orderData.paymentMethod,
                     }}
+                    discount={orderData.discount}
                     billingAddress={orderData.billing}
                     trackingCode={orderData.trackingCode}
                     trackingUrl={orderData.trackingUrl}

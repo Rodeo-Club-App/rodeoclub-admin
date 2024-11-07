@@ -3,6 +3,7 @@ import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 import { registerFonts } from "@/utils/register-fonts";
 import { ClientReport } from ".";
 import OrderReportHeader from "@/components/orderReportHeader";
+import { formatCentsToReal } from "@/utils/money";
 
 const styles = StyleSheet.create({
   page: {
@@ -70,7 +71,17 @@ interface Props {
 export function PDFReport({ data }: Props) {
   registerFonts();
 
-  const { period, total, partner } = data;
+  const { period, total, partner, clients } = data;
+
+  const resume = clients.reduce(
+    (p, c) => {
+      return {
+        totalOrder: p.totalOrder + c.totalOrders,
+        totalValue: p.totalValue + c.totalSpent,
+      };
+    },
+    { totalOrder: 0, totalValue: 0 }
+  );
 
   return (
     <Document>
@@ -83,11 +94,11 @@ export function PDFReport({ data }: Props) {
             },
             {
               label: "Total de compras",
-              value: "80",
+              value: String(resume.totalOrder),
             },
             {
               label: "Valor total",
-              value: "80.000",
+              value: formatCentsToReal(resume.totalValue),
             },
           ]}
           period={period}
@@ -173,7 +184,7 @@ export function PDFReport({ data }: Props) {
                     {client.user.name}
                   </Text>
                   <Text style={[styles.tableCol, { width: "25%" }]}>
-                    "Parceiro"
+                    {client.partner?.name ?? ""}
                   </Text>
 
                   <Text style={[styles.tableCol, { width: "25%" }]}>
