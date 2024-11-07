@@ -83,6 +83,15 @@ export function PDFReport({ data }: Props) {
     { totalOrder: 0, totalValue: 0 }
   );
 
+  const cols = {
+    col1: "20%",
+    col2: "10%",
+    col3: "20%",
+    col4: "20%",
+    col5: "15%",
+    col6: "15%",
+  };
+
   return (
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
@@ -124,7 +133,7 @@ export function PDFReport({ data }: Props) {
               style={[
                 styles.tableColHeader,
                 {
-                  width: "25%",
+                  width: cols.col1,
                   fontWeight: "bold",
                 },
               ]}
@@ -135,7 +144,18 @@ export function PDFReport({ data }: Props) {
               style={[
                 styles.tableColHeader,
                 {
-                  width: "25%",
+                  width: cols.col2,
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              Nascimento
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: cols.col3,
                   fontWeight: "bold",
                 },
               ]}
@@ -146,7 +166,18 @@ export function PDFReport({ data }: Props) {
               style={[
                 styles.tableColHeader,
                 {
-                  width: "25%",
+                  width: cols.col4,
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              Marca
+            </Text>
+            <Text
+              style={[
+                styles.tableColHeader,
+                {
+                  width: cols.col5,
                   fontWeight: "bold",
                 },
               ]}
@@ -158,7 +189,7 @@ export function PDFReport({ data }: Props) {
               style={[
                 styles.tableColHeader,
                 {
-                  width: "25%",
+                  width: cols.col6,
                   fontWeight: "bold",
                 },
               ]}
@@ -173,6 +204,7 @@ export function PDFReport({ data }: Props) {
             return (
               <React.Fragment key={client.id}>
                 <View
+                  key={client.id}
                   style={[
                     styles.tableRow,
                     index % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd,
@@ -180,50 +212,60 @@ export function PDFReport({ data }: Props) {
                   ]}
                   break={isLastRow}
                 >
-                  <Text style={[styles.tableCol, { width: "25%" }]}>
+                  <Text style={[styles.tableCol, { width: cols.col1 }]}>
                     {client.user.name}
                   </Text>
-                  <Text style={[styles.tableCol, { width: "25%" }]}>
+                  <Text style={[styles.tableCol, { width: cols.col2 }]}>
+                    {client.user.birthdate}
+                  </Text>
+                  <Text style={[styles.tableCol, { width: cols.col3 }]}>
                     {client.partner?.name ?? ""}
                   </Text>
+                  <Text style={[styles.tableCol, { width: cols.col4 }]}></Text>
 
-                  <Text style={[styles.tableCol, { width: "25%" }]}>
+                  <Text style={[styles.tableCol, { width: cols.col5 }]}>
                     {client.totalOrders}
                   </Text>
-                  <Text style={[styles.tableCol, { width: "25%" }]}>
+                  <Text style={[styles.tableCol, { width: cols.col6 }]}>
                     {client.totalSpentsFormatted}
                   </Text>
                 </View>
-                {/*    {data.topBrands.map((brand) => (
-                  <View
-                    key={brand.id}
-                    style={[
-                      styles.tableRow,
-                      index % 2 === 0
-                        ? styles.tableRowEven
-                        : styles.tableRowOdd,
-                      ...(isLastRow ? [styles.tableRowLast] : []),
-                    ]}
-                  >
-                    <View style={[styles.tableCol, { width: "25%" }]}>
-                      <img
-                        src={brand.imageUrl}
-                        alt={brand.brand}
-                        className="rounded-full"
-                        width={120}
-                      />
+
+                {client.topBrands.map((brand, index) => {
+                  return (
+                    <View
+                      key={brand.id}
+                      style={[
+                        styles.tableRow,
+                        index % 2 === 0
+                          ? styles.tableRowEven
+                          : styles.tableRowOdd,
+                        ...(isLastRow ? [styles.tableRowLast] : []),
+                      ]}
+                    >
+                      <Text style={[styles.tableCol, { width: cols.col1 }]}>
+                        {client.user.name}
+                      </Text>
+                      <Text style={[styles.tableCol, { width: cols.col2 }]}>
+                        {" "}
+                      </Text>
+                      <Text style={[styles.tableCol, { width: cols.col3 }]}>
+                        {" "}
+                      </Text>
+
+                      {/* Preenchendo a coluna de Marca, Qtd. compras e Total de compras */}
+                      <Text style={[styles.tableCol, { width: cols.col4 }]}>
+                        {brand.brand}
+                      </Text>
+                      <Text style={[styles.tableCol, { width: cols.col5 }]}>
+                        {brand.quantity}
+                      </Text>
+                      <Text style={[styles.tableCol, { width: cols.col6 }]}>
+                        {brand.totalSpentFormatted}
+                      </Text>
                     </View>
-                    <Text style={[styles.tableCol, { width: "25%" }]}>
-                      {brand.brand}
-                    </Text>
-                    <Text style={[styles.tableCol, { width: "25%" }]}>
-                      {brand.quantity}
-                    </Text>
-                    <Text style={[styles.tableCol, { width: "25%" }]}>
-                      {brand.totalSpentFormatted}
-                    </Text>
-                  </View>
-                ))} */}
+                  );
+                })}
               </React.Fragment>
             );
           })}

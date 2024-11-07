@@ -21,6 +21,7 @@ import {
   ChevronDown,
   ChevronUp,
   DollarSign,
+  File,
   Package,
   ShoppingCart,
   Users,
@@ -35,6 +36,9 @@ import { api } from "@/services/api";
 import { SalesAnalytics } from "@/dto/interfaces/sales-indicators";
 import { formatCentsToReal } from "@/utils/money";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+// import { AniversariantesSemana } from "./birthdate-list";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -51,6 +55,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const { data, isLoading, isRefetching } = useQuery({
     queryKey: ["indicators"],
     queryFn: async () => {
@@ -230,10 +235,14 @@ export function Dashboard() {
               </Card>
 
               <Card className="mt-6 md:mt-0">
-                <CardHeader>
+                <CardHeader className="flex flex-row justify-between items-center">
                   <CardTitle className="uppercase text-xl">
                     Top clientes com mais vendas
                   </CardTitle>
+
+                  <Button size="icon" onClick={() => navigate("/clients")}>
+                    <File className="w-3 h-3" />
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <ScrollArea>
@@ -358,6 +367,7 @@ export function Dashboard() {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
+              {/* <AniversariantesSemana /> */}
             </div>
           </AppLayout>
         )}
