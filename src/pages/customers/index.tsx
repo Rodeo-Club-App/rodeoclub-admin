@@ -254,7 +254,9 @@ export function Customers() {
                     )}
                   </div>
 
-                  <DataFilterPartners />
+                  <div className="mr-1">
+                    <DataFilterPartners />
+                  </div>
 
                   <Popover>
                     <PopoverTrigger asChild>

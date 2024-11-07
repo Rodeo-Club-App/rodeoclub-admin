@@ -1,3 +1,14 @@
+import { Input } from "@/components/ui/input";
+import { useSearchParams } from "react-router-dom";
+
+import { format, parseISO } from "date-fns";
+
+import { api } from "@/services/api";
+import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
+import { z } from "zod";
+
+import { listPartners } from "@/api/partners/list-partners";
 import { DatePickerWithRange } from "@/components/date-range-picker";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,42 +19,39 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { api } from "@/services/api";
-import { formatDate } from "@/utils/format-iso-date";
 import { formatDateRange } from "@/utils/formatters";
-import { formatCentsToReal } from "@/utils/money";
-import { formattedStatus } from "@/utils/status-enum";
 import ReactPDF from "@react-pdf/renderer";
-import { format, parseISO } from "date-fns";
 import { File, Loader2, Search, X } from "lucide-react";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
-import { useSearchParams } from "react-router-dom";
-import { useDebounce } from "use-debounce";
 import * as XLSX from "xlsx";
-import { z } from "zod";
-import { OrderList, OrderResponse } from ".";
-import { PDFReport } from "./pdf-report";
 
-import { DataFilterPartners } from "./data-filter-partners";
-import { DataFilterStatus } from "./data-filter-status";
+import { DataFilterPartners } from "../orders/data-filter-partners";
+import { PDFReport } from "./pdf-report";
+import { ClientList, ClientsResponse } from ".";
 
 export function DataFilters() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { data: partnersList } = useQuery({
+    queryKey: ["partners"],
+    queryFn: listPartners,
+    staleTime: 15 * 60 * 1000,
+  });
+
   const [isExporting, setIsExporting] = useState(false);
+
+  const search = searchParams.get("search") || "";
+
+  const startAt = searchParams.get("startAt") || "";
+  const endAt = searchParams.get("endAt") || "";
+  const partners = searchParams.get("partners") || "";
+
+  const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
+  const [debouncedSearchQuery] = useDebounce(search, 500);
 
   const parseDate = (param: string | null) =>
     param ? parseISO(param) : undefined;
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const search = searchParams.get("search") || "";
-  const startAt = searchParams.get("startAt") || "";
-  const endAt = searchParams.get("endAt") || "";
-  const partnerId = searchParams.get("partners") || "";
-  const status = searchParams.get("status") || "";
-  const limit = z.coerce.number().parse(searchParams.get("limit") ?? "10");
-  const [debouncedSearchQuery] = useDebounce(search, 500);
 
   const from = parseDate(startAt);
   const to = parseDate(endAt);
@@ -75,30 +83,25 @@ export function DataFilters() {
       debouncedSearchQuery,
       startAt,
       endAt,
-      partnerId,
-      status,
+      partners,
     };
 
-    const allOrders: OrderList[] = [];
+    const allClients: ClientList[] = [];
     let page = 1;
     let hasMore = true;
 
     while (hasMore) {
       try {
-        const response = await api.post<OrderResponse>(
-          "/orders/rodeoclub/search",
+        const response = await api.post<ClientsResponse>(
+          "/user/rodeoclub/search",
           {
             search: searchParams.debouncedSearchQuery,
-            ...(searchParams.partnerId && {
-              partnerIds: searchParams.partnerId
-                .split(",")
+            ...(searchParams.partners !== "" && {
+              partnerIds: searchParams.partners
+                ?.split(",")
                 .map((id) => Number(id.trim())),
             }),
 
-            ...(searchParams.status !== "" && {
-              status: searchParams.status?.split(",").map((i) => i),
-            }),
-            includeProducts: true,
             startAt: searchParams.startAt
               ? format(parseISO(searchParams.startAt), "yyyy-MM-dd")
               : undefined,
@@ -115,74 +118,41 @@ export function DataFilters() {
         );
 
         const data = response.data;
-        allOrders.push(...data.orders);
-
-        hasMore = data.orders.length === limit;
+        allClients.push(...data.data);
+        hasMore = data.data.length === limit;
         page += 1;
       } catch (err) {
         break;
       }
     }
 
-    const amount = allOrders.reduce((total, order) => {
-      return total + (order.totalCents || 0);
-    }, 0);
-
     const data = {
       period: formatDateRange(startAt, endAt),
-      //   partner: partnerId
-      //     ? partnersList?.find((i) => i.id === Number(partnerId))?.name ?? ""
-      //     : null,
-      total: formatCentsToReal(amount),
-      totalOrders: allOrders.length.toString(),
-      orders: allOrders,
+      partner: partners
+        ? partners
+            .split(",")
+            .map((id) => partnersList?.find((i) => i.id === Number(id))?.name)
+            .filter((name) => name)
+            .join(", ")
+        : null,
+
+      total: allClients.length.toString(),
+      clients: allClients,
     };
 
     if (type === "pdf") {
       const rows = [];
 
-      rows.push([
-        "Nº Pedido",
-        "Cliente",
-        "Status",
-        "Produto",
-        "Valor Unitário",
-        "Quantidade",
-        "Valor do Pedido",
-        "Data",
-        "Parceiro",
-      ]);
+      rows.push(["Cliente", "Parceiro", "Qtd. compras", "Total de compras"]);
 
-      data.orders.forEach((order) => {
-        const orderRow = [
-          order.externalId,
-          order.customer.name,
-          formattedStatus[order.status],
-          "",
-          formatCentsToReal(order.totalCents),
-          "",
-          "",
-          formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
-          order.customer.partner,
+      data.clients.forEach((client) => {
+        const clientRow = [
+          client.user.name,
+          "Parceiro",
+          client.totalOrders,
+          client.totalSpentsFormatted,
         ];
-
-        rows.push(orderRow);
-
-        order.items.forEach((item) => {
-          const itemRow = [
-            "",
-            "",
-            "",
-            item.name,
-            formatCentsToReal(item.price),
-            item.quantity,
-            "",
-            "",
-            "",
-          ];
-
-          rows.push(itemRow);
-        });
+        rows.push(clientRow);
       });
 
       const pdf = <PDFReport data={data} />;
@@ -195,74 +165,38 @@ export function DataFilters() {
     if (type === "excel") {
       const rows = [];
 
-      rows.push([
-        "Nº Pedido",
-        "Cliente",
-        "Status",
-        "Valor do Pedido",
-        "Produto",
-        "Quantidade",
-        "Valor Unitário",
-        "Valor Total",
-        "Parceiro",
-        "Data",
-      ]);
+      rows.push(["Cliente", "Parceiro", "Qtd. compras", "Total de compras"]);
 
-      data.orders.forEach((order) => {
-        const orderRow = [
-          order.externalId,
-          order.customer.name,
-          formattedStatus[order.status],
-          formatCentsToReal(order.totalCents),
-          "",
-          "",
-          "",
-          "",
-          formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
-          order.customer.partner,
+      data.clients.forEach((client) => {
+        const clientRow = [
+          client.user.name,
+          "Parceiro",
+          client.totalOrders,
+          client.totalSpentsFormatted,
         ];
-
-        rows.push(orderRow);
-
-        order.items.forEach((item) => {
-          const itemRow = [
-            "",
-            "",
-            "",
-            "",
-            item.name,
-            formatCentsToReal(item.price),
-            item.quantity,
-            formatCentsToReal(item.price * item.quantity),
-            order.customer.partner,
-            formatDate(order.createdAt, "dd/MM/yyyy HH:mm"),
-            "",
-            "",
-          ];
-
-          rows.push(itemRow);
-        });
+        rows.push(clientRow);
       });
 
       const worksheet = XLSX.utils.aoa_to_sheet(rows);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Logs");
 
-      const excelFilename = `relatorio_de_pedidos.xlsx`;
+      const excelFilename = `relatorio_de_clientes.xlsx`;
 
       XLSX.writeFile(workbook, excelFilename);
     }
 
     setIsExporting(false);
   };
+
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
       <div className="relative md:mr-2 md:grow-0 w-full sm:w-auto">
         <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Buscar pelo número do pedido ou cliente..."
-          className="pl-8 h-8 pr-4 py-2 w-full md:w-auto lg:w-[336px] rounded-lg bg-background"
+          placeholder="Buscar por nome..."
+          className="pl-8 pr-4 h-8 py-2 w-full md:w-auto lg:w-[336px] rounded-lg bg-background"
           value={search}
           onChange={(event) =>
             setSearchParams((p) => {
@@ -293,12 +227,8 @@ export function DataFilters() {
           )}
         </div>
 
-        {/* <div className="flex items-center sm:flex-initial sm:max-w-32 mr-1"> */}
-        {/* </div> */}
-
-        <div className="flex gap-1">
+        <div className="mr-1">
           <DataFilterPartners />
-          <DataFilterStatus />
         </div>
 
         <DropdownMenu>
@@ -306,7 +236,7 @@ export function DataFilters() {
             <Button
               size="sm"
               variant="outline"
-              className="h-8 gap-1 text-sm ml-1"
+              className="h-8 gap-1 text-sm"
               disabled={isExporting}
             >
               <File className="h-3.5 w-3.5" />

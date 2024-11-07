@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   Star,
   TabletSmartphone,
+  User2,
   Users,
 } from "lucide-react";
 import {
@@ -161,6 +162,13 @@ export function MainNav({
             >
               <Eye className="mr-2 h-4 w-4" />
               <span>Acessos</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/clients")}
+            >
+              <User2 className="mr-2 h-4 w-4" />
+              <span>Clientes</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuGroup></DropdownMenuGroup>

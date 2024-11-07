@@ -22,6 +22,7 @@ import { PromotionNotification } from "@/pages/product-promotion-notification";
 import { ProductsHighlights } from "@/pages/products-highlights";
 import { Categories } from "@/pages/categories";
 import { Partners } from "@/pages/partners";
+import { Clients } from "@/pages/Clients";
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
       {
         path: "/partners",
         element: <Partners />,
+      },
+      {
+        path: "/clients",
+        element: <Clients />,
       },
     ],
   },
