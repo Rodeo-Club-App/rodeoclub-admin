@@ -38,7 +38,7 @@ import { formatCentsToReal } from "@/utils/money";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-// import { AniversariantesSemana } from "./birthdate-list";
+import { BirthdateList } from "./birthdate-list";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -367,7 +367,7 @@ export function Dashboard() {
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
-              {/* <AniversariantesSemana /> */}
+              <BirthdateList />
             </div>
           </AppLayout>
         )}
